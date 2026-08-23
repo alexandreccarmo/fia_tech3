@@ -1,0 +1,81 @@
+{
+  "bruto": {
+    "pqa_labeled": 1000,
+    "pqa_artificial": 211269
+  },
+  "curadoria": {
+    "treino": 449,
+    "validacao": 51,
+    "teste": 500
+  },
+  "prontuarios": {
+    "pacientes": 40,
+    "idade_media": 63.0,
+    "gestantes": 3,
+    "com_alergia": 16,
+    "com_alergia_penicilina": 7,
+    "com_exame_pendente": 21,
+    "com_exame_critico": 11,
+    "medicacoes_ativas": 113,
+    "setores": [
+      {
+        "setor": "UTI",
+        "total": 11
+      },
+      {
+        "setor": "Clínica Médica",
+        "total": 10
+      },
+      {
+        "setor": "Cardiologia",
+        "total": 7
+      },
+      {
+        "setor": "Pneumologia",
+        "total": 5
+      },
+      {
+        "setor": "Pronto-Socorro",
+        "total": 3
+      },
+      {
+        "setor": "Nefrologia",
+        "total": 2
+      },
+      {
+        "setor": "Enfermaria",
+        "total": 2
+      }
+    ]
+  },
+  "sft": {
+    "total": 4074,
+    "proporcao_por_rotulo": {
+      "yes": 0.581,
+      "no": 0.2663,
+      "documento": 0.0074,
+      "faq": 0.0491,
+      "maybe": 0.0962
+    },
+    "repeticoes_aplicadas": {
+      "yes": 2,
+      "no": 3,
+      "maybe": 8
+    },
+    "treino": 3871,
+    "validacao": 203,
+    "por_rotulo": {
+      "yes": 2367,
+      "no": 1085,
+      "documento": 30,
+      "faq": 200,
+      "maybe": 392
+    },
+    "caracteres_por_exemplo": {
+      "media": 3607,
+      "minimo": 2380,
+      "maximo": 7059
+    },
+    "tokens_estimados_total": 3674193
+  }
+}

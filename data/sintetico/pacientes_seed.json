@@ -1,0 +1,5568 @@
+{
+  "metadata": {
+    "natureza": "sintético",
+    "gerado_para": "Tech Challenge Fase 3 - 8IADT",
+    "hospital": "Hospital Vida Plena (fictício)",
+    "aviso": "Nenhum dado real de paciente. Todos os registros são gerados artificialmente para fins acadêmicos.",
+    "total_pacientes": 40
+  },
+  "pacientes": [
+    {
+      "id": "PAC-0001",
+      "prontuario": "PRT-10001",
+      "nome": "Antonio Carlos Ferreira",
+      "cpf": "000.000.000-00",
+      "data_nascimento": "1954-02-11",
+      "sexo": "M",
+      "peso_kg": 74.0,
+      "altura_cm": 172,
+      "convenio": "SUS",
+      "setor": "UTI",
+      "leito": "UTI-05",
+      "data_internacao": "2026-08-19",
+      "gestante": false,
+      "telefone": "(00) 00000-0000",
+      "email": "paciente.ficticio@exemplo.invalido",
+      "observacoes": "Paciente admitido com quadro de sepse de foco pulmonar, evoluindo com hipotensao e taquicardia. Iniciada ressuscitacao volemica e antibioticoterapia empirica.",
+      "comorbidades": [
+        {
+          "cid10": "J44",
+          "descricao": "DPOC",
+          "desde": "2015-06-01"
+        },
+        {
+          "cid10": "I10",
+          "descricao": "Hipertensao arterial sistemica",
+          "desde": "2008-01-10"
+        }
+      ],
+      "alergias": [
+        {
+          "substancia": "Penicilina",
+          "classe": "Betalactâmico",
+          "gravidade": "grave",
+          "reacao": "Anafilaxia"
+        }
+      ],
+      "medicacoes": [
+        {
+          "principio_ativo": "Noradrenalina",
+          "dose": "0,1 mcg/kg/min",
+          "via": "EV",
+          "frequencia": "continuo",
+          "inicio": "2026-08-19",
+          "ativa": true,
+          "prescritor": "Dra. Helena Prado - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Piperacilina-Tazobactam",
+          "dose": "4,5 g",
+          "via": "EV",
+          "frequencia": "3x/dia",
+          "inicio": "2026-08-19",
+          "ativa": true,
+          "prescritor": "Dra. Helena Prado - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Vancomicina",
+          "dose": "1 g",
+          "via": "EV",
+          "frequencia": "2x/dia",
+          "inicio": "2026-08-19",
+          "ativa": true,
+          "prescritor": "Dra. Helena Prado - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Omeprazol",
+          "dose": "40 mg",
+          "via": "EV",
+          "frequencia": "1x/dia",
+          "inicio": "2026-08-19",
+          "ativa": true,
+          "prescritor": "Dr. Rafael Menezes - CRM/SP 000000"
+        }
+      ],
+      "exames": [
+        {
+          "nome": "Lactato serico",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-19",
+          "resultado_em": "2026-08-19",
+          "status": "resultado",
+          "valor": 4.5,
+          "unidade": "mmol/L",
+          "ref_min": 0.5,
+          "ref_max": 2.0,
+          "critico": true,
+          "laudo": "Hiperlactatemia compativel com hipoperfusao tecidual."
+        },
+        {
+          "nome": "Hemograma completo",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-19",
+          "resultado_em": "2026-08-19",
+          "status": "resultado",
+          "valor": 16800,
+          "unidade": "/mm3",
+          "ref_min": 4000,
+          "ref_max": 11000,
+          "critico": false,
+          "laudo": "Leucocitose com desvio a esquerda."
+        },
+        {
+          "nome": "Creatinina",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-19",
+          "resultado_em": "2026-08-19",
+          "status": "resultado",
+          "valor": 1.9,
+          "unidade": "mg/dL",
+          "ref_min": 0.7,
+          "ref_max": 1.3,
+          "critico": false,
+          "laudo": "Funcao renal alterada, provavel lesao renal aguda associada a sepse."
+        },
+        {
+          "nome": "Hemocultura",
+          "categoria": "Microbiologia",
+          "solicitado_em": "2026-08-19",
+          "resultado_em": null,
+          "status": "pendente",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": null
+        },
+        {
+          "nome": "Radiografia de torax",
+          "categoria": "Imagem",
+          "solicitado_em": "2026-08-19",
+          "resultado_em": "2026-08-19",
+          "status": "resultado",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": "Consolidacao em base pulmonar direita."
+        }
+      ],
+      "sinais_vitais": [
+        {
+          "aferido_em": "2026-08-19T08:00:00",
+          "pas": 88,
+          "pad": 52,
+          "fc": 122,
+          "fr": 28,
+          "temp": 38.6,
+          "sato2": 90,
+          "glasgow": 15
+        },
+        {
+          "aferido_em": "2026-08-19T20:00:00",
+          "pas": 96,
+          "pad": 58,
+          "fc": 110,
+          "fr": 24,
+          "temp": 37.9,
+          "sato2": 93,
+          "glasgow": 15
+        },
+        {
+          "aferido_em": "2026-08-20T08:00:00",
+          "pas": 104,
+          "pad": 64,
+          "fc": 98,
+          "fr": 20,
+          "temp": 37.2,
+          "sato2": 95,
+          "glasgow": 15
+        }
+      ],
+      "evolucoes": [
+        {
+          "data": "2026-08-19",
+          "autor": "Dra. Helena Prado",
+          "especialidade": "UTI",
+          "texto": "Paciente admitido em choque septico de foco pulmonar. Iniciada noradrenalina e antibioticoterapia de amplo espectro apos coleta de culturas."
+        },
+        {
+          "data": "2026-08-20",
+          "autor": "Dr. Rafael Menezes",
+          "especialidade": "UTI",
+          "texto": "Melhora hemodinamica discreta, doses decrescentes de noradrenalina. Mantida vigilancia de funcao renal."
+        }
+      ]
+    },
+    {
+      "id": "PAC-0002",
+      "prontuario": "PRT-10002",
+      "nome": "Maria das Gracas Souza",
+      "cpf": "000.000.000-00",
+      "data_nascimento": "1961-07-23",
+      "sexo": "F",
+      "peso_kg": 71.5,
+      "altura_cm": 160,
+      "convenio": "Particular",
+      "setor": "UTI",
+      "leito": "UTI-02",
+      "data_internacao": "2026-08-20",
+      "gestante": false,
+      "telefone": "(00) 00000-0000",
+      "email": "paciente.ficticio@exemplo.invalido",
+      "observacoes": "Sepse de foco urinario (pielonefrite complicada) com sinais de disfuncao organica. Sob monitorizacao continua em UTI.",
+      "comorbidades": [
+        {
+          "cid10": "N18",
+          "descricao": "Doenca renal cronica estagio 3",
+          "desde": "2018-03-12"
+        },
+        {
+          "cid10": "E11",
+          "descricao": "Diabetes mellitus tipo 2",
+          "desde": "2010-09-01"
+        }
+      ],
+      "alergias": [
+        {
+          "substancia": "Metamizol",
+          "classe": "Analgesico/antipiretico",
+          "gravidade": "moderada",
+          "reacao": "Urticaria"
+        }
+      ],
+      "medicacoes": [
+        {
+          "principio_ativo": "Noradrenalina",
+          "dose": "0,15 mcg/kg/min",
+          "via": "EV",
+          "frequencia": "continuo",
+          "inicio": "2026-08-20",
+          "ativa": true,
+          "prescritor": "Dr. Rafael Menezes - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Ceftriaxona",
+          "dose": "2 g",
+          "via": "EV",
+          "frequencia": "1x/dia",
+          "inicio": "2026-08-20",
+          "ativa": true,
+          "prescritor": "Dr. Rafael Menezes - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Insulina Regular",
+          "dose": "conforme escala",
+          "via": "SC",
+          "frequencia": "6x6h",
+          "inicio": "2026-08-20",
+          "ativa": true,
+          "prescritor": "Dr. Rafael Menezes - CRM/SP 000000"
+        }
+      ],
+      "exames": [
+        {
+          "nome": "Plaquetas",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-20",
+          "resultado_em": "2026-08-20",
+          "status": "resultado",
+          "valor": 18000,
+          "unidade": "/mm3",
+          "ref_min": 150000,
+          "ref_max": 450000,
+          "critico": true,
+          "laudo": "Plaquetopenia grave, sugestivo de coagulopatia associada a sepse."
+        },
+        {
+          "nome": "Creatinina",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-20",
+          "resultado_em": "2026-08-20",
+          "status": "resultado",
+          "valor": 2.3,
+          "unidade": "mg/dL",
+          "ref_min": 0.6,
+          "ref_max": 1.2,
+          "critico": false,
+          "laudo": "Piora aguda da funcao renal sobre DRC previa."
+        },
+        {
+          "nome": "Hemocultura",
+          "categoria": "Microbiologia",
+          "solicitado_em": "2026-08-20",
+          "resultado_em": null,
+          "status": "pendente",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": null
+        },
+        {
+          "nome": "Urocultura",
+          "categoria": "Microbiologia",
+          "solicitado_em": "2026-08-20",
+          "resultado_em": null,
+          "status": "pendente",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": null
+        },
+        {
+          "nome": "Proteina C reativa",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-20",
+          "resultado_em": "2026-08-20",
+          "status": "resultado",
+          "valor": 218,
+          "unidade": "mg/L",
+          "ref_min": 0,
+          "ref_max": 5,
+          "critico": false,
+          "laudo": "PCR muito elevada, compativel com processo infeccioso grave."
+        }
+      ],
+      "sinais_vitais": [
+        {
+          "aferido_em": "2026-08-20T07:00:00",
+          "pas": 82,
+          "pad": 48,
+          "fc": 128,
+          "fr": 26,
+          "temp": 38.9,
+          "sato2": 91,
+          "glasgow": 14
+        },
+        {
+          "aferido_em": "2026-08-20T19:00:00",
+          "pas": 90,
+          "pad": 55,
+          "fc": 115,
+          "fr": 22,
+          "temp": 38.1,
+          "sato2": 94,
+          "glasgow": 15
+        }
+      ],
+      "evolucoes": [
+        {
+          "data": "2026-08-20",
+          "autor": "Dr. Rafael Menezes",
+          "especialidade": "UTI",
+          "texto": "Paciente em choque septico de foco urinario, com plaquetopenia grave. Iniciado suporte vasopressor e antibioticoterapia dirigida."
+        }
+      ]
+    },
+    {
+      "id": "PAC-0003",
+      "prontuario": "PRT-10003",
+      "nome": "Jose Roberto Almeida",
+      "cpf": "000.000.000-00",
+      "data_nascimento": "1968-11-05",
+      "sexo": "M",
+      "peso_kg": 80.0,
+      "altura_cm": 175,
+      "convenio": "SUS",
+      "setor": "UTI",
+      "leito": "UTI-07",
+      "data_internacao": "2026-08-21",
+      "gestante": false,
+      "telefone": "(00) 00000-0000",
+      "email": "paciente.ficticio@exemplo.invalido",
+      "observacoes": "Sepse de foco abdominal (colangite aguda) apos episodio de colica biliar. Encaminhado a UTI para suporte e antibioticoterapia.",
+      "comorbidades": [
+        {
+          "cid10": "K80",
+          "descricao": "Colelitiase",
+          "desde": "2020-01-15"
+        },
+        {
+          "cid10": "I10",
+          "descricao": "Hipertensao arterial sistemica",
+          "desde": "2012-04-20"
+        }
+      ],
+      "alergias": [
+        {
+          "substancia": "Dipirona",
+          "classe": "Analgesico/antipiretico",
+          "gravidade": "leve",
+          "reacao": "Rash cutaneo"
+        }
+      ],
+      "medicacoes": [
+        {
+          "principio_ativo": "Noradrenalina",
+          "dose": "0,08 mcg/kg/min",
+          "via": "EV",
+          "frequencia": "continuo",
+          "inicio": "2026-08-21",
+          "ativa": true,
+          "prescritor": "Dra. Beatriz Cardoso - CRM/RJ 000000"
+        },
+        {
+          "principio_ativo": "Piperacilina-Tazobactam",
+          "dose": "4,5 g",
+          "via": "EV",
+          "frequencia": "3x/dia",
+          "inicio": "2026-08-21",
+          "ativa": true,
+          "prescritor": "Dra. Beatriz Cardoso - CRM/RJ 000000"
+        },
+        {
+          "principio_ativo": "Dipirona",
+          "dose": "1 g",
+          "via": "EV",
+          "frequencia": "se necessario",
+          "inicio": "2026-08-21",
+          "ativa": false,
+          "prescritor": "Dra. Beatriz Cardoso - CRM/RJ 000000"
+        }
+      ],
+      "exames": [
+        {
+          "nome": "Creatinina",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-21",
+          "resultado_em": "2026-08-21",
+          "status": "resultado",
+          "valor": 1.8,
+          "unidade": "mg/dL",
+          "ref_min": 0.7,
+          "ref_max": 1.3,
+          "critico": false,
+          "laudo": "Elevacao compativel com hipoperfusao renal secundaria a sepse."
+        },
+        {
+          "nome": "Bilirrubina total",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-21",
+          "resultado_em": "2026-08-21",
+          "status": "resultado",
+          "valor": 3.4,
+          "unidade": "mg/dL",
+          "ref_min": 0.3,
+          "ref_max": 1.2,
+          "critico": false,
+          "laudo": "Hiperbilirrubinemia compativel com colestase."
+        },
+        {
+          "nome": "Hemocultura",
+          "categoria": "Microbiologia",
+          "solicitado_em": "2026-08-21",
+          "resultado_em": null,
+          "status": "pendente",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": null
+        },
+        {
+          "nome": "Ultrassonografia de abdome",
+          "categoria": "Imagem",
+          "solicitado_em": "2026-08-21",
+          "resultado_em": "2026-08-21",
+          "status": "resultado",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": "Dilatacao de vias biliares compativel com colangite."
+        }
+      ],
+      "sinais_vitais": [
+        {
+          "aferido_em": "2026-08-21T09:00:00",
+          "pas": 92,
+          "pad": 56,
+          "fc": 118,
+          "fr": 24,
+          "temp": 38.4,
+          "sato2": 92,
+          "glasgow": 15
+        },
+        {
+          "aferido_em": "2026-08-22T09:00:00",
+          "pas": 100,
+          "pad": 62,
+          "fc": 104,
+          "fr": 20,
+          "temp": 37.5,
+          "sato2": 95,
+          "glasgow": 15
+        }
+      ],
+      "evolucoes": [
+        {
+          "data": "2026-08-21",
+          "autor": "Dra. Beatriz Cardoso",
+          "especialidade": "UTI",
+          "texto": "Colangite aguda com sepse associada. Iniciado suporte vasopressor e antibioticoterapia de amplo espectro, aguardando avaliacao da endoscopia para drenagem biliar."
+        }
+      ]
+    },
+    {
+      "id": "PAC-0004",
+      "prontuario": "PRT-10004",
+      "nome": "Sebastiao Nunes Barbosa",
+      "cpf": "000.000.000-00",
+      "data_nascimento": "1965-04-18",
+      "sexo": "M",
+      "peso_kg": 88.0,
+      "altura_cm": 174,
+      "convenio": "Particular",
+      "setor": "Cardiologia",
+      "leito": "2A-03",
+      "data_internacao": "2026-08-18",
+      "gestante": false,
+      "telefone": "(00) 00000-0000",
+      "email": "paciente.ficticio@exemplo.invalido",
+      "observacoes": "Admitido com dor toracica opressiva iniciada ha 3 horas, irradiando para membro superior esquerdo. Diagnostico de infarto agudo do miocardio com supradesnivelamento de ST.",
+      "comorbidades": [
+        {
+          "cid10": "I25.2",
+          "descricao": "Infarto do miocardio previo",
+          "desde": "2019-05-10"
+        },
+        {
+          "cid10": "E78.5",
+          "descricao": "Dislipidemia",
+          "desde": "2014-02-01"
+        }
+      ],
+      "alergias": [
+        {
+          "substancia": "Penicilina",
+          "classe": "Betalactâmico",
+          "gravidade": "grave",
+          "reacao": "Edema de glote"
+        }
+      ],
+      "medicacoes": [
+        {
+          "principio_ativo": "AAS",
+          "dose": "100 mg",
+          "via": "VO",
+          "frequencia": "1x/dia",
+          "inicio": "2026-08-18",
+          "ativa": true,
+          "prescritor": "Dr. Marcelo Nogueira - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Clopidogrel",
+          "dose": "75 mg",
+          "via": "VO",
+          "frequencia": "1x/dia",
+          "inicio": "2026-08-18",
+          "ativa": true,
+          "prescritor": "Dr. Marcelo Nogueira - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Enoxaparina",
+          "dose": "1 mg/kg",
+          "via": "SC",
+          "frequencia": "2x/dia",
+          "inicio": "2026-08-18",
+          "ativa": true,
+          "prescritor": "Dr. Marcelo Nogueira - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Atorvastatina",
+          "dose": "80 mg",
+          "via": "VO",
+          "frequencia": "1x/dia",
+          "inicio": "2026-08-18",
+          "ativa": true,
+          "prescritor": "Dr. Marcelo Nogueira - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Metoprolol",
+          "dose": "25 mg",
+          "via": "VO",
+          "frequencia": "2x/dia",
+          "inicio": "2026-08-18",
+          "ativa": true,
+          "prescritor": "Dr. Marcelo Nogueira - CRM/SP 000000"
+        }
+      ],
+      "exames": [
+        {
+          "nome": "Troponina I",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-18",
+          "resultado_em": "2026-08-18",
+          "status": "resultado",
+          "valor": 8.9,
+          "unidade": "ng/mL",
+          "ref_min": 0,
+          "ref_max": 0.04,
+          "critico": true,
+          "laudo": "Troponina muito elevada, compativel com necrose miocardica."
+        },
+        {
+          "nome": "Eletrocardiograma",
+          "categoria": "Cardiologia",
+          "solicitado_em": "2026-08-18",
+          "resultado_em": "2026-08-18",
+          "status": "resultado",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": "Supradesnivelamento de ST em parede anterior."
+        },
+        {
+          "nome": "CPK-MB",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-18",
+          "resultado_em": "2026-08-18",
+          "status": "resultado",
+          "valor": 68,
+          "unidade": "ng/mL",
+          "ref_min": 0,
+          "ref_max": 25,
+          "critico": false,
+          "laudo": "Elevacao compativel com IAM."
+        }
+      ],
+      "sinais_vitais": [
+        {
+          "aferido_em": "2026-08-18T05:00:00",
+          "pas": 148,
+          "pad": 96,
+          "fc": 108,
+          "fr": 24,
+          "temp": 36.8,
+          "sato2": 94,
+          "glasgow": 15
+        },
+        {
+          "aferido_em": "2026-08-18T17:00:00",
+          "pas": 128,
+          "pad": 82,
+          "fc": 88,
+          "fr": 18,
+          "temp": 36.6,
+          "sato2": 97,
+          "glasgow": 15
+        },
+        {
+          "aferido_em": "2026-08-19T09:00:00",
+          "pas": 118,
+          "pad": 76,
+          "fc": 78,
+          "fr": 16,
+          "temp": 36.5,
+          "sato2": 98,
+          "glasgow": 15
+        }
+      ],
+      "evolucoes": [
+        {
+          "data": "2026-08-18",
+          "autor": "Dr. Marcelo Nogueira",
+          "especialidade": "Cardiologia",
+          "texto": "Paciente submetido a angioplastia primaria com implante de stent em coronaria descendente anterior. Iniciada dupla antiagregacao plaquetaria associada a anticoagulacao."
+        },
+        {
+          "data": "2026-08-19",
+          "autor": "Dra. Camila Andrade",
+          "especialidade": "Cardiologia",
+          "texto": "Evolucao favoravel, sem novos episodios de dor toracica. Mantido esquema antitrombotico triplo, com atencao ao risco hemorragico."
+        }
+      ]
+    },
+    {
+      "id": "PAC-0005",
+      "prontuario": "PRT-10005",
+      "nome": "Terezinha Machado Lima",
+      "cpf": "000.000.000-00",
+      "data_nascimento": "1958-09-30",
+      "sexo": "F",
+      "peso_kg": 70.0,
+      "altura_cm": 162,
+      "convenio": "SUS",
+      "setor": "Cardiologia",
+      "leito": "2A-05",
+      "data_internacao": "2026-08-19",
+      "gestante": false,
+      "telefone": "(00) 00000-0000",
+      "email": "paciente.ficticio@exemplo.invalido",
+      "observacoes": "Angina instavel em paciente coronariopata previa, com dor toracica recorrente aos minimos esforcos. Optado por estrategia invasiva precoce.",
+      "comorbidades": [
+        {
+          "cid10": "I25.1",
+          "descricao": "Doenca arterial coronariana",
+          "desde": "2016-08-14"
+        },
+        {
+          "cid10": "I10",
+          "descricao": "Hipertensao arterial sistemica",
+          "desde": "2005-01-01"
+        },
+        {
+          "cid10": "E11",
+          "descricao": "Diabetes mellitus tipo 2",
+          "desde": "2011-03-22"
+        }
+      ],
+      "alergias": [],
+      "medicacoes": [
+        {
+          "principio_ativo": "AAS",
+          "dose": "100 mg",
+          "via": "VO",
+          "frequencia": "1x/dia",
+          "inicio": "2026-08-19",
+          "ativa": true,
+          "prescritor": "Dra. Camila Andrade - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Clopidogrel",
+          "dose": "75 mg",
+          "via": "VO",
+          "frequencia": "1x/dia",
+          "inicio": "2026-08-19",
+          "ativa": true,
+          "prescritor": "Dra. Camila Andrade - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Enoxaparina",
+          "dose": "1 mg/kg",
+          "via": "SC",
+          "frequencia": "2x/dia",
+          "inicio": "2026-08-19",
+          "ativa": true,
+          "prescritor": "Dra. Camila Andrade - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Losartana",
+          "dose": "50 mg",
+          "via": "VO",
+          "frequencia": "1x/dia",
+          "inicio": "2026-08-19",
+          "ativa": true,
+          "prescritor": "Dra. Camila Andrade - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Metformina",
+          "dose": "850 mg",
+          "via": "VO",
+          "frequencia": "2x/dia",
+          "inicio": "2026-08-19",
+          "ativa": true,
+          "prescritor": "Dra. Camila Andrade - CRM/SP 000000"
+        }
+      ],
+      "exames": [
+        {
+          "nome": "Troponina I",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-19",
+          "resultado_em": "2026-08-19",
+          "status": "resultado",
+          "valor": 0.09,
+          "unidade": "ng/mL",
+          "ref_min": 0,
+          "ref_max": 0.04,
+          "critico": false,
+          "laudo": "Discreta elevacao, compativel com lesao miocardica minima."
+        },
+        {
+          "nome": "Eletrocardiograma",
+          "categoria": "Cardiologia",
+          "solicitado_em": "2026-08-19",
+          "resultado_em": "2026-08-19",
+          "status": "resultado",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": "Infradesnivelamento de ST em parede inferior."
+        },
+        {
+          "nome": "Ecocardiograma",
+          "categoria": "Cardiologia",
+          "solicitado_em": "2026-08-19",
+          "resultado_em": "2026-08-20",
+          "status": "resultado",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": "Fracao de ejecao preservada, hipocinesia discreta de parede inferior."
+        }
+      ],
+      "sinais_vitais": [
+        {
+          "aferido_em": "2026-08-19T10:00:00",
+          "pas": 138,
+          "pad": 88,
+          "fc": 92,
+          "fr": 20,
+          "temp": 36.7,
+          "sato2": 96,
+          "glasgow": 15
+        },
+        {
+          "aferido_em": "2026-08-20T10:00:00",
+          "pas": 124,
+          "pad": 78,
+          "fc": 80,
+          "fr": 18,
+          "temp": 36.5,
+          "sato2": 97,
+          "glasgow": 15
+        }
+      ],
+      "evolucoes": [
+        {
+          "data": "2026-08-19",
+          "autor": "Dra. Camila Andrade",
+          "especialidade": "Cardiologia",
+          "texto": "Angina instavel de alto risco. Iniciada dupla antiagregacao plaquetaria e anticoagulacao, com cateterismo cardiaco programado."
+        }
+      ]
+    },
+    {
+      "id": "PAC-0006",
+      "prontuario": "PRT-10006",
+      "nome": "Wagner Correia Ramos",
+      "cpf": "000.000.000-00",
+      "data_nascimento": "1972-01-27",
+      "sexo": "M",
+      "peso_kg": 92.0,
+      "altura_cm": 178,
+      "convenio": "Particular",
+      "setor": "Pronto-Socorro",
+      "leito": "PS-11",
+      "data_internacao": "2026-08-22",
+      "gestante": false,
+      "telefone": "(00) 00000-0000",
+      "email": "paciente.ficticio@exemplo.invalido",
+      "observacoes": "Dor toracica atipica em investigacao, sem alteracoes eletrocardiograficas significativas ate o momento. Aguardando curva de marcadores de necrose miocardica.",
+      "comorbidades": [
+        {
+          "cid10": "E66",
+          "descricao": "Obesidade",
+          "desde": "2015-01-01"
+        },
+        {
+          "cid10": "E78.5",
+          "descricao": "Dislipidemia",
+          "desde": "2019-06-10"
+        }
+      ],
+      "alergias": [],
+      "medicacoes": [
+        {
+          "principio_ativo": "AAS",
+          "dose": "100 mg",
+          "via": "VO",
+          "frequencia": "1x/dia",
+          "inicio": "2026-08-22",
+          "ativa": true,
+          "prescritor": "Dr. Andre Teles - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Dipirona",
+          "dose": "1 g",
+          "via": "EV",
+          "frequencia": "se necessario",
+          "inicio": "2026-08-22",
+          "ativa": true,
+          "prescritor": "Dr. Andre Teles - CRM/SP 000000"
+        }
+      ],
+      "exames": [
+        {
+          "nome": "Troponina I",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-22",
+          "resultado_em": "2026-08-22",
+          "status": "resultado",
+          "valor": 0.02,
+          "unidade": "ng/mL",
+          "ref_min": 0,
+          "ref_max": 0.04,
+          "critico": false,
+          "laudo": "Dentro da normalidade."
+        },
+        {
+          "nome": "Troponina I (2a coleta)",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-22",
+          "resultado_em": null,
+          "status": "pendente",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": null
+        },
+        {
+          "nome": "Eletrocardiograma",
+          "categoria": "Cardiologia",
+          "solicitado_em": "2026-08-22",
+          "resultado_em": "2026-08-22",
+          "status": "resultado",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": "Ritmo sinusal, sem alteracoes agudas de repolarizacao."
+        }
+      ],
+      "sinais_vitais": [
+        {
+          "aferido_em": "2026-08-22T14:00:00",
+          "pas": 132,
+          "pad": 84,
+          "fc": 82,
+          "fr": 18,
+          "temp": 36.6,
+          "sato2": 97,
+          "glasgow": 15
+        },
+        {
+          "aferido_em": "2026-08-22T20:00:00",
+          "pas": 128,
+          "pad": 80,
+          "fc": 78,
+          "fr": 16,
+          "temp": 36.5,
+          "sato2": 98,
+          "glasgow": 15
+        }
+      ],
+      "evolucoes": [
+        {
+          "data": "2026-08-22",
+          "autor": "Dr. Andre Teles",
+          "especialidade": "Pronto-Socorro",
+          "texto": "Paciente em observacao para dor toracica atipica, primeira troponina negativa. Mantida monitorizacao e nova coleta programada para exclusao de sindrome coronariana aguda."
+        }
+      ]
+    },
+    {
+      "id": "PAC-0007",
+      "prontuario": "PRT-10007",
+      "nome": "Joaquim Pereira Dias",
+      "cpf": "000.000.000-00",
+      "data_nascimento": "1939-05-02",
+      "sexo": "M",
+      "peso_kg": 66.0,
+      "altura_cm": 168,
+      "convenio": "SUS",
+      "setor": "UTI",
+      "leito": "UTI-09",
+      "data_internacao": "2026-08-20",
+      "gestante": false,
+      "telefone": "(00) 00000-0000",
+      "email": "paciente.ficticio@exemplo.invalido",
+      "observacoes": "Paciente idoso admitido com deficit motor de dimidio direito e afasia de inicio subito, ha cerca de 2 horas. Diagnostico de AVC isquemico de circulacao anterior esquerda.",
+      "comorbidades": [
+        {
+          "cid10": "I48",
+          "descricao": "Fibrilacao atrial",
+          "desde": "2017-03-01"
+        },
+        {
+          "cid10": "I10",
+          "descricao": "Hipertensao arterial sistemica",
+          "desde": "2001-01-01"
+        }
+      ],
+      "alergias": [],
+      "medicacoes": [
+        {
+          "principio_ativo": "Enoxaparina",
+          "dose": "40 mg",
+          "via": "SC",
+          "frequencia": "1x/dia",
+          "inicio": "2026-08-20",
+          "ativa": true,
+          "prescritor": "Dr. Gustavo Moura - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Atorvastatina",
+          "dose": "80 mg",
+          "via": "VO",
+          "frequencia": "1x/dia",
+          "inicio": "2026-08-20",
+          "ativa": true,
+          "prescritor": "Dr. Gustavo Moura - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Losartana",
+          "dose": "50 mg",
+          "via": "VO",
+          "frequencia": "1x/dia",
+          "inicio": "2026-08-20",
+          "ativa": true,
+          "prescritor": "Dr. Gustavo Moura - CRM/SP 000000"
+        }
+      ],
+      "exames": [
+        {
+          "nome": "Angiotomografia de cranio",
+          "categoria": "Imagem",
+          "solicitado_em": "2026-08-20",
+          "resultado_em": null,
+          "status": "pendente",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": null
+        },
+        {
+          "nome": "Tomografia de cranio",
+          "categoria": "Imagem",
+          "solicitado_em": "2026-08-20",
+          "resultado_em": "2026-08-20",
+          "status": "resultado",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": "Sem sinais de sangramento agudo; area hipodensa em territorio de ACM esquerda."
+        },
+        {
+          "nome": "Glicemia capilar",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-20",
+          "resultado_em": "2026-08-20",
+          "status": "resultado",
+          "valor": 132,
+          "unidade": "mg/dL",
+          "ref_min": 70,
+          "ref_max": 99,
+          "critico": false,
+          "laudo": "Discretamente elevada."
+        }
+      ],
+      "sinais_vitais": [
+        {
+          "aferido_em": "2026-08-20T06:00:00",
+          "pas": 168,
+          "pad": 96,
+          "fc": 92,
+          "fr": 20,
+          "temp": 36.9,
+          "sato2": 95,
+          "glasgow": 12
+        },
+        {
+          "aferido_em": "2026-08-20T18:00:00",
+          "pas": 152,
+          "pad": 88,
+          "fc": 84,
+          "fr": 18,
+          "temp": 36.7,
+          "sato2": 96,
+          "glasgow": 13
+        },
+        {
+          "aferido_em": "2026-08-21T06:00:00",
+          "pas": 140,
+          "pad": 82,
+          "fc": 80,
+          "fr": 18,
+          "temp": 36.6,
+          "sato2": 96,
+          "glasgow": 14
+        }
+      ],
+      "evolucoes": [
+        {
+          "data": "2026-08-20",
+          "autor": "Dr. Gustavo Moura",
+          "especialidade": "UTI",
+          "texto": "AVC isquemico de circulacao anterior esquerda em paciente idoso com FA previa nao anticoagulada. Fora da janela para trombolise, iniciada antiagregacao e investigacao complementar."
+        },
+        {
+          "data": "2026-08-21",
+          "autor": "Dra. Larissa Barreto",
+          "especialidade": "UTI",
+          "texto": "Discreta melhora do nivel de consciencia. Mantida fisioterapia motora e fonoterapia precoce."
+        }
+      ]
+    },
+    {
+      "id": "PAC-0008",
+      "prontuario": "PRT-10008",
+      "nome": "Aparecida Rodrigues Costa",
+      "cpf": "000.000.000-00",
+      "data_nascimento": "1952-12-09",
+      "sexo": "F",
+      "peso_kg": 62.0,
+      "altura_cm": 155,
+      "convenio": "SUS",
+      "setor": "Clínica Médica",
+      "leito": "3B-04",
+      "data_internacao": "2026-08-19",
+      "gestante": false,
+      "telefone": "(00) 00000-0000",
+      "email": "paciente.ficticio@exemplo.invalido",
+      "observacoes": "AVC isquemico lacunar com hemiparesia leve a direita, paciente hipertensa e diabetica de longa data.",
+      "comorbidades": [
+        {
+          "cid10": "I10",
+          "descricao": "Hipertensao arterial sistemica",
+          "desde": "2000-04-05"
+        },
+        {
+          "cid10": "E11",
+          "descricao": "Diabetes mellitus tipo 2",
+          "desde": "2009-07-19"
+        },
+        {
+          "cid10": "I69",
+          "descricao": "Sequela de AVC previo",
+          "desde": "2021-02-14"
+        }
+      ],
+      "alergias": [
+        {
+          "substancia": "Dipirona",
+          "classe": "Analgesico/antipiretico",
+          "gravidade": "moderada",
+          "reacao": "Broncoespasmo"
+        }
+      ],
+      "medicacoes": [
+        {
+          "principio_ativo": "AAS",
+          "dose": "100 mg",
+          "via": "VO",
+          "frequencia": "1x/dia",
+          "inicio": "2026-08-19",
+          "ativa": true,
+          "prescritor": "Dra. Larissa Barreto - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Atorvastatina",
+          "dose": "40 mg",
+          "via": "VO",
+          "frequencia": "1x/dia",
+          "inicio": "2026-08-19",
+          "ativa": true,
+          "prescritor": "Dra. Larissa Barreto - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Metformina",
+          "dose": "850 mg",
+          "via": "VO",
+          "frequencia": "2x/dia",
+          "inicio": "2026-08-19",
+          "ativa": true,
+          "prescritor": "Dra. Larissa Barreto - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Losartana",
+          "dose": "50 mg",
+          "via": "VO",
+          "frequencia": "1x/dia",
+          "inicio": "2026-08-19",
+          "ativa": true,
+          "prescritor": "Dra. Larissa Barreto - CRM/SP 000000"
+        }
+      ],
+      "exames": [
+        {
+          "nome": "Tomografia de cranio",
+          "categoria": "Imagem",
+          "solicitado_em": "2026-08-19",
+          "resultado_em": "2026-08-19",
+          "status": "resultado",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": "Pequena area isquemica lacunar em nucleos da base a esquerda."
+        },
+        {
+          "nome": "Glicemia capilar",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-19",
+          "resultado_em": "2026-08-19",
+          "status": "resultado",
+          "valor": 178,
+          "unidade": "mg/dL",
+          "ref_min": 70,
+          "ref_max": 99,
+          "critico": false,
+          "laudo": "Hiperglicemia leve a moderada."
+        },
+        {
+          "nome": "Hemoglobina glicada",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-19",
+          "resultado_em": "2026-08-20",
+          "status": "resultado",
+          "valor": 8.1,
+          "unidade": "%",
+          "ref_min": 4.0,
+          "ref_max": 5.6,
+          "critico": false,
+          "laudo": "Controle glicemico inadequado nos ultimos meses."
+        }
+      ],
+      "sinais_vitais": [
+        {
+          "aferido_em": "2026-08-19T08:30:00",
+          "pas": 158,
+          "pad": 92,
+          "fc": 84,
+          "fr": 18,
+          "temp": 36.7,
+          "sato2": 96,
+          "glasgow": 15
+        },
+        {
+          "aferido_em": "2026-08-20T08:30:00",
+          "pas": 142,
+          "pad": 84,
+          "fc": 78,
+          "fr": 16,
+          "temp": 36.5,
+          "sato2": 97,
+          "glasgow": 15
+        }
+      ],
+      "evolucoes": [
+        {
+          "data": "2026-08-19",
+          "autor": "Dra. Larissa Barreto",
+          "especialidade": "Clínica Médica",
+          "texto": "AVC lacunar com hemiparesia leve. Iniciada antiagregacao e otimizacao do controle pressorico e glicemico. Encaminhada fisioterapia motora."
+        }
+      ]
+    },
+    {
+      "id": "PAC-0009",
+      "prontuario": "PRT-10009",
+      "nome": "Ricardo Vasconcelos Melo",
+      "cpf": "000.000.000-00",
+      "data_nascimento": "1960-06-16",
+      "sexo": "M",
+      "peso_kg": 79.0,
+      "altura_cm": 171,
+      "convenio": "Particular",
+      "setor": "Clínica Médica",
+      "leito": "3B-07",
+      "data_internacao": "2026-08-21",
+      "gestante": false,
+      "telefone": "(00) 00000-0000",
+      "email": "paciente.ficticio@exemplo.invalido",
+      "observacoes": "Ataque isquemico transitorio com resolucao completa do deficit motor em cerca de 40 minutos, mantido internado para investigacao etiologica.",
+      "comorbidades": [
+        {
+          "cid10": "I10",
+          "descricao": "Hipertensao arterial sistemica",
+          "desde": "2010-01-01"
+        },
+        {
+          "cid10": "E78.5",
+          "descricao": "Dislipidemia",
+          "desde": "2013-11-02"
+        }
+      ],
+      "alergias": [],
+      "medicacoes": [
+        {
+          "principio_ativo": "AAS",
+          "dose": "100 mg",
+          "via": "VO",
+          "frequencia": "1x/dia",
+          "inicio": "2026-08-21",
+          "ativa": true,
+          "prescritor": "Dr. Andre Teles - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Atorvastatina",
+          "dose": "80 mg",
+          "via": "VO",
+          "frequencia": "1x/dia",
+          "inicio": "2026-08-21",
+          "ativa": true,
+          "prescritor": "Dr. Andre Teles - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Enalapril",
+          "dose": "10 mg",
+          "via": "VO",
+          "frequencia": "2x/dia",
+          "inicio": "2026-08-21",
+          "ativa": true,
+          "prescritor": "Dr. Andre Teles - CRM/SP 000000"
+        }
+      ],
+      "exames": [
+        {
+          "nome": "Tomografia de cranio",
+          "categoria": "Imagem",
+          "solicitado_em": "2026-08-21",
+          "resultado_em": "2026-08-21",
+          "status": "resultado",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": "Sem lesoes isquemicas agudas identificaveis."
+        },
+        {
+          "nome": "Ecocardiograma",
+          "categoria": "Cardiologia",
+          "solicitado_em": "2026-08-21",
+          "resultado_em": null,
+          "status": "pendente",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": null
+        },
+        {
+          "nome": "Doppler de carotidas",
+          "categoria": "Imagem",
+          "solicitado_em": "2026-08-21",
+          "resultado_em": "2026-08-22",
+          "status": "resultado",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": "Placa aterosclerotica em carotida interna direita, estenose leve."
+        }
+      ],
+      "sinais_vitais": [
+        {
+          "aferido_em": "2026-08-21T11:00:00",
+          "pas": 150,
+          "pad": 90,
+          "fc": 82,
+          "fr": 18,
+          "temp": 36.6,
+          "sato2": 97,
+          "glasgow": 15
+        },
+        {
+          "aferido_em": "2026-08-22T11:00:00",
+          "pas": 136,
+          "pad": 84,
+          "fc": 76,
+          "fr": 16,
+          "temp": 36.5,
+          "sato2": 98,
+          "glasgow": 15
+        }
+      ],
+      "evolucoes": [
+        {
+          "data": "2026-08-21",
+          "autor": "Dr. Andre Teles",
+          "especialidade": "Clínica Médica",
+          "texto": "AIT com resolucao completa do quadro. Iniciada investigacao etiologica com doppler de carotidas e ecocardiograma, alem de antiagregacao e estatina."
+        }
+      ]
+    },
+    {
+      "id": "PAC-0010",
+      "prontuario": "PRT-10010",
+      "nome": "Neusa Aparecida Barros",
+      "cpf": "000.000.000-00",
+      "data_nascimento": "1956-08-08",
+      "sexo": "F",
+      "peso_kg": 84.0,
+      "altura_cm": 158,
+      "convenio": "SUS",
+      "setor": "Clínica Médica",
+      "leito": "3B-10",
+      "data_internacao": "2026-08-18",
+      "gestante": false,
+      "telefone": "(00) 00000-0000",
+      "email": "paciente.ficticio@exemplo.invalido",
+      "observacoes": "Diabetes tipo 2 descompensada com hiperglicemia importante, poliuria e polidipsia nos ultimos dias, sem sinais de cetoacidose.",
+      "comorbidades": [
+        {
+          "cid10": "E11",
+          "descricao": "Diabetes mellitus tipo 2",
+          "desde": "2005-02-11"
+        },
+        {
+          "cid10": "I10",
+          "descricao": "Hipertensao arterial sistemica",
+          "desde": "2003-05-01"
+        },
+        {
+          "cid10": "N18",
+          "descricao": "Doenca renal cronica estagio 3",
+          "desde": "2019-09-01"
+        }
+      ],
+      "alergias": [
+        {
+          "substancia": "Penicilina",
+          "classe": "Betalactâmico",
+          "gravidade": "grave",
+          "reacao": "Anafilaxia"
+        }
+      ],
+      "medicacoes": [
+        {
+          "principio_ativo": "Insulina NPH",
+          "dose": "20 UI",
+          "via": "SC",
+          "frequencia": "2x/dia",
+          "inicio": "2026-08-18",
+          "ativa": true,
+          "prescritor": "Dr. Rafael Menezes - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Insulina Regular",
+          "dose": "conforme escala",
+          "via": "SC",
+          "frequencia": "4x/dia",
+          "inicio": "2026-08-18",
+          "ativa": true,
+          "prescritor": "Dr. Rafael Menezes - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Losartana",
+          "dose": "50 mg",
+          "via": "VO",
+          "frequencia": "1x/dia",
+          "inicio": "2026-08-18",
+          "ativa": true,
+          "prescritor": "Dr. Rafael Menezes - CRM/SP 000000"
+        }
+      ],
+      "exames": [
+        {
+          "nome": "Glicemia capilar",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-18",
+          "resultado_em": "2026-08-18",
+          "status": "resultado",
+          "valor": 412,
+          "unidade": "mg/dL",
+          "ref_min": 70,
+          "ref_max": 99,
+          "critico": true,
+          "laudo": "Hiperglicemia grave, requer ajuste insulinoterapico imediato."
+        },
+        {
+          "nome": "Creatinina",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-18",
+          "resultado_em": "2026-08-18",
+          "status": "resultado",
+          "valor": 1.7,
+          "unidade": "mg/dL",
+          "ref_min": 0.6,
+          "ref_max": 1.2,
+          "critico": false,
+          "laudo": "Alteracao compativel com DRC previa e desidratacao."
+        },
+        {
+          "nome": "Hemoglobina glicada",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-18",
+          "resultado_em": "2026-08-19",
+          "status": "resultado",
+          "valor": 11.2,
+          "unidade": "%",
+          "ref_min": 4.0,
+          "ref_max": 5.6,
+          "critico": false,
+          "laudo": "Controle glicemico cronico muito inadequado."
+        },
+        {
+          "nome": "Sodio",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-18",
+          "resultado_em": "2026-08-18",
+          "status": "resultado",
+          "valor": 148,
+          "unidade": "mEq/L",
+          "ref_min": 135,
+          "ref_max": 145,
+          "critico": false,
+          "laudo": "Hipernatremia leve associada a desidratacao."
+        }
+      ],
+      "sinais_vitais": [
+        {
+          "aferido_em": "2026-08-18T07:00:00",
+          "pas": 128,
+          "pad": 78,
+          "fc": 96,
+          "fr": 20,
+          "temp": 36.9,
+          "sato2": 96,
+          "glasgow": 15
+        },
+        {
+          "aferido_em": "2026-08-19T07:00:00",
+          "pas": 122,
+          "pad": 74,
+          "fc": 88,
+          "fr": 18,
+          "temp": 36.6,
+          "sato2": 97,
+          "glasgow": 15
+        }
+      ],
+      "evolucoes": [
+        {
+          "data": "2026-08-18",
+          "autor": "Dr. Rafael Menezes",
+          "especialidade": "Clínica Médica",
+          "texto": "Hiperglicemia grave sem cetoacidose. Iniciada insulinoterapia intensiva com escala movel e hidratacao venosa, monitorando funcao renal."
+        }
+      ]
+    },
+    {
+      "id": "PAC-0011",
+      "prontuario": "PRT-10011",
+      "nome": "Manoel Pinto Freitas",
+      "cpf": "000.000.000-00",
+      "data_nascimento": "1966-10-21",
+      "sexo": "M",
+      "peso_kg": 90.0,
+      "altura_cm": 176,
+      "convenio": "SUS",
+      "setor": "Clínica Médica",
+      "leito": "3B-15",
+      "data_internacao": "2026-08-19",
+      "gestante": false,
+      "telefone": "(00) 00000-0000",
+      "email": "paciente.ficticio@exemplo.invalido",
+      "observacoes": "Pe diabetico com ulcera infectada em calcaneo direito, celulite associada, controle glicemico inadequado ha meses.",
+      "comorbidades": [
+        {
+          "cid10": "E11",
+          "descricao": "Diabetes mellitus tipo 2",
+          "desde": "2008-01-05"
+        },
+        {
+          "cid10": "I70",
+          "descricao": "Doenca arterial periferica",
+          "desde": "2020-03-11"
+        }
+      ],
+      "alergias": [],
+      "medicacoes": [
+        {
+          "principio_ativo": "Insulina NPH",
+          "dose": "24 UI",
+          "via": "SC",
+          "frequencia": "2x/dia",
+          "inicio": "2026-08-19",
+          "ativa": true,
+          "prescritor": "Dra. Fernanda Salles - CRM/MG 000000"
+        },
+        {
+          "principio_ativo": "Clindamicina",
+          "dose": "600 mg",
+          "via": "EV",
+          "frequencia": "3x/dia",
+          "inicio": "2026-08-19",
+          "ativa": true,
+          "prescritor": "Dra. Fernanda Salles - CRM/MG 000000"
+        },
+        {
+          "principio_ativo": "Ciprofloxacino",
+          "dose": "400 mg",
+          "via": "EV",
+          "frequencia": "2x/dia",
+          "inicio": "2026-08-19",
+          "ativa": true,
+          "prescritor": "Dra. Fernanda Salles - CRM/MG 000000"
+        }
+      ],
+      "exames": [
+        {
+          "nome": "Glicemia capilar",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-19",
+          "resultado_em": "2026-08-19",
+          "status": "resultado",
+          "valor": 298,
+          "unidade": "mg/dL",
+          "ref_min": 70,
+          "ref_max": 99,
+          "critico": false,
+          "laudo": "Hiperglicemia moderada a grave."
+        },
+        {
+          "nome": "Cultura de secrecao",
+          "categoria": "Microbiologia",
+          "solicitado_em": "2026-08-19",
+          "resultado_em": null,
+          "status": "pendente",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": null
+        },
+        {
+          "nome": "Radiografia de pe direito",
+          "categoria": "Imagem",
+          "solicitado_em": "2026-08-19",
+          "resultado_em": "2026-08-20",
+          "status": "resultado",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": "Sem sinais radiograficos evidentes de osteomielite no momento."
+        }
+      ],
+      "sinais_vitais": [
+        {
+          "aferido_em": "2026-08-19T09:00:00",
+          "pas": 138,
+          "pad": 84,
+          "fc": 92,
+          "fr": 18,
+          "temp": 37.6,
+          "sato2": 96,
+          "glasgow": 15
+        },
+        {
+          "aferido_em": "2026-08-20T09:00:00",
+          "pas": 132,
+          "pad": 80,
+          "fc": 86,
+          "fr": 18,
+          "temp": 37.1,
+          "sato2": 96,
+          "glasgow": 15
+        }
+      ],
+      "evolucoes": [
+        {
+          "data": "2026-08-19",
+          "autor": "Dra. Fernanda Salles",
+          "especialidade": "Clínica Médica",
+          "texto": "Pe diabetico infectado com celulite extensa. Iniciada antibioticoterapia empirica de amplo espectro e curativos diarios, aguardando resultado de cultura."
+        }
+      ]
+    },
+    {
+      "id": "PAC-0012",
+      "prontuario": "PRT-10012",
+      "nome": "Iracema Gomes Teixeira",
+      "cpf": "000.000.000-00",
+      "data_nascimento": "1970-03-29",
+      "sexo": "F",
+      "peso_kg": 76.0,
+      "altura_cm": 160,
+      "convenio": "Particular",
+      "setor": "Clínica Médica",
+      "leito": "3B-18",
+      "data_internacao": "2026-08-20",
+      "gestante": false,
+      "telefone": "(00) 00000-0000",
+      "email": "paciente.ficticio@exemplo.invalido",
+      "observacoes": "Descompensacao de diabetes tipo 2 desencadeada por infeccao respiratoria, com hiperglicemia persistente apesar de ajustes de insulina.",
+      "comorbidades": [
+        {
+          "cid10": "E11",
+          "descricao": "Diabetes mellitus tipo 2",
+          "desde": "2013-06-18"
+        },
+        {
+          "cid10": "E78.5",
+          "descricao": "Dislipidemia",
+          "desde": "2016-01-01"
+        }
+      ],
+      "alergias": [],
+      "medicacoes": [
+        {
+          "principio_ativo": "Insulina NPH",
+          "dose": "18 UI",
+          "via": "SC",
+          "frequencia": "2x/dia",
+          "inicio": "2026-08-20",
+          "ativa": true,
+          "prescritor": "Dr. Andre Teles - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Insulina Regular",
+          "dose": "conforme escala",
+          "via": "SC",
+          "frequencia": "4x/dia",
+          "inicio": "2026-08-20",
+          "ativa": true,
+          "prescritor": "Dr. Andre Teles - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Azitromicina",
+          "dose": "500 mg",
+          "via": "VO",
+          "frequencia": "1x/dia",
+          "inicio": "2026-08-20",
+          "ativa": true,
+          "prescritor": "Dr. Andre Teles - CRM/SP 000000"
+        }
+      ],
+      "exames": [
+        {
+          "nome": "Glicemia capilar",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-20",
+          "resultado_em": "2026-08-20",
+          "status": "resultado",
+          "valor": 256,
+          "unidade": "mg/dL",
+          "ref_min": 70,
+          "ref_max": 99,
+          "critico": false,
+          "laudo": "Hiperglicemia moderada."
+        },
+        {
+          "nome": "Radiografia de torax",
+          "categoria": "Imagem",
+          "solicitado_em": "2026-08-20",
+          "resultado_em": "2026-08-20",
+          "status": "resultado",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": "Infiltrado em base pulmonar esquerda."
+        },
+        {
+          "nome": "Proteina C reativa",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-20",
+          "resultado_em": "2026-08-21",
+          "status": "resultado",
+          "valor": 64,
+          "unidade": "mg/L",
+          "ref_min": 0,
+          "ref_max": 5,
+          "critico": false,
+          "laudo": "Elevacao compativel com processo infeccioso."
+        }
+      ],
+      "sinais_vitais": [
+        {
+          "aferido_em": "2026-08-20T10:00:00",
+          "pas": 130,
+          "pad": 80,
+          "fc": 94,
+          "fr": 20,
+          "temp": 37.9,
+          "sato2": 94,
+          "glasgow": 15
+        },
+        {
+          "aferido_em": "2026-08-21T10:00:00",
+          "pas": 126,
+          "pad": 78,
+          "fc": 86,
+          "fr": 18,
+          "temp": 37.2,
+          "sato2": 96,
+          "glasgow": 15
+        }
+      ],
+      "evolucoes": [
+        {
+          "data": "2026-08-20",
+          "autor": "Dr. Andre Teles",
+          "especialidade": "Clínica Médica",
+          "texto": "Descompensacao glicemica secundaria a pneumonia comunitaria. Ajustada insulinoterapia e iniciado antibiotico via oral."
+        }
+      ]
+    },
+    {
+      "id": "PAC-0013",
+      "prontuario": "PRT-10013",
+      "nome": "Jessica Fernandes Ramos",
+      "cpf": "000.000.000-00",
+      "data_nascimento": "1998-02-14",
+      "sexo": "F",
+      "peso_kg": 74.0,
+      "altura_cm": 165,
+      "convenio": "SUS",
+      "setor": "UTI",
+      "leito": "UTI-03",
+      "data_internacao": "2026-08-21",
+      "gestante": true,
+      "telefone": "(00) 00000-0000",
+      "email": "paciente.ficticio@exemplo.invalido",
+      "observacoes": "Gestante de 32 semanas admitida com pre-eclampsia grave, pressao arterial muito elevada e cefaleia intensa. Em monitorizacao materno-fetal continua.",
+      "comorbidades": [
+        {
+          "cid10": "O14",
+          "descricao": "Pre-eclampsia grave",
+          "desde": "2026-08-21"
+        }
+      ],
+      "alergias": [
+        {
+          "substancia": "Captopril",
+          "classe": "Inibidor da ECA",
+          "gravidade": "grave",
+          "reacao": "Angioedema"
+        }
+      ],
+      "medicacoes": [
+        {
+          "principio_ativo": "Sulfato de magnesio",
+          "dose": "4 g ataque + 1 g/h",
+          "via": "EV",
+          "frequencia": "continuo",
+          "inicio": "2026-08-21",
+          "ativa": true,
+          "prescritor": "Dra. Patricia Correia - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Metildopa",
+          "dose": "500 mg",
+          "via": "VO",
+          "frequencia": "3x/dia",
+          "inicio": "2026-08-21",
+          "ativa": true,
+          "prescritor": "Dra. Patricia Correia - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Nifedipino",
+          "dose": "10 mg",
+          "via": "VO",
+          "frequencia": "se necessario",
+          "inicio": "2026-08-21",
+          "ativa": true,
+          "prescritor": "Dra. Patricia Correia - CRM/SP 000000"
+        }
+      ],
+      "exames": [
+        {
+          "nome": "Proteinuria de 24h",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-21",
+          "resultado_em": null,
+          "status": "pendente",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": null
+        },
+        {
+          "nome": "Creatinina",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-21",
+          "resultado_em": "2026-08-21",
+          "status": "resultado",
+          "valor": 1.3,
+          "unidade": "mg/dL",
+          "ref_min": 0.5,
+          "ref_max": 0.9,
+          "critico": false,
+          "laudo": "Elevacao compativel com acometimento renal da pre-eclampsia."
+        },
+        {
+          "nome": "Acido urico",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-21",
+          "resultado_em": "2026-08-21",
+          "status": "resultado",
+          "valor": 7.8,
+          "unidade": "mg/dL",
+          "ref_min": 2.4,
+          "ref_max": 6.0,
+          "critico": false,
+          "laudo": "Elevado, achado compativel com pre-eclampsia."
+        },
+        {
+          "nome": "Transaminases (TGO/TGP)",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-21",
+          "resultado_em": "2026-08-21",
+          "status": "resultado",
+          "valor": 58,
+          "unidade": "U/L",
+          "ref_min": 5,
+          "ref_max": 40,
+          "critico": false,
+          "laudo": "Discreta elevacao de enzimas hepaticas."
+        }
+      ],
+      "sinais_vitais": [
+        {
+          "aferido_em": "2026-08-21T06:00:00",
+          "pas": 172,
+          "pad": 114,
+          "fc": 98,
+          "fr": 22,
+          "temp": 36.8,
+          "sato2": 97,
+          "glasgow": 15
+        },
+        {
+          "aferido_em": "2026-08-21T18:00:00",
+          "pas": 158,
+          "pad": 102,
+          "fc": 90,
+          "fr": 20,
+          "temp": 36.6,
+          "sato2": 97,
+          "glasgow": 15
+        },
+        {
+          "aferido_em": "2026-08-22T06:00:00",
+          "pas": 146,
+          "pad": 94,
+          "fc": 84,
+          "fr": 18,
+          "temp": 36.5,
+          "sato2": 98,
+          "glasgow": 15
+        }
+      ],
+      "evolucoes": [
+        {
+          "data": "2026-08-21",
+          "autor": "Dra. Patricia Correia",
+          "especialidade": "Obstetricia/UTI",
+          "texto": "Gestante com pre-eclampsia grave, iniciado sulfato de magnesio para profilaxia de eclampsia e anti-hipertensivos. Vitalidade fetal preservada na ultima avaliacao."
+        },
+        {
+          "data": "2026-08-22",
+          "autor": "Dra. Patricia Correia",
+          "especialidade": "Obstetricia/UTI",
+          "texto": "Melhora dos niveis pressoricos, mantida vigilancia laboratorial e cardiotocografia diaria."
+        }
+      ]
+    },
+    {
+      "id": "PAC-0014",
+      "prontuario": "PRT-10014",
+      "nome": "Osvaldo Cavalcanti Souza",
+      "cpf": "000.000.000-00",
+      "data_nascimento": "1957-01-19",
+      "sexo": "M",
+      "peso_kg": 86.0,
+      "altura_cm": 170,
+      "convenio": "SUS",
+      "setor": "Pronto-Socorro",
+      "leito": "PS-04",
+      "data_internacao": "2026-08-22",
+      "gestante": false,
+      "telefone": "(00) 00000-0000",
+      "email": "paciente.ficticio@exemplo.invalido",
+      "observacoes": "Emergencia hipertensiva com edema agudo de pulmao, dispneia intensa de inicio subito e pressao arterial muito elevada a admissao.",
+      "comorbidades": [
+        {
+          "cid10": "I10",
+          "descricao": "Hipertensao arterial sistemica",
+          "desde": "1998-01-01"
+        },
+        {
+          "cid10": "I50",
+          "descricao": "Insuficiencia cardiaca",
+          "desde": "2015-05-19"
+        }
+      ],
+      "alergias": [],
+      "medicacoes": [
+        {
+          "principio_ativo": "Nitroglicerina",
+          "dose": "10-100 mcg/min",
+          "via": "EV",
+          "frequencia": "continuo",
+          "inicio": "2026-08-22",
+          "ativa": true,
+          "prescritor": "Dr. Andre Teles - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Furosemida",
+          "dose": "40 mg",
+          "via": "EV",
+          "frequencia": "2x/dia",
+          "inicio": "2026-08-22",
+          "ativa": true,
+          "prescritor": "Dr. Andre Teles - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Captopril",
+          "dose": "25 mg",
+          "via": "VO",
+          "frequencia": "3x/dia",
+          "inicio": "2026-08-22",
+          "ativa": true,
+          "prescritor": "Dr. Andre Teles - CRM/SP 000000"
+        }
+      ],
+      "exames": [
+        {
+          "nome": "Creatinina",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-22",
+          "resultado_em": "2026-08-22",
+          "status": "resultado",
+          "valor": 2.1,
+          "unidade": "mg/dL",
+          "ref_min": 0.7,
+          "ref_max": 1.3,
+          "critico": false,
+          "laudo": "Alteracao aguda associada a congestao renal."
+        },
+        {
+          "nome": "BNP",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-22",
+          "resultado_em": null,
+          "status": "pendente",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": null
+        },
+        {
+          "nome": "Radiografia de torax",
+          "categoria": "Imagem",
+          "solicitado_em": "2026-08-22",
+          "resultado_em": "2026-08-22",
+          "status": "resultado",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": "Congestao pulmonar bilateral compativel com edema agudo de pulmao."
+        }
+      ],
+      "sinais_vitais": [
+        {
+          "aferido_em": "2026-08-22T03:00:00",
+          "pas": 214,
+          "pad": 128,
+          "fc": 118,
+          "fr": 32,
+          "temp": 36.9,
+          "sato2": 87,
+          "glasgow": 15
+        },
+        {
+          "aferido_em": "2026-08-22T09:00:00",
+          "pas": 168,
+          "pad": 100,
+          "fc": 96,
+          "fr": 24,
+          "temp": 36.7,
+          "sato2": 93,
+          "glasgow": 15
+        }
+      ],
+      "evolucoes": [
+        {
+          "data": "2026-08-22",
+          "autor": "Dr. Andre Teles",
+          "especialidade": "Pronto-Socorro",
+          "texto": "Emergencia hipertensiva com edema agudo de pulmao. Iniciados nitroglicerina EV e diureticos, com melhora progressiva do padrao respiratorio."
+        }
+      ]
+    },
+    {
+      "id": "PAC-0015",
+      "prontuario": "PRT-10015",
+      "nome": "Odete Marques Andrade",
+      "cpf": "000.000.000-00",
+      "data_nascimento": "1949-10-03",
+      "sexo": "F",
+      "peso_kg": 68.0,
+      "altura_cm": 152,
+      "convenio": "Particular",
+      "setor": "Pronto-Socorro",
+      "leito": "PS-08",
+      "data_internacao": "2026-08-20",
+      "gestante": false,
+      "telefone": "(00) 00000-0000",
+      "email": "paciente.ficticio@exemplo.invalido",
+      "observacoes": "Urgencia hipertensiva com cefaleia occipital intensa, sem sinais de lesao de orgao-alvo agudo identificados ate o momento.",
+      "comorbidades": [
+        {
+          "cid10": "I10",
+          "descricao": "Hipertensao arterial sistemica",
+          "desde": "1995-01-01"
+        },
+        {
+          "cid10": "N18",
+          "descricao": "Doenca renal cronica estagio 3",
+          "desde": "2017-08-08"
+        }
+      ],
+      "alergias": [
+        {
+          "substancia": "Enalapril",
+          "classe": "Inibidor da ECA",
+          "gravidade": "moderada",
+          "reacao": "Tosse seca persistente e angioedema leve"
+        }
+      ],
+      "medicacoes": [
+        {
+          "principio_ativo": "Anlodipino",
+          "dose": "10 mg",
+          "via": "VO",
+          "frequencia": "1x/dia",
+          "inicio": "2026-08-20",
+          "ativa": true,
+          "prescritor": "Dr. Andre Teles - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Clonidina",
+          "dose": "0,1 mg",
+          "via": "VO",
+          "frequencia": "2x/dia",
+          "inicio": "2026-08-20",
+          "ativa": true,
+          "prescritor": "Dr. Andre Teles - CRM/SP 000000"
+        }
+      ],
+      "exames": [
+        {
+          "nome": "Creatinina",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-20",
+          "resultado_em": "2026-08-20",
+          "status": "resultado",
+          "valor": 1.9,
+          "unidade": "mg/dL",
+          "ref_min": 0.6,
+          "ref_max": 1.2,
+          "critico": false,
+          "laudo": "Elevada, compativel com DRC previa."
+        },
+        {
+          "nome": "Potassio",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-20",
+          "resultado_em": "2026-08-20",
+          "status": "resultado",
+          "valor": 5.1,
+          "unidade": "mEq/L",
+          "ref_min": 3.5,
+          "ref_max": 5.0,
+          "critico": false,
+          "laudo": "Discretamente elevado."
+        },
+        {
+          "nome": "Fundo de olho",
+          "categoria": "Exame fisico",
+          "solicitado_em": "2026-08-20",
+          "resultado_em": "2026-08-21",
+          "status": "resultado",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": "Sem sinais de retinopatia hipertensiva aguda."
+        }
+      ],
+      "sinais_vitais": [
+        {
+          "aferido_em": "2026-08-20T12:00:00",
+          "pas": 198,
+          "pad": 116,
+          "fc": 88,
+          "fr": 20,
+          "temp": 36.6,
+          "sato2": 97,
+          "glasgow": 15
+        },
+        {
+          "aferido_em": "2026-08-21T12:00:00",
+          "pas": 156,
+          "pad": 94,
+          "fc": 78,
+          "fr": 18,
+          "temp": 36.5,
+          "sato2": 98,
+          "glasgow": 15
+        }
+      ],
+      "evolucoes": [
+        {
+          "data": "2026-08-20",
+          "autor": "Dr. Andre Teles",
+          "especialidade": "Pronto-Socorro",
+          "texto": "Urgencia hipertensiva sem sinais de lesao aguda de orgao-alvo. Ajustado esquema anti-hipertensivo por via oral e mantida observacao."
+        }
+      ]
+    },
+    {
+      "id": "PAC-0016",
+      "prontuario": "PRT-10016",
+      "nome": "Bruna Oliveira Santos",
+      "cpf": "000.000.000-00",
+      "data_nascimento": "2000-05-11",
+      "sexo": "F",
+      "peso_kg": 66.0,
+      "altura_cm": 163,
+      "convenio": "SUS",
+      "setor": "Enfermaria",
+      "leito": "4C-02",
+      "data_internacao": "2026-08-21",
+      "gestante": true,
+      "telefone": "(00) 00000-0000",
+      "email": "paciente.ficticio@exemplo.invalido",
+      "observacoes": "Gestante de 24 semanas com pielonefrite gestacional, febre e dor lombar direita, internada para antibioticoterapia venosa.",
+      "comorbidades": [
+        {
+          "cid10": "O23",
+          "descricao": "Infeccao do trato urinario na gravidez",
+          "desde": "2026-08-20"
+        }
+      ],
+      "alergias": [],
+      "medicacoes": [
+        {
+          "principio_ativo": "Cefuroxima",
+          "dose": "750 mg",
+          "via": "EV",
+          "frequencia": "3x/dia",
+          "inicio": "2026-08-21",
+          "ativa": true,
+          "prescritor": "Dra. Fernanda Salles - CRM/MG 000000"
+        },
+        {
+          "principio_ativo": "Dipirona",
+          "dose": "1 g",
+          "via": "EV",
+          "frequencia": "se necessario",
+          "inicio": "2026-08-21",
+          "ativa": true,
+          "prescritor": "Dra. Fernanda Salles - CRM/MG 000000"
+        }
+      ],
+      "exames": [
+        {
+          "nome": "Urocultura",
+          "categoria": "Microbiologia",
+          "solicitado_em": "2026-08-21",
+          "resultado_em": null,
+          "status": "pendente",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": null
+        },
+        {
+          "nome": "Sumario de urina (EAS)",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-21",
+          "resultado_em": "2026-08-21",
+          "status": "resultado",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": "Piocitos e nitrito positivo, compativel com infeccao urinaria."
+        },
+        {
+          "nome": "Hemograma completo",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-21",
+          "resultado_em": "2026-08-21",
+          "status": "resultado",
+          "valor": 13200,
+          "unidade": "/mm3",
+          "ref_min": 4000,
+          "ref_max": 11000,
+          "critico": false,
+          "laudo": "Leucocitose leve."
+        }
+      ],
+      "sinais_vitais": [
+        {
+          "aferido_em": "2026-08-21T08:00:00",
+          "pas": 112,
+          "pad": 70,
+          "fc": 98,
+          "fr": 20,
+          "temp": 38.4,
+          "sato2": 96,
+          "glasgow": 15
+        },
+        {
+          "aferido_em": "2026-08-22T08:00:00",
+          "pas": 108,
+          "pad": 68,
+          "fc": 86,
+          "fr": 18,
+          "temp": 37.1,
+          "sato2": 97,
+          "glasgow": 15
+        }
+      ],
+      "evolucoes": [
+        {
+          "data": "2026-08-21",
+          "autor": "Dra. Fernanda Salles",
+          "especialidade": "Obstetricia",
+          "texto": "Pielonefrite gestacional. Iniciada cefalosporina venosa segura para o periodo gestacional, com boa resposta inicial e vitalidade fetal preservada."
+        }
+      ]
+    },
+    {
+      "id": "PAC-0017",
+      "prontuario": "PRT-10017",
+      "nome": "Camila Ribeiro Nascimento",
+      "cpf": "000.000.000-00",
+      "data_nascimento": "2002-08-27",
+      "sexo": "F",
+      "peso_kg": 58.0,
+      "altura_cm": 160,
+      "convenio": "Particular",
+      "setor": "Enfermaria",
+      "leito": "4C-05",
+      "data_internacao": "2026-08-22",
+      "gestante": true,
+      "telefone": "(00) 00000-0000",
+      "email": "paciente.ficticio@exemplo.invalido",
+      "observacoes": "Gestante de 12 semanas com cistite aguda, disuria e polaciuria ha 2 dias, sem sinais de comprometimento sistemico.",
+      "comorbidades": [
+        {
+          "cid10": "O23",
+          "descricao": "Infeccao do trato urinario na gravidez",
+          "desde": "2026-08-22"
+        }
+      ],
+      "alergias": [],
+      "medicacoes": [
+        {
+          "principio_ativo": "Nitrofurantoina",
+          "dose": "100 mg",
+          "via": "VO",
+          "frequencia": "2x/dia",
+          "inicio": "2026-08-22",
+          "ativa": true,
+          "prescritor": "Dra. Fernanda Salles - CRM/MG 000000"
+        },
+        {
+          "principio_ativo": "Acido folico",
+          "dose": "5 mg",
+          "via": "VO",
+          "frequencia": "1x/dia",
+          "inicio": "2026-08-22",
+          "ativa": true,
+          "prescritor": "Dra. Fernanda Salles - CRM/MG 000000"
+        }
+      ],
+      "exames": [
+        {
+          "nome": "Urocultura",
+          "categoria": "Microbiologia",
+          "solicitado_em": "2026-08-22",
+          "resultado_em": null,
+          "status": "pendente",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": null
+        },
+        {
+          "nome": "Sumario de urina (EAS)",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-22",
+          "resultado_em": "2026-08-22",
+          "status": "resultado",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": "Leucocituria e bacteriuria, sem hematuria."
+        },
+        {
+          "nome": "Hemograma completo",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-22",
+          "resultado_em": "2026-08-22",
+          "status": "resultado",
+          "valor": 9800,
+          "unidade": "/mm3",
+          "ref_min": 4000,
+          "ref_max": 11000,
+          "critico": false,
+          "laudo": "Dentro da normalidade."
+        }
+      ],
+      "sinais_vitais": [
+        {
+          "aferido_em": "2026-08-22T10:00:00",
+          "pas": 110,
+          "pad": 68,
+          "fc": 82,
+          "fr": 16,
+          "temp": 36.9,
+          "sato2": 98,
+          "glasgow": 15
+        },
+        {
+          "aferido_em": "2026-08-22T18:00:00",
+          "pas": 112,
+          "pad": 70,
+          "fc": 80,
+          "fr": 16,
+          "temp": 36.7,
+          "sato2": 98,
+          "glasgow": 15
+        }
+      ],
+      "evolucoes": [
+        {
+          "data": "2026-08-22",
+          "autor": "Dra. Fernanda Salles",
+          "especialidade": "Obstetricia",
+          "texto": "Cistite aguda gestacional, iniciado antibiotico oral seguro para a gestacao. Orientada hidratacao e retorno ambulatorial apos resultado da urocultura."
+        }
+      ]
+    },
+    {
+      "id": "PAC-0018",
+      "prontuario": "PRT-10018",
+      "nome": "Zilda Nunes Correia",
+      "cpf": "000.000.000-00",
+      "data_nascimento": "1944-06-30",
+      "sexo": "F",
+      "peso_kg": 60.0,
+      "altura_cm": 150,
+      "convenio": "SUS",
+      "setor": "Clínica Médica",
+      "leito": "3B-20",
+      "data_internacao": "2026-08-19",
+      "gestante": false,
+      "telefone": "(00) 00000-0000",
+      "email": "paciente.ficticio@exemplo.invalido",
+      "observacoes": "Infeccao do trato urinario em idosa institucionalizada, evoluindo com confusao mental aguda associada ao quadro infeccioso.",
+      "comorbidades": [
+        {
+          "cid10": "N39",
+          "descricao": "Infeccao do trato urinario de repeticao",
+          "desde": "2015-01-01"
+        },
+        {
+          "cid10": "F03",
+          "descricao": "Demencia nao especificada",
+          "desde": "2021-10-01"
+        }
+      ],
+      "alergias": [
+        {
+          "substancia": "Penicilina",
+          "classe": "Betalactâmico",
+          "gravidade": "grave",
+          "reacao": "Urticaria generalizada e edema de face"
+        }
+      ],
+      "medicacoes": [
+        {
+          "principio_ativo": "Ceftriaxona",
+          "dose": "1 g",
+          "via": "EV",
+          "frequencia": "1x/dia",
+          "inicio": "2026-08-19",
+          "ativa": true,
+          "prescritor": "Dr. Rafael Menezes - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Dipirona",
+          "dose": "1 g",
+          "via": "EV",
+          "frequencia": "se necessario",
+          "inicio": "2026-08-19",
+          "ativa": true,
+          "prescritor": "Dr. Rafael Menezes - CRM/SP 000000"
+        }
+      ],
+      "exames": [
+        {
+          "nome": "Urocultura",
+          "categoria": "Microbiologia",
+          "solicitado_em": "2026-08-19",
+          "resultado_em": "2026-08-22",
+          "status": "resultado",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": "Escherichia coli, sensivel a ceftriaxona."
+        },
+        {
+          "nome": "Sumario de urina (EAS)",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-19",
+          "resultado_em": "2026-08-19",
+          "status": "resultado",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": "Piuria intensa, nitrito positivo."
+        },
+        {
+          "nome": "Creatinina",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-19",
+          "resultado_em": "2026-08-19",
+          "status": "resultado",
+          "valor": 1.4,
+          "unidade": "mg/dL",
+          "ref_min": 0.6,
+          "ref_max": 1.1,
+          "critico": false,
+          "laudo": "Discretamente elevada para a idade e funcao renal basal."
+        }
+      ],
+      "sinais_vitais": [
+        {
+          "aferido_em": "2026-08-19T09:00:00",
+          "pas": 128,
+          "pad": 76,
+          "fc": 96,
+          "fr": 20,
+          "temp": 38.1,
+          "sato2": 95,
+          "glasgow": 14
+        },
+        {
+          "aferido_em": "2026-08-20T09:00:00",
+          "pas": 122,
+          "pad": 72,
+          "fc": 88,
+          "fr": 18,
+          "temp": 37.3,
+          "sato2": 96,
+          "glasgow": 15
+        }
+      ],
+      "evolucoes": [
+        {
+          "data": "2026-08-19",
+          "autor": "Dr. Rafael Menezes",
+          "especialidade": "Clínica Médica",
+          "texto": "ITU em idosa com delirium associado. Iniciada antibioticoterapia venosa, orientacoes de reorientacao e prevencao de quedas."
+        }
+      ]
+    },
+    {
+      "id": "PAC-0019",
+      "prontuario": "PRT-10019",
+      "nome": "Benedito Alves Moreira",
+      "cpf": "000.000.000-00",
+      "data_nascimento": "1937-04-04",
+      "sexo": "M",
+      "peso_kg": 64.0,
+      "altura_cm": 167,
+      "convenio": "SUS",
+      "setor": "UTI",
+      "leito": "UTI-01",
+      "data_internacao": "2026-08-18",
+      "gestante": false,
+      "telefone": "(00) 00000-0000",
+      "email": "paciente.ficticio@exemplo.invalido",
+      "observacoes": "Pneumonia adquirida na comunidade grave em paciente idoso, com insuficiencia respiratoria e necessidade de suporte de oxigenio de alto fluxo.",
+      "comorbidades": [
+        {
+          "cid10": "J44",
+          "descricao": "DPOC",
+          "desde": "2010-01-01"
+        },
+        {
+          "cid10": "I50",
+          "descricao": "Insuficiencia cardiaca",
+          "desde": "2018-02-14"
+        }
+      ],
+      "alergias": [
+        {
+          "substancia": "Penicilina",
+          "classe": "Betalactâmico",
+          "gravidade": "grave",
+          "reacao": "Anafilaxia"
+        }
+      ],
+      "medicacoes": [
+        {
+          "principio_ativo": "Claritromicina",
+          "dose": "500 mg",
+          "via": "VO",
+          "frequencia": "2x/dia",
+          "inicio": "2026-08-18",
+          "ativa": true,
+          "prescritor": "Dra. Beatriz Cardoso - CRM/RJ 000000"
+        },
+        {
+          "principio_ativo": "Ceftriaxona",
+          "dose": "2 g",
+          "via": "EV",
+          "frequencia": "1x/dia",
+          "inicio": "2026-08-18",
+          "ativa": true,
+          "prescritor": "Dra. Beatriz Cardoso - CRM/RJ 000000"
+        },
+        {
+          "principio_ativo": "Sinvastatina",
+          "dose": "40 mg",
+          "via": "VO",
+          "frequencia": "1x/dia",
+          "inicio": "2026-08-18",
+          "ativa": true,
+          "prescritor": "Dra. Beatriz Cardoso - CRM/RJ 000000"
+        },
+        {
+          "principio_ativo": "Furosemida",
+          "dose": "40 mg",
+          "via": "EV",
+          "frequencia": "1x/dia",
+          "inicio": "2026-08-18",
+          "ativa": true,
+          "prescritor": "Dra. Beatriz Cardoso - CRM/RJ 000000"
+        }
+      ],
+      "exames": [
+        {
+          "nome": "Radiografia de torax",
+          "categoria": "Imagem",
+          "solicitado_em": "2026-08-18",
+          "resultado_em": "2026-08-18",
+          "status": "resultado",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": "Consolidacao extensa em lobo inferior direito."
+        },
+        {
+          "nome": "Hemocultura",
+          "categoria": "Microbiologia",
+          "solicitado_em": "2026-08-18",
+          "resultado_em": null,
+          "status": "pendente",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": null
+        },
+        {
+          "nome": "Gasometria arterial",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-18",
+          "resultado_em": "2026-08-18",
+          "status": "resultado",
+          "valor": 58,
+          "unidade": "mmHg",
+          "ref_min": 80,
+          "ref_max": 100,
+          "critico": false,
+          "laudo": "Hipoxemia importante (PaO2 reduzida)."
+        }
+      ],
+      "sinais_vitais": [
+        {
+          "aferido_em": "2026-08-18T07:00:00",
+          "pas": 100,
+          "pad": 62,
+          "fc": 112,
+          "fr": 30,
+          "temp": 38.8,
+          "sato2": 86,
+          "glasgow": 14
+        },
+        {
+          "aferido_em": "2026-08-18T19:00:00",
+          "pas": 106,
+          "pad": 66,
+          "fc": 100,
+          "fr": 26,
+          "temp": 38.0,
+          "sato2": 90,
+          "glasgow": 15
+        },
+        {
+          "aferido_em": "2026-08-19T07:00:00",
+          "pas": 112,
+          "pad": 70,
+          "fc": 92,
+          "fr": 22,
+          "temp": 37.4,
+          "sato2": 93,
+          "glasgow": 15
+        }
+      ],
+      "evolucoes": [
+        {
+          "data": "2026-08-18",
+          "autor": "Dra. Beatriz Cardoso",
+          "especialidade": "UTI",
+          "texto": "PAC grave com insuficiencia respiratoria. Iniciado suporte de oxigenio de alto fluxo e antibioticoterapia combinada, alertar interacao entre claritromicina e sinvastatina - considerar suspensao temporaria da estatina."
+        },
+        {
+          "data": "2026-08-19",
+          "autor": "Dr. Gustavo Moura",
+          "especialidade": "UTI",
+          "texto": "Melhora discreta da oxigenacao. Mantida antibioticoterapia e fisioterapia respiratoria intensiva."
+        }
+      ]
+    },
+    {
+      "id": "PAC-0020",
+      "prontuario": "PRT-10020",
+      "nome": "Vanessa Barros Cavalcanti",
+      "cpf": "000.000.000-00",
+      "data_nascimento": "1955-02-25",
+      "sexo": "F",
+      "peso_kg": 72.0,
+      "altura_cm": 159,
+      "convenio": "SUS",
+      "setor": "Pneumologia",
+      "leito": "5D-02",
+      "data_internacao": "2026-08-20",
+      "gestante": false,
+      "telefone": "(00) 00000-0000",
+      "email": "paciente.ficticio@exemplo.invalido",
+      "observacoes": "Pneumonia comunitaria em paciente hipertensa, com tosse produtiva, febre e dor pleuritica ha 4 dias.",
+      "comorbidades": [
+        {
+          "cid10": "I10",
+          "descricao": "Hipertensao arterial sistemica",
+          "desde": "2009-05-01"
+        }
+      ],
+      "alergias": [],
+      "medicacoes": [
+        {
+          "principio_ativo": "Amoxicilina-Clavulanato",
+          "dose": "875 mg",
+          "via": "VO",
+          "frequencia": "2x/dia",
+          "inicio": "2026-08-20",
+          "ativa": true,
+          "prescritor": "Dr. Felipe Farias - CRM/PR 000000"
+        },
+        {
+          "principio_ativo": "Dipirona",
+          "dose": "1 g",
+          "via": "VO",
+          "frequencia": "se necessario",
+          "inicio": "2026-08-20",
+          "ativa": true,
+          "prescritor": "Dr. Felipe Farias - CRM/PR 000000"
+        },
+        {
+          "principio_ativo": "Losartana",
+          "dose": "50 mg",
+          "via": "VO",
+          "frequencia": "1x/dia",
+          "inicio": "2026-08-20",
+          "ativa": true,
+          "prescritor": "Dr. Felipe Farias - CRM/PR 000000"
+        }
+      ],
+      "exames": [
+        {
+          "nome": "Radiografia de torax",
+          "categoria": "Imagem",
+          "solicitado_em": "2026-08-20",
+          "resultado_em": "2026-08-20",
+          "status": "resultado",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": "Infiltrado alveolar em lobo medio direito."
+        },
+        {
+          "nome": "Cultura de escarro",
+          "categoria": "Microbiologia",
+          "solicitado_em": "2026-08-20",
+          "resultado_em": null,
+          "status": "pendente",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": null
+        },
+        {
+          "nome": "Proteina C reativa",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-20",
+          "resultado_em": "2026-08-21",
+          "status": "resultado",
+          "valor": 88,
+          "unidade": "mg/L",
+          "ref_min": 0,
+          "ref_max": 5,
+          "critico": false,
+          "laudo": "Elevada, compativel com processo infeccioso."
+        }
+      ],
+      "sinais_vitais": [
+        {
+          "aferido_em": "2026-08-20T09:00:00",
+          "pas": 128,
+          "pad": 80,
+          "fc": 96,
+          "fr": 22,
+          "temp": 38.3,
+          "sato2": 93,
+          "glasgow": 15
+        },
+        {
+          "aferido_em": "2026-08-21T09:00:00",
+          "pas": 122,
+          "pad": 76,
+          "fc": 86,
+          "fr": 18,
+          "temp": 37.0,
+          "sato2": 96,
+          "glasgow": 15
+        }
+      ],
+      "evolucoes": [
+        {
+          "data": "2026-08-20",
+          "autor": "Dr. Felipe Farias",
+          "especialidade": "Pneumologia",
+          "texto": "PAC em paciente hipertensa, estavel hemodinamicamente. Iniciado antibiotico oral e mantida vigilancia clinica."
+        }
+      ]
+    },
+    {
+      "id": "PAC-0021",
+      "prontuario": "PRT-10021",
+      "nome": "Diego Martins Rocha",
+      "cpf": "000.000.000-00",
+      "data_nascimento": "1980-09-13",
+      "sexo": "M",
+      "peso_kg": 82.0,
+      "altura_cm": 179,
+      "convenio": "Particular",
+      "setor": "Pneumologia",
+      "leito": "5D-06",
+      "data_internacao": "2026-08-21",
+      "gestante": false,
+      "telefone": "(00) 00000-0000",
+      "email": "paciente.ficticio@exemplo.invalido",
+      "observacoes": "Pneumonia comunitaria moderada em adulto jovem previamente higido, com boa resposta clinica inicial ao tratamento.",
+      "comorbidades": [
+        {
+          "cid10": "J45",
+          "descricao": "Asma bronquica leve",
+          "desde": "2001-01-01"
+        }
+      ],
+      "alergias": [],
+      "medicacoes": [
+        {
+          "principio_ativo": "Amoxicilina-Clavulanato",
+          "dose": "875 mg",
+          "via": "VO",
+          "frequencia": "2x/dia",
+          "inicio": "2026-08-21",
+          "ativa": true,
+          "prescritor": "Dr. Felipe Farias - CRM/PR 000000"
+        },
+        {
+          "principio_ativo": "Dipirona",
+          "dose": "1 g",
+          "via": "VO",
+          "frequencia": "se necessario",
+          "inicio": "2026-08-21",
+          "ativa": true,
+          "prescritor": "Dr. Felipe Farias - CRM/PR 000000"
+        }
+      ],
+      "exames": [
+        {
+          "nome": "Radiografia de torax",
+          "categoria": "Imagem",
+          "solicitado_em": "2026-08-21",
+          "resultado_em": "2026-08-21",
+          "status": "resultado",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": "Infiltrado em base pulmonar esquerda."
+        },
+        {
+          "nome": "Hemograma completo",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-21",
+          "resultado_em": "2026-08-21",
+          "status": "resultado",
+          "valor": 12800,
+          "unidade": "/mm3",
+          "ref_min": 4000,
+          "ref_max": 11000,
+          "critico": false,
+          "laudo": "Leucocitose leve."
+        },
+        {
+          "nome": "Proteina C reativa",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-21",
+          "resultado_em": "2026-08-22",
+          "status": "resultado",
+          "valor": 42,
+          "unidade": "mg/L",
+          "ref_min": 0,
+          "ref_max": 5,
+          "critico": false,
+          "laudo": "Elevada, compativel com processo infeccioso em resolucao."
+        }
+      ],
+      "sinais_vitais": [
+        {
+          "aferido_em": "2026-08-21T11:00:00",
+          "pas": 118,
+          "pad": 74,
+          "fc": 90,
+          "fr": 20,
+          "temp": 38.0,
+          "sato2": 95,
+          "glasgow": 15
+        },
+        {
+          "aferido_em": "2026-08-22T11:00:00",
+          "pas": 116,
+          "pad": 72,
+          "fc": 80,
+          "fr": 16,
+          "temp": 36.8,
+          "sato2": 97,
+          "glasgow": 15
+        }
+      ],
+      "evolucoes": [
+        {
+          "data": "2026-08-21",
+          "autor": "Dr. Felipe Farias",
+          "especialidade": "Pneumologia",
+          "texto": "PAC moderada com boa evolucao clinica. Mantido antibiotico oral, previsao de alta em breve caso mantenha melhora."
+        }
+      ]
+    },
+    {
+      "id": "PAC-0022",
+      "prontuario": "PRT-10022",
+      "nome": "Silvia Regina Teles",
+      "cpf": "000.000.000-00",
+      "data_nascimento": "1969-07-07",
+      "sexo": "F",
+      "peso_kg": 78.0,
+      "altura_cm": 163,
+      "convenio": "SUS",
+      "setor": "Clínica Médica",
+      "leito": "3B-22",
+      "data_internacao": "2026-08-19",
+      "gestante": false,
+      "telefone": "(00) 00000-0000",
+      "email": "paciente.ficticio@exemplo.invalido",
+      "observacoes": "Trombose venosa profunda de membro inferior esquerdo, com edema e dor a palpacao da panturrilha, sem sinais de embolia pulmonar associada.",
+      "comorbidades": [
+        {
+          "cid10": "I83",
+          "descricao": "Insuficiencia venosa cronica",
+          "desde": "2012-01-01"
+        },
+        {
+          "cid10": "E66",
+          "descricao": "Obesidade",
+          "desde": "2010-01-01"
+        }
+      ],
+      "alergias": [],
+      "medicacoes": [
+        {
+          "principio_ativo": "Enoxaparina",
+          "dose": "1 mg/kg",
+          "via": "SC",
+          "frequencia": "2x/dia",
+          "inicio": "2026-08-19",
+          "ativa": true,
+          "prescritor": "Dr. Rafael Menezes - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Rivaroxabana",
+          "dose": "20 mg",
+          "via": "VO",
+          "frequencia": "1x/dia",
+          "inicio": "2026-08-24",
+          "ativa": false,
+          "prescritor": "Dr. Rafael Menezes - CRM/SP 000000"
+        }
+      ],
+      "exames": [
+        {
+          "nome": "Doppler venoso de membro inferior",
+          "categoria": "Imagem",
+          "solicitado_em": "2026-08-19",
+          "resultado_em": "2026-08-19",
+          "status": "resultado",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": "Trombose venosa profunda em veia femoral esquerda."
+        },
+        {
+          "nome": "D-dimero",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-19",
+          "resultado_em": "2026-08-19",
+          "status": "resultado",
+          "valor": 3200,
+          "unidade": "ng/mL",
+          "ref_min": 0,
+          "ref_max": 500,
+          "critico": false,
+          "laudo": "Muito elevado, compativel com evento tromboembolico agudo."
+        },
+        {
+          "nome": "Hemograma completo",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-19",
+          "resultado_em": "2026-08-19",
+          "status": "resultado",
+          "valor": 8600,
+          "unidade": "/mm3",
+          "ref_min": 4000,
+          "ref_max": 11000,
+          "critico": false,
+          "laudo": "Dentro da normalidade."
+        }
+      ],
+      "sinais_vitais": [
+        {
+          "aferido_em": "2026-08-19T10:00:00",
+          "pas": 130,
+          "pad": 82,
+          "fc": 88,
+          "fr": 18,
+          "temp": 36.9,
+          "sato2": 97,
+          "glasgow": 15
+        },
+        {
+          "aferido_em": "2026-08-20T10:00:00",
+          "pas": 126,
+          "pad": 78,
+          "fc": 82,
+          "fr": 16,
+          "temp": 36.6,
+          "sato2": 98,
+          "glasgow": 15
+        }
+      ],
+      "evolucoes": [
+        {
+          "data": "2026-08-19",
+          "autor": "Dr. Rafael Menezes",
+          "especialidade": "Clínica Médica",
+          "texto": "TVP de membro inferior esquerdo confirmada por doppler. Iniciada anticoagulacao plena com enoxaparina, planejada transicao para anticoagulante oral direto."
+        }
+      ]
+    },
+    {
+      "id": "PAC-0023",
+      "prontuario": "PRT-10023",
+      "nome": "Alexandre Barreto Ferreira",
+      "cpf": "000.000.000-00",
+      "data_nascimento": "1962-11-24",
+      "sexo": "M",
+      "peso_kg": 85.0,
+      "altura_cm": 173,
+      "convenio": "Particular",
+      "setor": "Pneumologia",
+      "leito": "5D-09",
+      "data_internacao": "2026-08-20",
+      "gestante": false,
+      "telefone": "(00) 00000-0000",
+      "email": "paciente.ficticio@exemplo.invalido",
+      "observacoes": "Embolia pulmonar submaciça com dispneia subita e dor toracica ventilatorio-dependente, em investigacao de fator de risco.",
+      "comorbidades": [
+        {
+          "cid10": "I26",
+          "descricao": "Embolia pulmonar",
+          "desde": "2026-08-20"
+        },
+        {
+          "cid10": "E66",
+          "descricao": "Obesidade",
+          "desde": "2014-01-01"
+        }
+      ],
+      "alergias": [
+        {
+          "substancia": "Contraste iodado",
+          "classe": "Meio de contraste",
+          "gravidade": "moderada",
+          "reacao": "Urticaria e broncoespasmo leve"
+        }
+      ],
+      "medicacoes": [
+        {
+          "principio_ativo": "Enoxaparina",
+          "dose": "1 mg/kg",
+          "via": "SC",
+          "frequencia": "2x/dia",
+          "inicio": "2026-08-20",
+          "ativa": true,
+          "prescritor": "Dr. Felipe Farias - CRM/PR 000000"
+        },
+        {
+          "principio_ativo": "Oxigenoterapia suplementar",
+          "dose": "2 L/min",
+          "via": "IN",
+          "frequencia": "continuo",
+          "inicio": "2026-08-20",
+          "ativa": true,
+          "prescritor": "Dr. Felipe Farias - CRM/PR 000000"
+        }
+      ],
+      "exames": [
+        {
+          "nome": "Angiotomografia de torax",
+          "categoria": "Imagem",
+          "solicitado_em": "2026-08-20",
+          "resultado_em": "2026-08-20",
+          "status": "resultado",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": "Falha de enchimento em arteria pulmonar direita, compativel com TEP."
+        },
+        {
+          "nome": "D-dimero",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-20",
+          "resultado_em": "2026-08-20",
+          "status": "resultado",
+          "valor": 4100,
+          "unidade": "ng/mL",
+          "ref_min": 0,
+          "ref_max": 500,
+          "critico": false,
+          "laudo": "Muito elevado."
+        },
+        {
+          "nome": "Troponina I",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-20",
+          "resultado_em": null,
+          "status": "pendente",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": null
+        }
+      ],
+      "sinais_vitais": [
+        {
+          "aferido_em": "2026-08-20T08:00:00",
+          "pas": 108,
+          "pad": 70,
+          "fc": 112,
+          "fr": 26,
+          "temp": 37.0,
+          "sato2": 90,
+          "glasgow": 15
+        },
+        {
+          "aferido_em": "2026-08-21T08:00:00",
+          "pas": 114,
+          "pad": 74,
+          "fc": 96,
+          "fr": 20,
+          "temp": 36.7,
+          "sato2": 94,
+          "glasgow": 15
+        }
+      ],
+      "evolucoes": [
+        {
+          "data": "2026-08-20",
+          "autor": "Dr. Felipe Farias",
+          "especialidade": "Pneumologia",
+          "texto": "TEP submaciço confirmado por angiotomografia. Iniciada anticoagulacao plena e suplementacao de oxigenio, com monitorizacao para sinais de disfuncao de ventriculo direito."
+        }
+      ]
+    },
+    {
+      "id": "PAC-0024",
+      "prontuario": "PRT-10024",
+      "nome": "Fabio Nascimento Andrade",
+      "cpf": "000.000.000-00",
+      "data_nascimento": "1988-03-15",
+      "sexo": "M",
+      "peso_kg": 94.0,
+      "altura_cm": 181,
+      "convenio": "Particular",
+      "setor": "Clínica Médica",
+      "leito": "3B-25",
+      "data_internacao": "2026-08-22",
+      "gestante": false,
+      "telefone": "(00) 00000-0000",
+      "email": "paciente.ficticio@exemplo.invalido",
+      "observacoes": "Trombose venosa profunda em paciente jovem, usuario de anticoncepcional hormonal combinado, sem outros fatores de risco identificados.",
+      "comorbidades": [
+        {
+          "cid10": "E66",
+          "descricao": "Obesidade",
+          "desde": "2018-01-01"
+        }
+      ],
+      "alergias": [],
+      "medicacoes": [
+        {
+          "principio_ativo": "Enoxaparina",
+          "dose": "1 mg/kg",
+          "via": "SC",
+          "frequencia": "2x/dia",
+          "inicio": "2026-08-22",
+          "ativa": true,
+          "prescritor": "Dr. Rafael Menezes - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Dipirona",
+          "dose": "1 g",
+          "via": "VO",
+          "frequencia": "se necessario",
+          "inicio": "2026-08-22",
+          "ativa": true,
+          "prescritor": "Dr. Rafael Menezes - CRM/SP 000000"
+        }
+      ],
+      "exames": [
+        {
+          "nome": "Doppler venoso de membro inferior",
+          "categoria": "Imagem",
+          "solicitado_em": "2026-08-22",
+          "resultado_em": "2026-08-22",
+          "status": "resultado",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": "TVP em veia poplitea direita."
+        },
+        {
+          "nome": "D-dimero",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-22",
+          "resultado_em": "2026-08-22",
+          "status": "resultado",
+          "valor": 2100,
+          "unidade": "ng/mL",
+          "ref_min": 0,
+          "ref_max": 500,
+          "critico": false,
+          "laudo": "Elevado."
+        },
+        {
+          "nome": "Hemograma completo",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-22",
+          "resultado_em": "2026-08-22",
+          "status": "resultado",
+          "valor": 9200,
+          "unidade": "/mm3",
+          "ref_min": 4000,
+          "ref_max": 11000,
+          "critico": false,
+          "laudo": "Dentro da normalidade."
+        }
+      ],
+      "sinais_vitais": [
+        {
+          "aferido_em": "2026-08-22T13:00:00",
+          "pas": 124,
+          "pad": 78,
+          "fc": 84,
+          "fr": 18,
+          "temp": 36.8,
+          "sato2": 97,
+          "glasgow": 15
+        },
+        {
+          "aferido_em": "2026-08-22T21:00:00",
+          "pas": 120,
+          "pad": 76,
+          "fc": 80,
+          "fr": 16,
+          "temp": 36.6,
+          "sato2": 97,
+          "glasgow": 15
+        }
+      ],
+      "evolucoes": [
+        {
+          "data": "2026-08-22",
+          "autor": "Dr. Rafael Menezes",
+          "especialidade": "Clínica Médica",
+          "texto": "TVP em paciente jovem, sem fatores de risco maiores alem do uso de contraceptivo hormonal. Iniciada anticoagulacao e orientada suspensao do anticoncepcional."
+        }
+      ]
+    },
+    {
+      "id": "PAC-0025",
+      "prontuario": "PRT-10025",
+      "nome": "Leticia Vieira Machado",
+      "cpf": "000.000.000-00",
+      "data_nascimento": "2004-01-30",
+      "sexo": "F",
+      "peso_kg": 54.0,
+      "altura_cm": 164,
+      "convenio": "SUS",
+      "setor": "UTI",
+      "leito": "UTI-04",
+      "data_internacao": "2026-08-21",
+      "gestante": false,
+      "telefone": "(00) 00000-0000",
+      "email": "paciente.ficticio@exemplo.invalido",
+      "observacoes": "Cetoacidose diabetica em paciente jovem com diabetes tipo 1, quadro de vomitos, dor abdominal e hiperglicemia grave.",
+      "comorbidades": [
+        {
+          "cid10": "E10",
+          "descricao": "Diabetes mellitus tipo 1",
+          "desde": "2015-04-01"
+        }
+      ],
+      "alergias": [],
+      "medicacoes": [
+        {
+          "principio_ativo": "Insulina Regular",
+          "dose": "0,1 UI/kg/h",
+          "via": "EV",
+          "frequencia": "continuo",
+          "inicio": "2026-08-21",
+          "ativa": true,
+          "prescritor": "Dra. Renata Vasconcelos - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Solucao fisiologica 0,9%",
+          "dose": "1000 mL",
+          "via": "EV",
+          "frequencia": "conforme protocolo",
+          "inicio": "2026-08-21",
+          "ativa": true,
+          "prescritor": "Dra. Renata Vasconcelos - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Cloreto de potassio",
+          "dose": "20 mEq",
+          "via": "EV",
+          "frequencia": "conforme protocolo",
+          "inicio": "2026-08-21",
+          "ativa": true,
+          "prescritor": "Dra. Renata Vasconcelos - CRM/SP 000000"
+        }
+      ],
+      "exames": [
+        {
+          "nome": "Glicemia capilar",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-21",
+          "resultado_em": "2026-08-21",
+          "status": "resultado",
+          "valor": 580,
+          "unidade": "mg/dL",
+          "ref_min": 70,
+          "ref_max": 99,
+          "critico": true,
+          "laudo": "Hiperglicemia muito grave, compativel com cetoacidose diabetica."
+        },
+        {
+          "nome": "Gasometria arterial",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-21",
+          "resultado_em": "2026-08-21",
+          "status": "resultado",
+          "valor": 7.18,
+          "unidade": "pH",
+          "ref_min": 7.35,
+          "ref_max": 7.45,
+          "critico": true,
+          "laudo": "Acidose metabolica grave."
+        },
+        {
+          "nome": "Cetonemia",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-21",
+          "resultado_em": "2026-08-21",
+          "status": "resultado",
+          "valor": 5.8,
+          "unidade": "mmol/L",
+          "ref_min": 0,
+          "ref_max": 0.6,
+          "critico": false,
+          "laudo": "Cetonemia muito elevada."
+        },
+        {
+          "nome": "Potassio",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-21",
+          "resultado_em": "2026-08-21",
+          "status": "resultado",
+          "valor": 3.2,
+          "unidade": "mEq/L",
+          "ref_min": 3.5,
+          "ref_max": 5.0,
+          "critico": false,
+          "laudo": "Hipocalemia, requer reposicao antes/durante insulinoterapia."
+        }
+      ],
+      "sinais_vitais": [
+        {
+          "aferido_em": "2026-08-21T05:00:00",
+          "pas": 96,
+          "pad": 58,
+          "fc": 122,
+          "fr": 28,
+          "temp": 36.5,
+          "sato2": 96,
+          "glasgow": 14
+        },
+        {
+          "aferido_em": "2026-08-21T13:00:00",
+          "pas": 104,
+          "pad": 64,
+          "fc": 106,
+          "fr": 22,
+          "temp": 36.6,
+          "sato2": 97,
+          "glasgow": 15
+        },
+        {
+          "aferido_em": "2026-08-22T05:00:00",
+          "pas": 112,
+          "pad": 70,
+          "fc": 92,
+          "fr": 18,
+          "temp": 36.6,
+          "sato2": 98,
+          "glasgow": 15
+        }
+      ],
+      "evolucoes": [
+        {
+          "data": "2026-08-21",
+          "autor": "Dra. Renata Vasconcelos",
+          "especialidade": "UTI",
+          "texto": "CAD grave em DM1. Iniciado protocolo de insulinoterapia venosa continua com reposicao de potassio e hidratacao vigorosa."
+        },
+        {
+          "data": "2026-08-22",
+          "autor": "Dr. Gustavo Moura",
+          "especialidade": "UTI",
+          "texto": "Melhora da acidose metabolica e reducao progressiva da glicemia. Planejada transicao para insulina subcutanea nas proximas horas."
+        }
+      ]
+    },
+    {
+      "id": "PAC-0026",
+      "prontuario": "PRT-10026",
+      "nome": "Thiago Cardoso Lopes",
+      "cpf": "000.000.000-00",
+      "data_nascimento": "1992-06-11",
+      "sexo": "M",
+      "peso_kg": 76.0,
+      "altura_cm": 177,
+      "convenio": "SUS",
+      "setor": "UTI",
+      "leito": "UTI-06",
+      "data_internacao": "2026-08-20",
+      "gestante": false,
+      "telefone": "(00) 00000-0000",
+      "email": "paciente.ficticio@exemplo.invalido",
+      "observacoes": "Cetoacidose diabetica desencadeada por infeccao urinaria, com desidratacao importante e hipercalemia a admissao.",
+      "comorbidades": [
+        {
+          "cid10": "E10",
+          "descricao": "Diabetes mellitus tipo 1",
+          "desde": "2010-09-09"
+        },
+        {
+          "cid10": "N39",
+          "descricao": "Infeccao do trato urinario",
+          "desde": "2026-08-19"
+        }
+      ],
+      "alergias": [],
+      "medicacoes": [
+        {
+          "principio_ativo": "Insulina Regular",
+          "dose": "0,1 UI/kg/h",
+          "via": "EV",
+          "frequencia": "continuo",
+          "inicio": "2026-08-20",
+          "ativa": true,
+          "prescritor": "Dr. Gustavo Moura - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Ceftriaxona",
+          "dose": "1 g",
+          "via": "EV",
+          "frequencia": "1x/dia",
+          "inicio": "2026-08-20",
+          "ativa": true,
+          "prescritor": "Dr. Gustavo Moura - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Solucao fisiologica 0,9%",
+          "dose": "1000 mL",
+          "via": "EV",
+          "frequencia": "conforme protocolo",
+          "inicio": "2026-08-20",
+          "ativa": true,
+          "prescritor": "Dr. Gustavo Moura - CRM/SP 000000"
+        }
+      ],
+      "exames": [
+        {
+          "nome": "Potassio",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-20",
+          "resultado_em": "2026-08-20",
+          "status": "resultado",
+          "valor": 6.5,
+          "unidade": "mEq/L",
+          "ref_min": 3.5,
+          "ref_max": 5.0,
+          "critico": true,
+          "laudo": "Hipercalemia importante, risco de arritmia cardiaca."
+        },
+        {
+          "nome": "Glicemia capilar",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-20",
+          "resultado_em": "2026-08-20",
+          "status": "resultado",
+          "valor": 498,
+          "unidade": "mg/dL",
+          "ref_min": 70,
+          "ref_max": 99,
+          "critico": false,
+          "laudo": "Hiperglicemia grave."
+        },
+        {
+          "nome": "Gasometria arterial",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-20",
+          "resultado_em": "2026-08-20",
+          "status": "resultado",
+          "valor": 7.21,
+          "unidade": "pH",
+          "ref_min": 7.35,
+          "ref_max": 7.45,
+          "critico": false,
+          "laudo": "Acidose metabolica."
+        },
+        {
+          "nome": "Urocultura",
+          "categoria": "Microbiologia",
+          "solicitado_em": "2026-08-20",
+          "resultado_em": null,
+          "status": "pendente",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": null
+        }
+      ],
+      "sinais_vitais": [
+        {
+          "aferido_em": "2026-08-20T04:00:00",
+          "pas": 100,
+          "pad": 60,
+          "fc": 118,
+          "fr": 26,
+          "temp": 37.8,
+          "sato2": 95,
+          "glasgow": 15
+        },
+        {
+          "aferido_em": "2026-08-20T16:00:00",
+          "pas": 110,
+          "pad": 68,
+          "fc": 100,
+          "fr": 20,
+          "temp": 37.1,
+          "sato2": 97,
+          "glasgow": 15
+        }
+      ],
+      "evolucoes": [
+        {
+          "data": "2026-08-20",
+          "autor": "Dr. Gustavo Moura",
+          "especialidade": "UTI",
+          "texto": "CAD com hipercalemia grave a admissao, foco infeccioso urinario. Iniciado protocolo de insulinoterapia e monitorizacao cardiaca continua pelo risco de arritmia."
+        }
+      ]
+    },
+    {
+      "id": "PAC-0027",
+      "prontuario": "PRT-10027",
+      "nome": "Julia Pinto Ramos",
+      "cpf": "000.000.000-00",
+      "data_nascimento": "1985-12-22",
+      "sexo": "F",
+      "peso_kg": 62.0,
+      "altura_cm": 166,
+      "convenio": "Particular",
+      "setor": "UTI",
+      "leito": "UTI-08",
+      "data_internacao": "2026-08-22",
+      "gestante": false,
+      "telefone": "(00) 00000-0000",
+      "email": "paciente.ficticio@exemplo.invalido",
+      "observacoes": "Cetoacidose diabetica leve a moderada em paciente com ma adesao ao tratamento insulinico ambulatorial.",
+      "comorbidades": [
+        {
+          "cid10": "E10",
+          "descricao": "Diabetes mellitus tipo 1",
+          "desde": "2003-02-17"
+        }
+      ],
+      "alergias": [
+        {
+          "substancia": "Sulfametoxazol-Trimetoprima",
+          "classe": "Sulfonamida",
+          "gravidade": "moderada",
+          "reacao": "Rash cutaneo"
+        }
+      ],
+      "medicacoes": [
+        {
+          "principio_ativo": "Insulina Regular",
+          "dose": "0,1 UI/kg/h",
+          "via": "EV",
+          "frequencia": "continuo",
+          "inicio": "2026-08-22",
+          "ativa": true,
+          "prescritor": "Dra. Renata Vasconcelos - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Solucao fisiologica 0,9%",
+          "dose": "1000 mL",
+          "via": "EV",
+          "frequencia": "conforme protocolo",
+          "inicio": "2026-08-22",
+          "ativa": true,
+          "prescritor": "Dra. Renata Vasconcelos - CRM/SP 000000"
+        }
+      ],
+      "exames": [
+        {
+          "nome": "Glicemia capilar",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-22",
+          "resultado_em": "2026-08-22",
+          "status": "resultado",
+          "valor": 388,
+          "unidade": "mg/dL",
+          "ref_min": 70,
+          "ref_max": 99,
+          "critico": false,
+          "laudo": "Hiperglicemia grave."
+        },
+        {
+          "nome": "Gasometria arterial (seriada)",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-22",
+          "resultado_em": null,
+          "status": "pendente",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": null
+        },
+        {
+          "nome": "Cetonemia",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-22",
+          "resultado_em": "2026-08-22",
+          "status": "resultado",
+          "valor": 3.1,
+          "unidade": "mmol/L",
+          "ref_min": 0,
+          "ref_max": 0.6,
+          "critico": false,
+          "laudo": "Elevada."
+        }
+      ],
+      "sinais_vitais": [
+        {
+          "aferido_em": "2026-08-22T07:00:00",
+          "pas": 106,
+          "pad": 66,
+          "fc": 104,
+          "fr": 22,
+          "temp": 36.7,
+          "sato2": 97,
+          "glasgow": 15
+        },
+        {
+          "aferido_em": "2026-08-22T15:00:00",
+          "pas": 112,
+          "pad": 70,
+          "fc": 92,
+          "fr": 18,
+          "temp": 36.6,
+          "sato2": 97,
+          "glasgow": 15
+        }
+      ],
+      "evolucoes": [
+        {
+          "data": "2026-08-22",
+          "autor": "Dra. Renata Vasconcelos",
+          "especialidade": "UTI",
+          "texto": "CAD leve a moderada por ma adesao terapeutica. Iniciado protocolo padrao de insulinoterapia venosa, reforcada orientacao sobre autocuidado no diabetes."
+        }
+      ]
+    },
+    {
+      "id": "PAC-0028",
+      "prontuario": "PRT-10028",
+      "nome": "Waldemar Correia Nogueira",
+      "cpf": "000.000.000-00",
+      "data_nascimento": "1935-03-08",
+      "sexo": "M",
+      "peso_kg": 70.0,
+      "altura_cm": 169,
+      "convenio": "SUS",
+      "setor": "Cardiologia",
+      "leito": "2A-10",
+      "data_internacao": "2026-08-18",
+      "gestante": false,
+      "telefone": "(00) 00000-0000",
+      "email": "paciente.ficticio@exemplo.invalido",
+      "observacoes": "Insuficiencia cardiaca com fracao de ejecao reduzida descompensada, dispneia aos minimos esforcos e edema de membros inferiores importante.",
+      "comorbidades": [
+        {
+          "cid10": "I50",
+          "descricao": "Insuficiencia cardiaca",
+          "desde": "2014-06-01"
+        },
+        {
+          "cid10": "I48",
+          "descricao": "Fibrilacao atrial",
+          "desde": "2016-09-12"
+        },
+        {
+          "cid10": "N18",
+          "descricao": "Doenca renal cronica estagio 3",
+          "desde": "2019-01-20"
+        }
+      ],
+      "alergias": [],
+      "medicacoes": [
+        {
+          "principio_ativo": "Enalapril",
+          "dose": "10 mg",
+          "via": "VO",
+          "frequencia": "2x/dia",
+          "inicio": "2026-08-18",
+          "ativa": true,
+          "prescritor": "Dra. Camila Andrade - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Espironolactona",
+          "dose": "25 mg",
+          "via": "VO",
+          "frequencia": "1x/dia",
+          "inicio": "2026-08-18",
+          "ativa": true,
+          "prescritor": "Dra. Camila Andrade - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Furosemida",
+          "dose": "40 mg",
+          "via": "EV",
+          "frequencia": "2x/dia",
+          "inicio": "2026-08-18",
+          "ativa": true,
+          "prescritor": "Dra. Camila Andrade - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Carvedilol",
+          "dose": "6,25 mg",
+          "via": "VO",
+          "frequencia": "2x/dia",
+          "inicio": "2026-08-18",
+          "ativa": true,
+          "prescritor": "Dra. Camila Andrade - CRM/SP 000000"
+        }
+      ],
+      "exames": [
+        {
+          "nome": "Creatinina",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-18",
+          "resultado_em": "2026-08-18",
+          "status": "resultado",
+          "valor": 2.0,
+          "unidade": "mg/dL",
+          "ref_min": 0.7,
+          "ref_max": 1.3,
+          "critico": false,
+          "laudo": "Elevada, sindrome cardiorrenal."
+        },
+        {
+          "nome": "Potassio",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-18",
+          "resultado_em": "2026-08-18",
+          "status": "resultado",
+          "valor": 5.4,
+          "unidade": "mEq/L",
+          "ref_min": 3.5,
+          "ref_max": 5.0,
+          "critico": false,
+          "laudo": "Discretamente elevado, atencao ao uso concomitante de IECA e espironolactona."
+        },
+        {
+          "nome": "BNP",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-18",
+          "resultado_em": "2026-08-19",
+          "status": "resultado",
+          "valor": 1250,
+          "unidade": "pg/mL",
+          "ref_min": 0,
+          "ref_max": 100,
+          "critico": false,
+          "laudo": "Muito elevado, compativel com descompensacao de IC."
+        },
+        {
+          "nome": "Ecocardiograma",
+          "categoria": "Cardiologia",
+          "solicitado_em": "2026-08-18",
+          "resultado_em": "2026-08-19",
+          "status": "resultado",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": "Fracao de ejecao de 28%, disfuncao sistolica importante de VE."
+        }
+      ],
+      "sinais_vitais": [
+        {
+          "aferido_em": "2026-08-18T08:00:00",
+          "pas": 138,
+          "pad": 84,
+          "fc": 98,
+          "fr": 26,
+          "temp": 36.5,
+          "sato2": 91,
+          "glasgow": 15
+        },
+        {
+          "aferido_em": "2026-08-19T08:00:00",
+          "pas": 126,
+          "pad": 78,
+          "fc": 86,
+          "fr": 20,
+          "temp": 36.4,
+          "sato2": 94,
+          "glasgow": 15
+        },
+        {
+          "aferido_em": "2026-08-20T08:00:00",
+          "pas": 118,
+          "pad": 72,
+          "fc": 78,
+          "fr": 18,
+          "temp": 36.4,
+          "sato2": 96,
+          "glasgow": 15
+        }
+      ],
+      "evolucoes": [
+        {
+          "data": "2026-08-18",
+          "autor": "Dra. Camila Andrade",
+          "especialidade": "Cardiologia",
+          "texto": "IC descompensada com sinais de congestao importante. Intensificado diuretico venoso, mantidos IECA e espironolactona com monitorizacao de potassio e funcao renal pelo risco de hipercalemia."
+        },
+        {
+          "data": "2026-08-19",
+          "autor": "Dr. Marcelo Nogueira",
+          "especialidade": "Cardiologia",
+          "texto": "Melhora do quadro congestivo, reducao do peso corporal. Potassio estavel, mantido esquema atual."
+        }
+      ]
+    },
+    {
+      "id": "PAC-0029",
+      "prontuario": "PRT-10029",
+      "nome": "Rita de Cassia Barros",
+      "cpf": "000.000.000-00",
+      "data_nascimento": "1948-09-17",
+      "sexo": "F",
+      "peso_kg": 66.0,
+      "altura_cm": 156,
+      "convenio": "SUS",
+      "setor": "Cardiologia",
+      "leito": "2A-12",
+      "data_internacao": "2026-08-19",
+      "gestante": false,
+      "telefone": "(00) 00000-0000",
+      "email": "paciente.ficticio@exemplo.invalido",
+      "observacoes": "Insuficiencia cardiaca descompensada associada a fibrilacao atrial de alta resposta ventricular, dispneia e ortopneia ha 5 dias.",
+      "comorbidades": [
+        {
+          "cid10": "I50",
+          "descricao": "Insuficiencia cardiaca",
+          "desde": "2017-11-03"
+        },
+        {
+          "cid10": "I48",
+          "descricao": "Fibrilacao atrial",
+          "desde": "2019-04-22"
+        }
+      ],
+      "alergias": [],
+      "medicacoes": [
+        {
+          "principio_ativo": "Enalapril",
+          "dose": "10 mg",
+          "via": "VO",
+          "frequencia": "2x/dia",
+          "inicio": "2026-08-19",
+          "ativa": true,
+          "prescritor": "Dr. Marcelo Nogueira - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Espironolactona",
+          "dose": "25 mg",
+          "via": "VO",
+          "frequencia": "1x/dia",
+          "inicio": "2026-08-19",
+          "ativa": true,
+          "prescritor": "Dr. Marcelo Nogueira - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Furosemida",
+          "dose": "40 mg",
+          "via": "EV",
+          "frequencia": "2x/dia",
+          "inicio": "2026-08-19",
+          "ativa": true,
+          "prescritor": "Dr. Marcelo Nogueira - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Varfarina",
+          "dose": "5 mg",
+          "via": "VO",
+          "frequencia": "1x/dia",
+          "inicio": "2026-08-19",
+          "ativa": true,
+          "prescritor": "Dr. Marcelo Nogueira - CRM/SP 000000"
+        }
+      ],
+      "exames": [
+        {
+          "nome": "Creatinina",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-19",
+          "resultado_em": "2026-08-19",
+          "status": "resultado",
+          "valor": 1.6,
+          "unidade": "mg/dL",
+          "ref_min": 0.6,
+          "ref_max": 1.2,
+          "critico": false,
+          "laudo": "Elevada, compativel com congestao renal."
+        },
+        {
+          "nome": "BNP",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-19",
+          "resultado_em": "2026-08-20",
+          "status": "resultado",
+          "valor": 980,
+          "unidade": "pg/mL",
+          "ref_min": 0,
+          "ref_max": 100,
+          "critico": false,
+          "laudo": "Muito elevado."
+        },
+        {
+          "nome": "INR",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-19",
+          "resultado_em": "2026-08-19",
+          "status": "resultado",
+          "valor": 2.4,
+          "unidade": "razao",
+          "ref_min": 2.0,
+          "ref_max": 3.0,
+          "critico": false,
+          "laudo": "Dentro da faixa terapeutica para FA."
+        }
+      ],
+      "sinais_vitais": [
+        {
+          "aferido_em": "2026-08-19T09:00:00",
+          "pas": 122,
+          "pad": 76,
+          "fc": 118,
+          "fr": 24,
+          "temp": 36.6,
+          "sato2": 92,
+          "glasgow": 15
+        },
+        {
+          "aferido_em": "2026-08-20T09:00:00",
+          "pas": 116,
+          "pad": 70,
+          "fc": 92,
+          "fr": 20,
+          "temp": 36.5,
+          "sato2": 95,
+          "glasgow": 15
+        }
+      ],
+      "evolucoes": [
+        {
+          "data": "2026-08-19",
+          "autor": "Dr. Marcelo Nogueira",
+          "especialidade": "Cardiologia",
+          "texto": "IC descompensada com FA de alta resposta. Iniciado diuretico venoso e controle de frequencia, mantida anticoagulacao com varfarina e monitorizacao de potassio pelo uso de IECA associado a espironolactona."
+        }
+      ]
+    },
+    {
+      "id": "PAC-0030",
+      "prontuario": "PRT-10030",
+      "nome": "Nelson Farias Melo",
+      "cpf": "000.000.000-00",
+      "data_nascimento": "1959-05-26",
+      "sexo": "M",
+      "peso_kg": 84.0,
+      "altura_cm": 172,
+      "convenio": "Particular",
+      "setor": "Cardiologia",
+      "leito": "2A-15",
+      "data_internacao": "2026-08-21",
+      "gestante": false,
+      "telefone": "(00) 00000-0000",
+      "email": "paciente.ficticio@exemplo.invalido",
+      "observacoes": "Insuficiencia cardiaca descompensada por provavel abandono de tratamento diuretico, edema de membros inferiores e ganho ponderal recente.",
+      "comorbidades": [
+        {
+          "cid10": "I50",
+          "descricao": "Insuficiencia cardiaca",
+          "desde": "2015-01-01"
+        },
+        {
+          "cid10": "I10",
+          "descricao": "Hipertensao arterial sistemica",
+          "desde": "2005-06-01"
+        }
+      ],
+      "alergias": [],
+      "medicacoes": [
+        {
+          "principio_ativo": "Furosemida",
+          "dose": "40 mg",
+          "via": "EV",
+          "frequencia": "2x/dia",
+          "inicio": "2026-08-21",
+          "ativa": true,
+          "prescritor": "Dra. Camila Andrade - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Carvedilol",
+          "dose": "12,5 mg",
+          "via": "VO",
+          "frequencia": "2x/dia",
+          "inicio": "2026-08-21",
+          "ativa": true,
+          "prescritor": "Dra. Camila Andrade - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Enalapril",
+          "dose": "10 mg",
+          "via": "VO",
+          "frequencia": "2x/dia",
+          "inicio": "2026-08-21",
+          "ativa": true,
+          "prescritor": "Dra. Camila Andrade - CRM/SP 000000"
+        }
+      ],
+      "exames": [
+        {
+          "nome": "Creatinina",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-21",
+          "resultado_em": "2026-08-21",
+          "status": "resultado",
+          "valor": 1.5,
+          "unidade": "mg/dL",
+          "ref_min": 0.7,
+          "ref_max": 1.3,
+          "critico": false,
+          "laudo": "Discretamente elevada."
+        },
+        {
+          "nome": "BNP",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-21",
+          "resultado_em": null,
+          "status": "pendente",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": null
+        },
+        {
+          "nome": "Radiografia de torax",
+          "categoria": "Imagem",
+          "solicitado_em": "2026-08-21",
+          "resultado_em": "2026-08-21",
+          "status": "resultado",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": "Congestao pulmonar e derrame pleural bilateral discreto."
+        }
+      ],
+      "sinais_vitais": [
+        {
+          "aferido_em": "2026-08-21T10:00:00",
+          "pas": 132,
+          "pad": 82,
+          "fc": 92,
+          "fr": 22,
+          "temp": 36.5,
+          "sato2": 93,
+          "glasgow": 15
+        },
+        {
+          "aferido_em": "2026-08-22T10:00:00",
+          "pas": 124,
+          "pad": 76,
+          "fc": 82,
+          "fr": 18,
+          "temp": 36.4,
+          "sato2": 96,
+          "glasgow": 15
+        }
+      ],
+      "evolucoes": [
+        {
+          "data": "2026-08-21",
+          "autor": "Dra. Camila Andrade",
+          "especialidade": "Cardiologia",
+          "texto": "IC descompensada com sinais de sobrecarga volemica. Reintroduzido diuretico venoso e reforcadas orientacoes sobre adesao ao tratamento e restricao hidrossalina."
+        }
+      ]
+    },
+    {
+      "id": "PAC-0031",
+      "prontuario": "PRT-10031",
+      "nome": "Aldo Ribeiro Souza",
+      "cpf": "000.000.000-00",
+      "data_nascimento": "1953-10-14",
+      "sexo": "M",
+      "peso_kg": 68.0,
+      "altura_cm": 170,
+      "convenio": "SUS",
+      "setor": "Pneumologia",
+      "leito": "5D-11",
+      "data_internacao": "2026-08-20",
+      "gestante": false,
+      "telefone": "(00) 00000-0000",
+      "email": "paciente.ficticio@exemplo.invalido",
+      "observacoes": "Exacerbacao infecciosa de DPOC, com aumento do volume e purulencia do escarro e piora da dispneia habitual.",
+      "comorbidades": [
+        {
+          "cid10": "J44",
+          "descricao": "DPOC",
+          "desde": "2011-03-01"
+        },
+        {
+          "cid10": "I10",
+          "descricao": "Hipertensao arterial sistemica",
+          "desde": "2008-01-01"
+        }
+      ],
+      "alergias": [
+        {
+          "substancia": "Penicilina",
+          "classe": "Betalactâmico",
+          "gravidade": "moderada",
+          "reacao": "Urticaria"
+        }
+      ],
+      "medicacoes": [
+        {
+          "principio_ativo": "Prednisona",
+          "dose": "40 mg",
+          "via": "VO",
+          "frequencia": "1x/dia",
+          "inicio": "2026-08-20",
+          "ativa": true,
+          "prescritor": "Dr. Felipe Farias - CRM/PR 000000"
+        },
+        {
+          "principio_ativo": "Azitromicina",
+          "dose": "500 mg",
+          "via": "VO",
+          "frequencia": "1x/dia",
+          "inicio": "2026-08-20",
+          "ativa": true,
+          "prescritor": "Dr. Felipe Farias - CRM/PR 000000"
+        },
+        {
+          "principio_ativo": "Salbutamol",
+          "dose": "100 mcg",
+          "via": "IN",
+          "frequencia": "4x/dia",
+          "inicio": "2026-08-20",
+          "ativa": true,
+          "prescritor": "Dr. Felipe Farias - CRM/PR 000000"
+        },
+        {
+          "principio_ativo": "Brometo de ipratropio",
+          "dose": "20 mcg",
+          "via": "IN",
+          "frequencia": "4x/dia",
+          "inicio": "2026-08-20",
+          "ativa": true,
+          "prescritor": "Dr. Felipe Farias - CRM/PR 000000"
+        }
+      ],
+      "exames": [
+        {
+          "nome": "Gasometria arterial",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-20",
+          "resultado_em": "2026-08-20",
+          "status": "resultado",
+          "valor": 52,
+          "unidade": "mmHg",
+          "ref_min": 80,
+          "ref_max": 100,
+          "critico": false,
+          "laudo": "Hipoxemia moderada."
+        },
+        {
+          "nome": "Radiografia de torax",
+          "categoria": "Imagem",
+          "solicitado_em": "2026-08-20",
+          "resultado_em": "2026-08-20",
+          "status": "resultado",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": "Hiperinsuflacao pulmonar, sem consolidacao focal."
+        },
+        {
+          "nome": "Cultura de escarro",
+          "categoria": "Microbiologia",
+          "solicitado_em": "2026-08-20",
+          "resultado_em": null,
+          "status": "pendente",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": null
+        }
+      ],
+      "sinais_vitais": [
+        {
+          "aferido_em": "2026-08-20T08:00:00",
+          "pas": 138,
+          "pad": 86,
+          "fc": 104,
+          "fr": 28,
+          "temp": 37.3,
+          "sato2": 88,
+          "glasgow": 15
+        },
+        {
+          "aferido_em": "2026-08-21T08:00:00",
+          "pas": 132,
+          "pad": 82,
+          "fc": 92,
+          "fr": 22,
+          "temp": 36.9,
+          "sato2": 92,
+          "glasgow": 15
+        }
+      ],
+      "evolucoes": [
+        {
+          "data": "2026-08-20",
+          "autor": "Dr. Felipe Farias",
+          "especialidade": "Pneumologia",
+          "texto": "Exacerbacao infecciosa de DPOC. Iniciados corticoide sistemico, broncodilatadores inalatorios e antibiotico oral, com melhora progressiva da dispneia."
+        }
+      ]
+    },
+    {
+      "id": "PAC-0032",
+      "prontuario": "PRT-10032",
+      "nome": "Roberta Machado Vieira",
+      "cpf": "000.000.000-00",
+      "data_nascimento": "1960-02-09",
+      "sexo": "F",
+      "peso_kg": 64.0,
+      "altura_cm": 161,
+      "convenio": "Particular",
+      "setor": "Pneumologia",
+      "leito": "5D-14",
+      "data_internacao": "2026-08-22",
+      "gestante": false,
+      "telefone": "(00) 00000-0000",
+      "email": "paciente.ficticio@exemplo.invalido",
+      "observacoes": "Exacerbacao de DPOC sem foco infeccioso claro, possivelmente relacionada a exposicao a poluicao atmosferica intensa nos ultimos dias.",
+      "comorbidades": [
+        {
+          "cid10": "J44",
+          "descricao": "DPOC",
+          "desde": "2013-07-19"
+        }
+      ],
+      "alergias": [],
+      "medicacoes": [
+        {
+          "principio_ativo": "Prednisona",
+          "dose": "40 mg",
+          "via": "VO",
+          "frequencia": "1x/dia",
+          "inicio": "2026-08-22",
+          "ativa": true,
+          "prescritor": "Dr. Felipe Farias - CRM/PR 000000"
+        },
+        {
+          "principio_ativo": "Salbutamol",
+          "dose": "100 mcg",
+          "via": "IN",
+          "frequencia": "4x/dia",
+          "inicio": "2026-08-22",
+          "ativa": true,
+          "prescritor": "Dr. Felipe Farias - CRM/PR 000000"
+        },
+        {
+          "principio_ativo": "Brometo de ipratropio",
+          "dose": "20 mcg",
+          "via": "IN",
+          "frequencia": "4x/dia",
+          "inicio": "2026-08-22",
+          "ativa": true,
+          "prescritor": "Dr. Felipe Farias - CRM/PR 000000"
+        }
+      ],
+      "exames": [
+        {
+          "nome": "Gasometria arterial",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-22",
+          "resultado_em": null,
+          "status": "pendente",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": null
+        },
+        {
+          "nome": "Radiografia de torax",
+          "categoria": "Imagem",
+          "solicitado_em": "2026-08-22",
+          "resultado_em": "2026-08-22",
+          "status": "resultado",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": "Sinais cronicos de hiperinsuflacao, sem consolidacao aguda."
+        },
+        {
+          "nome": "Hemograma completo",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-22",
+          "resultado_em": "2026-08-22",
+          "status": "resultado",
+          "valor": 9600,
+          "unidade": "/mm3",
+          "ref_min": 4000,
+          "ref_max": 11000,
+          "critico": false,
+          "laudo": "Dentro da normalidade."
+        }
+      ],
+      "sinais_vitais": [
+        {
+          "aferido_em": "2026-08-22T09:00:00",
+          "pas": 128,
+          "pad": 80,
+          "fc": 96,
+          "fr": 24,
+          "temp": 36.8,
+          "sato2": 91,
+          "glasgow": 15
+        },
+        {
+          "aferido_em": "2026-08-22T17:00:00",
+          "pas": 124,
+          "pad": 78,
+          "fc": 88,
+          "fr": 20,
+          "temp": 36.6,
+          "sato2": 93,
+          "glasgow": 15
+        }
+      ],
+      "evolucoes": [
+        {
+          "data": "2026-08-22",
+          "autor": "Dr. Felipe Farias",
+          "especialidade": "Pneumologia",
+          "texto": "Exacerbacao de DPOC sem sinais de infeccao. Iniciado corticoide sistemico e otimizado esquema broncodilatador, aguardando gasometria de controle."
+        }
+      ]
+    },
+    {
+      "id": "PAC-0033",
+      "prontuario": "PRT-10033",
+      "nome": "Geraldo Teixeira Barbosa",
+      "cpf": "000.000.000-00",
+      "data_nascimento": "1967-08-01",
+      "sexo": "M",
+      "peso_kg": 72.0,
+      "altura_cm": 172,
+      "convenio": "SUS",
+      "setor": "UTI",
+      "leito": "UTI-10",
+      "data_internacao": "2026-08-19",
+      "gestante": false,
+      "telefone": "(00) 00000-0000",
+      "email": "paciente.ficticio@exemplo.invalido",
+      "observacoes": "Hemorragia digestiva alta por ulcera peptica, com melena volumosa e queda importante do nivel de hemoglobina, hemodinamicamente instavel a admissao.",
+      "comorbidades": [
+        {
+          "cid10": "K27",
+          "descricao": "Ulcera peptica",
+          "desde": "2019-01-01"
+        },
+        {
+          "cid10": "I10",
+          "descricao": "Hipertensao arterial sistemica",
+          "desde": "2010-01-01"
+        }
+      ],
+      "alergias": [],
+      "medicacoes": [
+        {
+          "principio_ativo": "Omeprazol",
+          "dose": "80 mg ataque + 8 mg/h",
+          "via": "EV",
+          "frequencia": "continuo",
+          "inicio": "2026-08-19",
+          "ativa": true,
+          "prescritor": "Dr. Rafael Menezes - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Concentrado de hemacias",
+          "dose": "1 unidade",
+          "via": "EV",
+          "frequencia": "conforme necessidade",
+          "inicio": "2026-08-19",
+          "ativa": true,
+          "prescritor": "Dr. Rafael Menezes - CRM/SP 000000"
+        }
+      ],
+      "exames": [
+        {
+          "nome": "Hemoglobina",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-19",
+          "resultado_em": "2026-08-19",
+          "status": "resultado",
+          "valor": 6.1,
+          "unidade": "g/dL",
+          "ref_min": 13.0,
+          "ref_max": 17.0,
+          "critico": true,
+          "laudo": "Anemia grave por sangramento agudo, indicacao de transfusao."
+        },
+        {
+          "nome": "Endoscopia digestiva alta",
+          "categoria": "Endoscopia",
+          "solicitado_em": "2026-08-19",
+          "resultado_em": null,
+          "status": "coletado",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": null
+        },
+        {
+          "nome": "Ureia",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-19",
+          "resultado_em": "2026-08-19",
+          "status": "resultado",
+          "valor": 82,
+          "unidade": "mg/dL",
+          "ref_min": 15,
+          "ref_max": 45,
+          "critico": false,
+          "laudo": "Elevada, compativel com sangramento digestivo alto."
+        }
+      ],
+      "sinais_vitais": [
+        {
+          "aferido_em": "2026-08-19T04:00:00",
+          "pas": 88,
+          "pad": 54,
+          "fc": 118,
+          "fr": 24,
+          "temp": 36.2,
+          "sato2": 94,
+          "glasgow": 14
+        },
+        {
+          "aferido_em": "2026-08-19T16:00:00",
+          "pas": 104,
+          "pad": 66,
+          "fc": 98,
+          "fr": 20,
+          "temp": 36.5,
+          "sato2": 96,
+          "glasgow": 15
+        },
+        {
+          "aferido_em": "2026-08-20T04:00:00",
+          "pas": 116,
+          "pad": 74,
+          "fc": 84,
+          "fr": 18,
+          "temp": 36.6,
+          "sato2": 97,
+          "glasgow": 15
+        }
+      ],
+      "evolucoes": [
+        {
+          "data": "2026-08-19",
+          "autor": "Dr. Rafael Menezes",
+          "especialidade": "UTI",
+          "texto": "HDA por ulcera peptica com instabilidade hemodinamica inicial. Iniciada reposicao volemica, transfusao de concentrado de hemacias e inibidor de bomba de protons em infusao continua, aguardando endoscopia terapeutica."
+        },
+        {
+          "data": "2026-08-20",
+          "autor": "Dra. Beatriz Cardoso",
+          "especialidade": "UTI",
+          "texto": "Estabilizacao hemodinamica apos transfusao. Endoscopia realizada com hemostasia endoscopica de lesao ulcerosa duodenal."
+        }
+      ]
+    },
+    {
+      "id": "PAC-0034",
+      "prontuario": "PRT-10034",
+      "nome": "Conceicao Aparecida Farias",
+      "cpf": "000.000.000-00",
+      "data_nascimento": "1950-04-28",
+      "sexo": "F",
+      "peso_kg": 58.0,
+      "altura_cm": 154,
+      "convenio": "Particular",
+      "setor": "UTI",
+      "leito": "UTI-12",
+      "data_internacao": "2026-08-21",
+      "gestante": false,
+      "telefone": "(00) 00000-0000",
+      "email": "paciente.ficticio@exemplo.invalido",
+      "observacoes": "Hemorragia digestiva alta por provavel ruptura de varizes esofagicas em paciente cirrotica, com hematemese volumosa.",
+      "comorbidades": [
+        {
+          "cid10": "K74",
+          "descricao": "Cirrose hepatica",
+          "desde": "2016-05-14"
+        },
+        {
+          "cid10": "K76",
+          "descricao": "Hipertensao portal",
+          "desde": "2018-02-01"
+        }
+      ],
+      "alergias": [],
+      "medicacoes": [
+        {
+          "principio_ativo": "Terlipressina",
+          "dose": "1 mg",
+          "via": "EV",
+          "frequencia": "4x4h",
+          "inicio": "2026-08-21",
+          "ativa": true,
+          "prescritor": "Dra. Beatriz Cardoso - CRM/RJ 000000"
+        },
+        {
+          "principio_ativo": "Ceftriaxona",
+          "dose": "1 g",
+          "via": "EV",
+          "frequencia": "1x/dia",
+          "inicio": "2026-08-21",
+          "ativa": true,
+          "prescritor": "Dra. Beatriz Cardoso - CRM/RJ 000000"
+        },
+        {
+          "principio_ativo": "Omeprazol",
+          "dose": "80 mg ataque + 8 mg/h",
+          "via": "EV",
+          "frequencia": "continuo",
+          "inicio": "2026-08-21",
+          "ativa": true,
+          "prescritor": "Dra. Beatriz Cardoso - CRM/RJ 000000"
+        }
+      ],
+      "exames": [
+        {
+          "nome": "Hemoglobina",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-21",
+          "resultado_em": "2026-08-21",
+          "status": "resultado",
+          "valor": 7.0,
+          "unidade": "g/dL",
+          "ref_min": 12.0,
+          "ref_max": 15.5,
+          "critico": true,
+          "laudo": "Anemia grave por sangramento digestivo agudo."
+        },
+        {
+          "nome": "INR",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-21",
+          "resultado_em": "2026-08-21",
+          "status": "resultado",
+          "valor": 2.1,
+          "unidade": "razao",
+          "ref_min": 0.8,
+          "ref_max": 1.2,
+          "critico": false,
+          "laudo": "Elevado, compativel com coagulopatia da hepatopatia."
+        },
+        {
+          "nome": "Endoscopia digestiva alta",
+          "categoria": "Endoscopia",
+          "solicitado_em": "2026-08-21",
+          "resultado_em": null,
+          "status": "pendente",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": null
+        }
+      ],
+      "sinais_vitais": [
+        {
+          "aferido_em": "2026-08-21T05:00:00",
+          "pas": 84,
+          "pad": 52,
+          "fc": 122,
+          "fr": 26,
+          "temp": 36.0,
+          "sato2": 93,
+          "glasgow": 13
+        },
+        {
+          "aferido_em": "2026-08-21T17:00:00",
+          "pas": 98,
+          "pad": 62,
+          "fc": 104,
+          "fr": 22,
+          "temp": 36.4,
+          "sato2": 95,
+          "glasgow": 15
+        }
+      ],
+      "evolucoes": [
+        {
+          "data": "2026-08-21",
+          "autor": "Dra. Beatriz Cardoso",
+          "especialidade": "UTI",
+          "texto": "HDA varicosa em paciente cirrotica. Iniciada terlipressina, antibioticoprofilaxia e suporte transfusional, aguardando endoscopia para ligadura elastica das varizes."
+        }
+      ]
+    },
+    {
+      "id": "PAC-0035",
+      "prontuario": "PRT-10035",
+      "nome": "Nair Souza Ramos",
+      "cpf": "000.000.000-00",
+      "data_nascimento": "1936-01-06",
+      "sexo": "F",
+      "peso_kg": 52.0,
+      "altura_cm": 149,
+      "convenio": "SUS",
+      "setor": "Clínica Médica",
+      "leito": "3B-28",
+      "data_internacao": "2026-08-20",
+      "gestante": false,
+      "telefone": "(00) 00000-0000",
+      "email": "paciente.ficticio@exemplo.invalido",
+      "observacoes": "Delirium hipoativo em paciente idosa internada por infeccao urinaria, com flutuacao do nivel de consciencia e sonolencia excessiva.",
+      "comorbidades": [
+        {
+          "cid10": "N39",
+          "descricao": "Infeccao do trato urinario de repeticao",
+          "desde": "2018-01-01"
+        },
+        {
+          "cid10": "F03",
+          "descricao": "Demencia nao especificada",
+          "desde": "2020-06-10"
+        }
+      ],
+      "alergias": [],
+      "medicacoes": [
+        {
+          "principio_ativo": "Ceftriaxona",
+          "dose": "1 g",
+          "via": "EV",
+          "frequencia": "1x/dia",
+          "inicio": "2026-08-20",
+          "ativa": true,
+          "prescritor": "Dr. Andre Teles - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Quetiapina",
+          "dose": "12,5 mg",
+          "via": "VO",
+          "frequencia": "a noite",
+          "inicio": "2026-08-20",
+          "ativa": true,
+          "prescritor": "Dr. Andre Teles - CRM/SP 000000"
+        }
+      ],
+      "exames": [
+        {
+          "nome": "Sumario de urina (EAS)",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-20",
+          "resultado_em": "2026-08-20",
+          "status": "resultado",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": "Piocitos presentes, compativel com ITU."
+        },
+        {
+          "nome": "Creatinina",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-20",
+          "resultado_em": "2026-08-20",
+          "status": "resultado",
+          "valor": 1.5,
+          "unidade": "mg/dL",
+          "ref_min": 0.6,
+          "ref_max": 1.1,
+          "critico": false,
+          "laudo": "Elevada para a idade."
+        },
+        {
+          "nome": "Sodio",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-20",
+          "resultado_em": "2026-08-20",
+          "status": "resultado",
+          "valor": 129,
+          "unidade": "mEq/L",
+          "ref_min": 135,
+          "ref_max": 145,
+          "critico": false,
+          "laudo": "Hiponatremia, possivel fator contribuinte para o delirium."
+        }
+      ],
+      "sinais_vitais": [
+        {
+          "aferido_em": "2026-08-20T07:00:00",
+          "pas": 118,
+          "pad": 72,
+          "fc": 88,
+          "fr": 18,
+          "temp": 37.4,
+          "sato2": 95,
+          "glasgow": 13
+        },
+        {
+          "aferido_em": "2026-08-21T07:00:00",
+          "pas": 114,
+          "pad": 70,
+          "fc": 82,
+          "fr": 16,
+          "temp": 36.8,
+          "sato2": 96,
+          "glasgow": 14
+        }
+      ],
+      "evolucoes": [
+        {
+          "data": "2026-08-20",
+          "autor": "Dr. Andre Teles",
+          "especialidade": "Clínica Médica",
+          "texto": "Delirium hipoativo com flutuacao do nivel de consciencia em contexto de ITU e hiponatremia. Iniciadas medidas nao farmacologicas de reorientacao, corrigido sodio e tratada infeccao de base."
+        }
+      ]
+    },
+    {
+      "id": "PAC-0036",
+      "prontuario": "PRT-10036",
+      "nome": "Ademir Costa Barbosa",
+      "cpf": "000.000.000-00",
+      "data_nascimento": "1950-11-11",
+      "sexo": "M",
+      "peso_kg": 74.0,
+      "altura_cm": 173,
+      "convenio": "Particular",
+      "setor": "Clínica Médica",
+      "leito": "3B-30",
+      "data_internacao": "2026-08-21",
+      "gestante": false,
+      "telefone": "(00) 00000-0000",
+      "email": "paciente.ficticio@exemplo.invalido",
+      "observacoes": "Delirium hiperativo no pos-operatorio de cirurgia ortopedica, com agitacao psicomotora e desorientacao temporoespacial.",
+      "comorbidades": [
+        {
+          "cid10": "I10",
+          "descricao": "Hipertensao arterial sistemica",
+          "desde": "2009-01-01"
+        }
+      ],
+      "alergias": [],
+      "medicacoes": [
+        {
+          "principio_ativo": "Haloperidol",
+          "dose": "2,5 mg",
+          "via": "EV",
+          "frequencia": "se necessario",
+          "inicio": "2026-08-21",
+          "ativa": true,
+          "prescritor": "Dr. Andre Teles - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Dipirona",
+          "dose": "1 g",
+          "via": "EV",
+          "frequencia": "se necessario",
+          "inicio": "2026-08-21",
+          "ativa": true,
+          "prescritor": "Dr. Andre Teles - CRM/SP 000000"
+        }
+      ],
+      "exames": [
+        {
+          "nome": "Sodio",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-21",
+          "resultado_em": "2026-08-21",
+          "status": "resultado",
+          "valor": 137,
+          "unidade": "mEq/L",
+          "ref_min": 135,
+          "ref_max": 145,
+          "critico": false,
+          "laudo": "Dentro da normalidade."
+        },
+        {
+          "nome": "Glicemia capilar",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-21",
+          "resultado_em": "2026-08-21",
+          "status": "resultado",
+          "valor": 104,
+          "unidade": "mg/dL",
+          "ref_min": 70,
+          "ref_max": 99,
+          "critico": false,
+          "laudo": "Discretamente elevada."
+        },
+        {
+          "nome": "Tomografia de cranio",
+          "categoria": "Imagem",
+          "solicitado_em": "2026-08-21",
+          "resultado_em": "2026-08-22",
+          "status": "resultado",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": "Sem alteracoes agudas."
+        }
+      ],
+      "sinais_vitais": [
+        {
+          "aferido_em": "2026-08-21T09:00:00",
+          "pas": 142,
+          "pad": 88,
+          "fc": 102,
+          "fr": 20,
+          "temp": 37.1,
+          "sato2": 96,
+          "glasgow": 14
+        },
+        {
+          "aferido_em": "2026-08-22T09:00:00",
+          "pas": 130,
+          "pad": 82,
+          "fc": 90,
+          "fr": 18,
+          "temp": 36.7,
+          "sato2": 97,
+          "glasgow": 14
+        }
+      ],
+      "evolucoes": [
+        {
+          "data": "2026-08-21",
+          "autor": "Dr. Andre Teles",
+          "especialidade": "Clínica Médica",
+          "texto": "Delirium hiperativo pos-operatorio. Priorizadas medidas nao farmacologicas, uso pontual de haloperidol para controle de agitacao, investigacao de causas organicas em andamento."
+        }
+      ]
+    },
+    {
+      "id": "PAC-0037",
+      "prontuario": "PRT-10037",
+      "nome": "Valdir Gomes Nunes",
+      "cpf": "000.000.000-00",
+      "data_nascimento": "1958-07-20",
+      "sexo": "M",
+      "peso_kg": 80.0,
+      "altura_cm": 174,
+      "convenio": "SUS",
+      "setor": "Nefrologia",
+      "leito": "6E-01",
+      "data_internacao": "2026-08-19",
+      "gestante": false,
+      "telefone": "(00) 00000-0000",
+      "email": "paciente.ficticio@exemplo.invalido",
+      "observacoes": "Lesao renal aguda pre-renal por desidratacao grave, associada a quadro de gastroenterite com vomitos e diarreia intensos.",
+      "comorbidades": [
+        {
+          "cid10": "I10",
+          "descricao": "Hipertensao arterial sistemica",
+          "desde": "2011-01-01"
+        },
+        {
+          "cid10": "N18",
+          "descricao": "Doenca renal cronica estagio 2",
+          "desde": "2020-03-01"
+        }
+      ],
+      "alergias": [
+        {
+          "substancia": "Contraste iodado",
+          "classe": "Meio de contraste",
+          "gravidade": "grave",
+          "reacao": "Nefrotoxicidade previa e broncoespasmo"
+        }
+      ],
+      "medicacoes": [
+        {
+          "principio_ativo": "Solucao fisiologica 0,9%",
+          "dose": "1000 mL",
+          "via": "EV",
+          "frequencia": "conforme protocolo",
+          "inicio": "2026-08-19",
+          "ativa": true,
+          "prescritor": "Dra. Patricia Correia - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Ondansetrona",
+          "dose": "8 mg",
+          "via": "EV",
+          "frequencia": "3x/dia",
+          "inicio": "2026-08-19",
+          "ativa": true,
+          "prescritor": "Dra. Patricia Correia - CRM/SP 000000"
+        }
+      ],
+      "exames": [
+        {
+          "nome": "Creatinina",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-19",
+          "resultado_em": "2026-08-19",
+          "status": "resultado",
+          "valor": 3.9,
+          "unidade": "mg/dL",
+          "ref_min": 0.7,
+          "ref_max": 1.3,
+          "critico": true,
+          "laudo": "Lesao renal aguda grave, necessita monitorizacao intensiva e possivel terapia dialitica."
+        },
+        {
+          "nome": "Potassio",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-19",
+          "resultado_em": "2026-08-19",
+          "status": "resultado",
+          "valor": 5.8,
+          "unidade": "mEq/L",
+          "ref_min": 3.5,
+          "ref_max": 5.0,
+          "critico": false,
+          "laudo": "Elevado, atencao ao risco de arritmia."
+        },
+        {
+          "nome": "Ureia",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-19",
+          "resultado_em": "2026-08-19",
+          "status": "resultado",
+          "valor": 145,
+          "unidade": "mg/dL",
+          "ref_min": 15,
+          "ref_max": 45,
+          "critico": false,
+          "laudo": "Muito elevada."
+        },
+        {
+          "nome": "Ultrassonografia de rins e vias urinarias",
+          "categoria": "Imagem",
+          "solicitado_em": "2026-08-19",
+          "resultado_em": "2026-08-20",
+          "status": "resultado",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": "Rins de dimensoes normais, sem sinais de obstrucao."
+        }
+      ],
+      "sinais_vitais": [
+        {
+          "aferido_em": "2026-08-19T08:00:00",
+          "pas": 96,
+          "pad": 60,
+          "fc": 108,
+          "fr": 20,
+          "temp": 36.4,
+          "sato2": 95,
+          "glasgow": 15
+        },
+        {
+          "aferido_em": "2026-08-20T08:00:00",
+          "pas": 108,
+          "pad": 68,
+          "fc": 92,
+          "fr": 18,
+          "temp": 36.6,
+          "sato2": 96,
+          "glasgow": 15
+        }
+      ],
+      "evolucoes": [
+        {
+          "data": "2026-08-19",
+          "autor": "Dra. Patricia Correia",
+          "especialidade": "Nefrologia",
+          "texto": "LRA pre-renal grave por desidratacao. Iniciada hidratacao venosa vigorosa e monitorizacao rigorosa de diurese e eletrolitos, avaliando necessidade de terapia renal substitutiva."
+        }
+      ]
+    },
+    {
+      "id": "PAC-0038",
+      "prontuario": "PRT-10038",
+      "nome": "Eliane Ramos Correia",
+      "cpf": "000.000.000-00",
+      "data_nascimento": "1953-02-02",
+      "sexo": "F",
+      "peso_kg": 70.0,
+      "altura_cm": 158,
+      "convenio": "Particular",
+      "setor": "Nefrologia",
+      "leito": "6E-04",
+      "data_internacao": "2026-08-22",
+      "gestante": false,
+      "telefone": "(00) 00000-0000",
+      "email": "paciente.ficticio@exemplo.invalido",
+      "observacoes": "Lesao renal aguda associada ao uso continuo de anti-inflamatorio nao esteroidal para dor lombar cronica, evoluindo com hipercalemia importante.",
+      "comorbidades": [
+        {
+          "cid10": "I10",
+          "descricao": "Hipertensao arterial sistemica",
+          "desde": "2007-01-01"
+        },
+        {
+          "cid10": "E11",
+          "descricao": "Diabetes mellitus tipo 2",
+          "desde": "2015-04-11"
+        }
+      ],
+      "alergias": [],
+      "medicacoes": [
+        {
+          "principio_ativo": "Gluconato de calcio",
+          "dose": "10 mL",
+          "via": "EV",
+          "frequencia": "dose unica",
+          "inicio": "2026-08-22",
+          "ativa": true,
+          "prescritor": "Dra. Patricia Correia - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Solucao polarizante (glicoinsulinica)",
+          "dose": "conforme protocolo",
+          "via": "EV",
+          "frequencia": "dose unica",
+          "inicio": "2026-08-22",
+          "ativa": true,
+          "prescritor": "Dra. Patricia Correia - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Furosemida",
+          "dose": "40 mg",
+          "via": "EV",
+          "frequencia": "1x/dia",
+          "inicio": "2026-08-22",
+          "ativa": true,
+          "prescritor": "Dra. Patricia Correia - CRM/SP 000000"
+        }
+      ],
+      "exames": [
+        {
+          "nome": "Potassio",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-22",
+          "resultado_em": "2026-08-22",
+          "status": "resultado",
+          "valor": 6.8,
+          "unidade": "mEq/L",
+          "ref_min": 3.5,
+          "ref_max": 5.0,
+          "critico": true,
+          "laudo": "Hipercalemia grave, risco iminente de arritmia cardiaca."
+        },
+        {
+          "nome": "Creatinina",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-22",
+          "resultado_em": "2026-08-22",
+          "status": "resultado",
+          "valor": 2.6,
+          "unidade": "mg/dL",
+          "ref_min": 0.6,
+          "ref_max": 1.2,
+          "critico": false,
+          "laudo": "Elevada, compativel com nefrotoxicidade por AINE."
+        },
+        {
+          "nome": "Eletrocardiograma",
+          "categoria": "Cardiologia",
+          "solicitado_em": "2026-08-22",
+          "resultado_em": "2026-08-22",
+          "status": "resultado",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": "Ondas T apiculadas, compativel com hipercalemia."
+        }
+      ],
+      "sinais_vitais": [
+        {
+          "aferido_em": "2026-08-22T06:00:00",
+          "pas": 148,
+          "pad": 90,
+          "fc": 96,
+          "fr": 20,
+          "temp": 36.5,
+          "sato2": 96,
+          "glasgow": 15
+        },
+        {
+          "aferido_em": "2026-08-22T14:00:00",
+          "pas": 138,
+          "pad": 84,
+          "fc": 84,
+          "fr": 18,
+          "temp": 36.5,
+          "sato2": 97,
+          "glasgow": 15
+        }
+      ],
+      "evolucoes": [
+        {
+          "data": "2026-08-22",
+          "autor": "Dra. Patricia Correia",
+          "especialidade": "Nefrologia",
+          "texto": "LRA por nefrotoxicidade de AINE com hipercalemia grave. Iniciadas medidas de estabilizacao de membrana e deslocamento de potassio para o intracelular, suspenso o anti-inflamatorio."
+        }
+      ]
+    },
+    {
+      "id": "PAC-0039",
+      "prontuario": "PRT-10039",
+      "nome": "Sergio Alves Moreira",
+      "cpf": "000.000.000-00",
+      "data_nascimento": "1949-08-19",
+      "sexo": "M",
+      "peso_kg": 82.0,
+      "altura_cm": 175,
+      "convenio": "SUS",
+      "setor": "Cardiologia",
+      "leito": "2A-18",
+      "data_internacao": "2026-08-18",
+      "gestante": false,
+      "telefone": "(00) 00000-0000",
+      "email": "paciente.ficticio@exemplo.invalido",
+      "observacoes": "Paciente em uso cronico de varfarina por fibrilacao atrial, admitido com INR muito elevado apos inicio recente de amiodarona, sem sangramento ativo evidente.",
+      "comorbidades": [
+        {
+          "cid10": "I48",
+          "descricao": "Fibrilacao atrial",
+          "desde": "2015-02-01"
+        },
+        {
+          "cid10": "I10",
+          "descricao": "Hipertensao arterial sistemica",
+          "desde": "2005-01-01"
+        }
+      ],
+      "alergias": [
+        {
+          "substancia": "Penicilina",
+          "classe": "Betalactâmico",
+          "gravidade": "grave",
+          "reacao": "Anafilaxia"
+        }
+      ],
+      "medicacoes": [
+        {
+          "principio_ativo": "Varfarina",
+          "dose": "5 mg",
+          "via": "VO",
+          "frequencia": "1x/dia",
+          "inicio": "2026-08-10",
+          "ativa": true,
+          "prescritor": "Dr. Marcelo Nogueira - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Amiodarona",
+          "dose": "200 mg",
+          "via": "VO",
+          "frequencia": "1x/dia",
+          "inicio": "2026-08-15",
+          "ativa": true,
+          "prescritor": "Dr. Marcelo Nogueira - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Vitamina K",
+          "dose": "10 mg",
+          "via": "VO",
+          "frequencia": "dose unica",
+          "inicio": "2026-08-18",
+          "ativa": true,
+          "prescritor": "Dr. Marcelo Nogueira - CRM/SP 000000"
+        }
+      ],
+      "exames": [
+        {
+          "nome": "INR",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-18",
+          "resultado_em": "2026-08-18",
+          "status": "resultado",
+          "valor": 6.2,
+          "unidade": "razao",
+          "ref_min": 2.0,
+          "ref_max": 3.0,
+          "critico": true,
+          "laudo": "INR muito acima da faixa terapeutica, alto risco hemorragico. Possivel interacao entre varfarina e amiodarona introduzida recentemente."
+        },
+        {
+          "nome": "Hemoglobina",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-18",
+          "resultado_em": "2026-08-18",
+          "status": "resultado",
+          "valor": 13.8,
+          "unidade": "g/dL",
+          "ref_min": 13.0,
+          "ref_max": 17.0,
+          "critico": false,
+          "laudo": "Dentro da normalidade, sem sinais de sangramento ativo."
+        },
+        {
+          "nome": "Pesquisa de sangue oculto nas fezes",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-18",
+          "resultado_em": null,
+          "status": "pendente",
+          "valor": null,
+          "unidade": null,
+          "ref_min": null,
+          "ref_max": null,
+          "critico": false,
+          "laudo": null
+        }
+      ],
+      "sinais_vitais": [
+        {
+          "aferido_em": "2026-08-18T09:00:00",
+          "pas": 128,
+          "pad": 80,
+          "fc": 78,
+          "fr": 16,
+          "temp": 36.4,
+          "sato2": 97,
+          "glasgow": 15
+        },
+        {
+          "aferido_em": "2026-08-19T09:00:00",
+          "pas": 124,
+          "pad": 76,
+          "fc": 74,
+          "fr": 16,
+          "temp": 36.3,
+          "sato2": 98,
+          "glasgow": 15
+        }
+      ],
+      "evolucoes": [
+        {
+          "data": "2026-08-18",
+          "autor": "Dr. Marcelo Nogueira",
+          "especialidade": "Cardiologia",
+          "texto": "INR muito elevado por provavel interacao entre varfarina e amiodarona recentemente introduzida. Suspensa varfarina temporariamente e administrada vitamina K, sem evidencia de sangramento ativo ate o momento."
+        }
+      ]
+    },
+    {
+      "id": "PAC-0040",
+      "prontuario": "PRT-10040",
+      "nome": "Silvana Aparecida Dias",
+      "cpf": "000.000.000-00",
+      "data_nascimento": "1945-10-05",
+      "sexo": "F",
+      "peso_kg": 64.0,
+      "altura_cm": 157,
+      "convenio": "Particular",
+      "setor": "Cardiologia",
+      "leito": "2A-20",
+      "data_internacao": "2026-08-19",
+      "gestante": false,
+      "telefone": "(00) 00000-0000",
+      "email": "paciente.ficticio@exemplo.invalido",
+      "observacoes": "Paciente em anticoagulacao oral cronica por TVP previa, internada apos uso recente de anti-inflamatorio para dor articular, com hematomas espontaneos.",
+      "comorbidades": [
+        {
+          "cid10": "I82",
+          "descricao": "Trombose venosa profunda previa",
+          "desde": "2022-05-30"
+        },
+        {
+          "cid10": "I10",
+          "descricao": "Hipertensao arterial sistemica",
+          "desde": "2010-01-01"
+        }
+      ],
+      "alergias": [
+        {
+          "substancia": "AAS",
+          "classe": "Anti-inflamatorio/antiagregante",
+          "gravidade": "moderada",
+          "reacao": "Dispepsia importante e sangramento digestivo previo"
+        }
+      ],
+      "medicacoes": [
+        {
+          "principio_ativo": "Varfarina",
+          "dose": "5 mg",
+          "via": "VO",
+          "frequencia": "1x/dia",
+          "inicio": "2026-08-01",
+          "ativa": true,
+          "prescritor": "Dra. Camila Andrade - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Diclofenaco",
+          "dose": "50 mg",
+          "via": "VO",
+          "frequencia": "2x/dia",
+          "inicio": "2026-08-16",
+          "ativa": false,
+          "prescritor": "Dra. Camila Andrade - CRM/SP 000000"
+        },
+        {
+          "principio_ativo": "Omeprazol",
+          "dose": "20 mg",
+          "via": "VO",
+          "frequencia": "1x/dia",
+          "inicio": "2026-08-19",
+          "ativa": true,
+          "prescritor": "Dra. Camila Andrade - CRM/SP 000000"
+        }
+      ],
+      "exames": [
+        {
+          "nome": "INR",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-19",
+          "resultado_em": "2026-08-19",
+          "status": "resultado",
+          "valor": 4.8,
+          "unidade": "razao",
+          "ref_min": 2.0,
+          "ref_max": 3.0,
+          "critico": false,
+          "laudo": "Elevado, possivel potencializacao do efeito da varfarina pelo uso concomitante de AINE."
+        },
+        {
+          "nome": "Hemoglobina",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-19",
+          "resultado_em": "2026-08-19",
+          "status": "resultado",
+          "valor": 11.2,
+          "unidade": "g/dL",
+          "ref_min": 12.0,
+          "ref_max": 15.5,
+          "critico": false,
+          "laudo": "Discretamente reduzida."
+        },
+        {
+          "nome": "Creatinina",
+          "categoria": "Laboratorial",
+          "solicitado_em": "2026-08-19",
+          "resultado_em": "2026-08-19",
+          "status": "resultado",
+          "valor": 1.1,
+          "unidade": "mg/dL",
+          "ref_min": 0.6,
+          "ref_max": 1.2,
+          "critico": false,
+          "laudo": "Dentro da normalidade."
+        }
+      ],
+      "sinais_vitais": [
+        {
+          "aferido_em": "2026-08-19T10:00:00",
+          "pas": 134,
+          "pad": 82,
+          "fc": 80,
+          "fr": 18,
+          "temp": 36.5,
+          "sato2": 97,
+          "glasgow": 15
+        },
+        {
+          "aferido_em": "2026-08-20T10:00:00",
+          "pas": 128,
+          "pad": 78,
+          "fc": 76,
+          "fr": 16,
+          "temp": 36.4,
+          "sato2": 97,
+          "glasgow": 15
+        }
+      ],
+      "evolucoes": [
+        {
+          "data": "2026-08-19",
+          "autor": "Dra. Camila Andrade",
+          "especialidade": "Cardiologia",
+          "texto": "INR elevado associado ao uso concomitante de diclofenaco e varfarina, com hematomas espontaneos. Suspenso o anti-inflamatorio e orientado retorno ao uso isolado de anticoagulante, com reavaliacao seriada do INR."
+        }
+      ]
+    }
+  ]
+}

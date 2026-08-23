@@ -31,14 +31,36 @@ dist/
 htmlcov/
 
 # Dados pesados --------------------------------------------------------------
-# O PubMedQA e baixado por script (src/medgraph/dados/baixar_pubmedqa.py),
-# nao faz sentido versionar centenas de MB de JSON.
+# O PubMedQA bruto e baixado por script (src/medgraph/dados/baixar_pubmedqa.py):
+# 735 MB de JSON nao entram no repositorio.
 data/raw/
-data/processed/
 data/indices/
 data/sintetico/prontuarios.sqlite
 *.faiss
 *.pkl
+
+# Os arquivos DERIVADOS ficam ignorados por padrao...
+data/processed/*
+
+# ...com excecao dos que precisam viajar com o projeto:
+#
+#   sft_train / sft_valid   sao o insumo do notebook do Colab. Versionando-os,
+#                           treinar o modelo e um `git clone` - o professor
+#                           reproduz o fine-tuning sem refazer o pipeline de
+#                           dados nem baixar 735 MB.
+#   pubmedqa_teste          e a base de TODA a avaliacao da Etapa 4. Sem ele no
+#                           repositorio, os numeros do relatorio nao seriam
+#                           conferiveis.
+#   pubmedqa_treino/valid   sao pequenos e completam o rastro da divisao.
+#   relatorio_*             sao a evidencia documental da curadoria.
+!data/processed/sft_train.jsonl
+!data/processed/sft_valid.jsonl
+!data/processed/pubmedqa_teste.jsonl
+!data/processed/pubmedqa_treino.jsonl
+!data/processed/pubmedqa_validacao.jsonl
+!data/processed/relatorio_curadoria.json
+!data/processed/relatorio_sft.json
+!data/processed/resumo_etapa1.json
 
 # Modelos --------------------------------------------------------------------
 # O adapter LoRA (~50 MB) E versionado em models/adapters/ porque e o

@@ -13,7 +13,7 @@ ao ponto exato do código onde ela é atendida. As referências vêm das tags
 | --- | --- |
 | **Com implementação identificada** | **9** |
 | Ainda sem implementação | 4 |
-| Total de referências no código | 59 |
+| Total de referências no código | 80 |
 
 ### Requisitos ainda sem cobertura
 
@@ -37,7 +37,12 @@ São itens previstos para etapas seguintes do projeto.
 | Arquivo | Linha | Contexto |
 | --- | ---: | --- |
 | `src/medgraph/__init__.py` | 20 | finetune/         preparo do dataset e notebooks do Colab     [REQ-1] |
+| `src/medgraph/dados/baixar_pubmedqa.py` | 2 | [REQ-1][REQ-E2] Download do PubMedQA. |
 | `src/medgraph/finetune/__init__.py` | 1 | """[REQ-1] Preparo do dataset de fine-tuning e artefatos do treino no Colab.""" |
+| `src/medgraph/finetune/colab_utils.py` | 2 | [REQ-1] Utilidades do fine-tuning executado no Google Colab. |
+| `src/medgraph/finetune/preparar_dataset_sft.py` | 2 | [REQ-1] Montagem do dataset de fine-tuning supervisionado. |
+| `tests/test_dados.py` | 352 | DATASET DE FINE-TUNING  [REQ-1] |
+| `tests/test_dados.py` | 381 | """[REQ-1] Sem isso, "maybe" ficaria abaixo de 1% do dataset.""" |
 
 #### ✅ `REQ-1a` — Preparar os dados com tecnicas de preprocessing, anonimizacao e curadoria.
 
@@ -50,6 +55,11 @@ São itens previstos para etapas seguintes do projeto.
 | `src/medgraph/auditoria.py` | 97 | ANONIMIZACAO = "anonimizacao"  # PII removida                      [REQ-1a] |
 | `src/medgraph/auditoria.py` | 140 | Chamada uma vez no bootstrap, pelo modulo de anonimizacao. [REQ-1a] |
 | `src/medgraph/dados/__init__.py` | 1 | """[REQ-1a][REQ-E2] Aquisicao, anonimizacao e curadoria dos dados.""" |
+| `src/medgraph/dados/anonimizador.py` | 2 | [REQ-1a] Anonimizacao de dados pessoais e de saude. |
+| `src/medgraph/dados/anonimizador.py` | 453 | [REQ-1a][REQ-3b] Faz a trilha de auditoria passar por este modulo. |
+| `src/medgraph/dados/curadoria.py` | 2 | [REQ-1a] Curadoria e divisao do PubMedQA. |
+| `tests/test_dados.py` | 27 | ANONIMIZAÇÃO  [REQ-1a] |
+| `tests/test_dados.py` | 152 | CURADORIA  [REQ-1a] |
 | `tests/test_fundacao.py` | 422 | """[REQ-1a] Nenhum dado pessoal chega ao disco pela trilha.""" |
 
 ### Assistente LangChain
@@ -63,7 +73,9 @@ São itens previstos para etapas seguintes do projeto.
 | `src/medgraph/__init__.py` | 22 | llm/              provedores de modelo e controle de custo    [REQ-2] |
 | `src/medgraph/__init__.py` | 25 | chains/           pipelines LangChain                         [REQ-2] |
 | `src/medgraph/chains/__init__.py` | 1 | """[REQ-2] Pipelines LangChain: triagem, RAG e geracao de documentos.""" |
+| `src/medgraph/chains/prompts.py` | 2 | [REQ-2][REQ-3a][REQ-3c] Prompts do MedGraph. |
 | `src/medgraph/llm/__init__.py` | 1 | """[REQ-2] Provedores de modelo de linguagem e controle de consumo.""" |
+| `src/medgraph/llm/provider.py` | 2 | [REQ-2] Provedor de modelo de linguagem. |
 | `src/medgraph/rag/__init__.py` | 1 | """[REQ-2][REQ-3c] Indexacao vetorial e recuperacao de evidencia com fontes.""" |
 
 #### ✅ `REQ-2a` — Realizar consultas em base de dados estruturadas (como prontuarios e registros).
@@ -76,7 +88,9 @@ São itens previstos para etapas seguintes do projeto.
 | `scripts/demo_fundacao.py` | 88 | """Simula a leitura da base estruturada de pacientes. [REQ-2a]""" |
 | `src/medgraph/__init__.py` | 24 | prontuario/       acesso a base estruturada de pacientes      [REQ-2a] |
 | `src/medgraph/auditoria.py` | 100 | BANCO = "banco"                # consulta ao prontuario            [REQ-2a] |
+| `src/medgraph/dados/construir_banco.py` | 2 | [REQ-2a][REQ-E2] Construcao da base estruturada de prontuarios. |
 | `src/medgraph/prontuario/__init__.py` | 1 | """[REQ-2a][REQ-2b] Acesso a base estruturada de prontuarios do hospital.""" |
+| `tests/test_dados.py` | 266 | BASE DE PRONTUÁRIOS  [REQ-2a] |
 
 #### ✅ `REQ-2b` — Contextualizar as respostas da LLM com informacoes atualizadas do paciente.
 
@@ -98,12 +112,15 @@ São itens previstos para etapas seguintes do projeto.
 | `config/politicas.yaml` | 128 | [REQ-3a] Nenhuma posologia sai sem marcacao explicita de revisao humana. |
 | `config/settings.py` | 116 | 4) COMPORTAMENTO DO GRAFO  [REQ-3a] |
 | `config/settings.py` | 284 | """Regras declarativas de guardrail. [REQ-3a]""" |
+| `scripts/03_instalar_modelo.py` | 101 | PROMPT DE SISTEMA — limites de atuação do assistente  [REQ-3a] |
 | `scripts/demo_fundacao.py` | 75 | """Simula a verificacao de escopo e a anonimizacao da pergunta. [REQ-3a]""" |
 | `scripts/demo_fundacao.py` | 128 | """Simula a validacao da resposta antes da entrega. [REQ-3a][REQ-3c]""" |
 | `src/medgraph/__init__.py` | 26 | guardrails/       limites de atuacao do assistente            [REQ-3a] |
 | `src/medgraph/auditoria.py` | 96 | GUARDRAIL = "guardrail"        # aprovacao/reprovacao de politica  [REQ-3a] |
 | `src/medgraph/auditoria.py` | 103 | VALIDACAO_HUMANA = "validacao_humana"  # human-in-the-loop         [REQ-3a] |
+| `src/medgraph/chains/prompts.py` | 2 | [REQ-2][REQ-3a][REQ-3c] Prompts do MedGraph. |
 | `src/medgraph/guardrails/__init__.py` | 1 | """[REQ-3a] Limites de atuacao: guardrails de entrada, de saida e regras clinicas.""" |
+| `tests/test_dados.py` | 356 | """[REQ-3a] O limite mais importante precisa estar no prompt.""" |
 | `tests/test_fundacao.py` | 521 | POLITICAS  [REQ-3a] |
 | `tests/test_fundacao.py` | 557 | """[REQ-3a] O item mais sensivel do enunciado, verificado por teste.""" |
 
@@ -122,7 +139,10 @@ São itens previstos para etapas seguintes do projeto.
 | `src/medgraph/__init__.py` | 18 | auditoria.py      trilha de auditoria e trace por consulta    [REQ-3b] |
 | `src/medgraph/auditoria.py` | 2 | [REQ-3b] Trilha de auditoria do MedGraph. |
 | `src/medgraph/auditoria.py` | 513 | [REQ-3b] Decorator que audita automaticamente um no do grafo. |
+| `src/medgraph/dados/anonimizador.py` | 435 | """Publica o resumo da anonimizacao na trilha de auditoria. [REQ-3b]""" |
+| `src/medgraph/dados/anonimizador.py` | 453 | [REQ-1a][REQ-3b] Faz a trilha de auditoria passar por este modulo. |
 | `src/medgraph/llm/custo.py` | 2 | [REQ-3b] Contabilidade de consumo e trava de orcamento. |
+| `src/medgraph/llm/provider.py` | 78 | CALLBACK DE CUSTO  [REQ-3b] |
 | `src/medgraph/logging_config.py` | 2 | [REQ-3b] Configuracao de logging do MedGraph. |
 | `src/medgraph/requisitos.py` | 23 | Uma docstring que comeca com "[REQ-3b][REQ-3c]" significa que aquele |
 | `tests/test_fundacao.py` | 84 | """[REQ-3b] A configuracao vai para a auditoria; o segredo, nunca.""" |
@@ -142,6 +162,7 @@ São itens previstos para etapas seguintes do projeto.
 | `scripts/demo_fundacao.py` | 128 | """Simula a validacao da resposta antes da entrega. [REQ-3a][REQ-3c]""" |
 | `src/medgraph/__init__.py` | 23 | rag/              indice vetorial e recuperacao com fontes    [REQ-3c] |
 | `src/medgraph/auditoria.py` | 99 | RECUPERACAO = "recuperacao"    # busca no indice vetorial          [REQ-3c] |
+| `src/medgraph/chains/prompts.py` | 2 | [REQ-2][REQ-3a][REQ-3c] Prompts do MedGraph. |
 | `src/medgraph/rag/__init__.py` | 1 | """[REQ-2][REQ-3c] Indexacao vetorial e recuperacao de evidencia com fontes.""" |
 | `src/medgraph/requisitos.py` | 23 | Uma docstring que comeca com "[REQ-3b][REQ-3c]" significa que aquele |
 | `tests/test_fundacao.py` | 353 | requisito e explainability por citacao, isso e inaceitavel. [REQ-3c] |
