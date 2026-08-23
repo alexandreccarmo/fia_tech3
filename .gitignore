@@ -1,0 +1,68 @@
+# ---------------------------------------------------------------------------
+# MedGraph - Tech Challenge Fase 3 (8IADT)
+# Arquivos que NAO devem ir para o repositorio.
+# ---------------------------------------------------------------------------
+
+# Segredos -------------------------------------------------------------------
+# O .env guarda a OPENAI_API_KEY. Nunca deve ser versionado.
+# O arquivo .env.example (versionado) documenta as variaveis esperadas.
+.env
+.env.local
+*.key
+*.pem
+
+# Ambiente virtual Python ----------------------------------------------------
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# Ferramentas ----------------------------------------------------------------
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+.coverage
+htmlcov/
+
+# Dados pesados --------------------------------------------------------------
+# O PubMedQA e baixado por script (src/medgraph/dados/baixar_pubmedqa.py),
+# nao faz sentido versionar centenas de MB de JSON.
+data/raw/
+data/processed/
+data/indices/
+data/sintetico/prontuarios.sqlite
+*.faiss
+*.pkl
+
+# Modelos --------------------------------------------------------------------
+# O adapter LoRA (~50 MB) E versionado em models/adapters/ porque e o
+# artefato central do fine-tuning. O GGUF (~2 GB) fica no Hugging Face Hub
+# e e baixado por scripts/baixar_modelo.py.
+models/gguf/
+*.gguf
+*.safetensors.index.json
+
+# Logs -----------------------------------------------------------------------
+# A estrutura de pastas e versionada (via .gitkeep), o conteudo nao.
+logs/**/*.log
+logs/**/*.jsonl
+logs/**/*.json
+
+# Cache de LLM ---------------------------------------------------------------
+.langchain.db
+cache_llm.sqlite
+
+# Sistema operacional --------------------------------------------------------
+.DS_Store
+Thumbs.db
+
+# Editores -------------------------------------------------------------------
+.vscode/
+.idea/
+*.swp

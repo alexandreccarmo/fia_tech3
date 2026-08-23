@@ -1,0 +1,220 @@
+# =============================================================================
+# [REQ-3a] POLITICAS DE ATUACAO DO ASSISTENTE MEDGRAPH
+# =============================================================================
+#
+# O QUE E ESTE ARQUIVO:
+#   A definicao declarativa dos LIMITES DE ATUACAO do assistente. O enunciado
+#   do Tech Challenge exige "definir limites de atuacao do assistente para
+#   evitar sugestoes improprias (ex.: nunca prescrever diretamente, sem
+#   validacao humana)". Este YAML e a materializacao desses limites.
+#
+# POR QUE EM YAML E NAO EM CODIGO:
+#   1. Governanca clinica nao e responsabilidade de quem programa. Num hospital
+#      real, quem define o que o assistente pode ou nao dizer e a comissao
+#      medica - e ela precisa conseguir revisar as regras sem ler Python.
+#   2. Mudanca de politica vira diff legivel no Git, auditavel por qualquer um.
+#   3. Os testes automatizados carregam este mesmo arquivo, entao a regra
+#      documentada e exatamente a regra testada.
+#
+# QUEM LE ESTE ARQUIVO:
+#   src/medgraph/guardrails/entrada.py  -> secoes 'escopo' e 'entrada'
+#   src/medgraph/guardrails/saida.py    -> secoes 'saida' e 'textos'
+#   src/medgraph/grafo/nos.py           -> secao 'risco'
+# =============================================================================
+
+versao: "1.0"
+atualizado_em: "2026-08-23"
+responsavel: "Comissao de Etica e Seguranca Clinica (ficticia) - Hospital Vida Plena"
+
+# -----------------------------------------------------------------------------
+# IDENTIDADE
+# -----------------------------------------------------------------------------
+identidade:
+  nome_assistente: "MedGraph"
+  hospital: "Hospital Vida Plena"
+  publico_alvo: "corpo clinico (medicos e residentes)"
+  # Ponto critico de seguranca: o assistente NAO atende pacientes. Todo o
+  # tom das respostas parte do pressuposto de que quem le tem formacao
+  # medica e vai exercer julgamento clinico proprio.
+  atende_pacientes: false
+
+# -----------------------------------------------------------------------------
+# ESCOPO: o que o assistente se propoe a fazer
+# -----------------------------------------------------------------------------
+escopo:
+  # As cinco intencoes que o no de classificacao pode atribuir a uma pergunta.
+  # Qualquer coisa fora desta lista cai em recusa educada.
+  intencoes_permitidas:
+    - id: duvida_clinica
+      descricao: "Pergunta conceitual sobre condutas, diagnosticos ou evidencia cientifica."
+      exige_paciente: false
+    - id: consulta_paciente
+      descricao: "Consulta a dados do prontuario de um paciente especifico."
+      exige_paciente: true
+    - id: exames_pendentes
+      descricao: "Verificacao de exames solicitados e ainda nao resultados."
+      exige_paciente: true
+    - id: conduta_terapeutica
+      descricao: "Sugestao de conduta para um paciente, baseada em protocolo interno."
+      exige_paciente: true
+      # Esta e a intencao de maior risco: e a unica que pode gerar texto
+      # parecido com prescricao. Sempre passa por validacao humana.
+      sempre_validacao_humana: true
+    - id: resumo_prontuario
+      descricao: "Sintese do historico clinico do paciente."
+      exige_paciente: true
+
+  # Assuntos que o assistente reconhece mas se recusa a tratar.
+  fora_de_escopo:
+    - id: nao_medico
+      descricao: "Assunto sem relacao com a pratica clinica."
+      exemplos: ["receita de bolo", "cotacao do dolar", "escalacao do time"]
+    - id: aconselhamento_a_paciente
+      descricao: "Pedido para orientar diretamente um paciente, sem medico no meio."
+    - id: questao_administrativa_sensivel
+      descricao: "Faturamento, folha de pagamento, contratos, dados de RH."
+    - id: uso_indevido_de_dados
+      descricao: "Pedido para listar/exportar pacientes em massa ou por atributo sensivel."
+
+# -----------------------------------------------------------------------------
+# GUARDRAIL DE ENTRADA: o que barrar antes de gastar um token sequer
+# -----------------------------------------------------------------------------
+entrada:
+  # Comprimento maximo da pergunta. Entradas gigantes costumam ser tentativa
+  # de prompt injection ou colagem acidental de prontuario inteiro.
+  max_caracteres_pergunta: 4000
+
+  # Padroes que, se encontrados, disparam RECUSA IMEDIATA. Sao expressoes
+  # regulares, avaliadas sem diferenciar maiusculas/minusculas.
+  padroes_bloqueio:
+    - id: prescricao_direta_ao_paciente
+      regex: "(prescrev[ae]|receit[ae])\\s+(direto|diretamente|para o paciente|pro paciente)"
+      motivo: "Prescricao so pode ser emitida por medico responsavel, nunca pelo assistente."
+    - id: burlar_validacao
+      regex: "(sem|dispens[ae]|pul[ae]|ignor[ae])\\s+(a\\s+)?(validacao|revisao|aprovacao)\\s*(humana|medica)?"
+      motivo: "A validacao humana e obrigatoria e nao pode ser desativada por pedido."
+    - id: exportacao_em_massa
+      regex: "(list[ae]|export[ae]|baix[ae]|traz[ae]).{0,30}(todos os pacientes|toda a base|todos os prontuarios)"
+      motivo: "Exportacao em massa de dados de pacientes nao e funcao do assistente."
+    - id: ignorar_instrucoes
+      regex: "(ignore|desconsidere|esqueca).{0,40}(instru|regra|politica|prompt|sistema)"
+      motivo: "Tentativa de prompt injection contra as politicas de seguranca."
+
+  # Termos que indicam EMERGENCIA. Nao bloqueiam a pergunta, mas fazem o
+  # assistente antepor a orientacao de acionar o time de resposta rapida
+  # antes de qualquer discussao de conduta.
+  termos_emergencia:
+    - "parada cardiorrespiratoria"
+    - "pcr em curso"
+    - "codigo azul"
+    - "choque anafilatico"
+    - "hemorragia macica"
+    - "sepse grave"
+    - "avc agudo"
+    - "iam com supra"
+
+# -----------------------------------------------------------------------------
+# GUARDRAIL DE SAIDA: o que a resposta precisa cumprir para ser entregue
+# -----------------------------------------------------------------------------
+saida:
+  # [REQ-3c] Explainability: toda afirmacao clinica precisa apontar de onde veio.
+  exigir_citacao: true
+  # Formato aceito: [E1] para evidencia cientifica (PubMedQA),
+  #                 [P1] para protocolo interno do hospital,
+  #                 [C1] para dado do prontuario (clinico) do paciente.
+  formato_citacao: "\\[(E|P|C)\\d+\\]"
+  minimo_citacoes: 1
+
+  # [REQ-3a] Nenhuma posologia sai sem marcacao explicita de revisao humana.
+  proibir_posologia_sem_revisao: true
+  padroes_posologia:
+    - "\\d+\\s*(mg|mcg|g|ml|ui|mEq)\\b"
+    - "\\b\\d+\\s*(x|vezes)\\s*(ao dia|/dia|por dia)"
+    - "\\bde\\s+\\d+\\s*/\\s*\\d+\\s*h\\b"
+    - "\\b(vo|ev|im|sc|iv)\\b\\s*\\d"
+
+  # O disclaimer precisa estar presente no texto final, sempre.
+  exigir_disclaimer: true
+
+  # Nenhum dado pessoal identificavel pode aparecer na resposta final,
+  # mesmo que tenha entrado pelo prontuario. [REQ-1a]
+  proibir_pii_na_resposta: true
+
+  # Quantas vezes o no de reescrita pode tentar consertar uma resposta
+  # reprovada antes de o sistema degradar para uma resposta segura minima.
+  # O valor efetivo vem de MAX_TENTATIVAS_GUARDRAIL no .env; este e o teto.
+  max_tentativas_reescrita: 2
+
+# -----------------------------------------------------------------------------
+# RISCO: quando exigir validacao humana antes de entregar (human-in-the-loop)
+# -----------------------------------------------------------------------------
+# Cada gatilho acionado soma seu peso. Se a soma alcancar o limiar definido
+# em LIMIAR_RISCO_VALIDACAO_HUMANA (.env), o grafo pausa no no de validacao.
+risco:
+  gatilhos:
+    - id: intencao_conduta_terapeutica
+      peso: 0.60
+      descricao: "A pergunta pede conduta/tratamento para um paciente real."
+    - id: menciona_medicamento
+      peso: 0.25
+      descricao: "A resposta cita farmaco, dose ou via de administracao."
+    - id: alergia_conhecida_do_paciente
+      peso: 0.90
+      descricao: "A conduta sugerida colide com alergia registrada no prontuario."
+    - id: interacao_medicamentosa
+      peso: 0.70
+      descricao: "Ha interacao relevante com medicacao em uso pelo paciente."
+    - id: exame_com_valor_critico
+      peso: 0.80
+      descricao: "O paciente tem resultado laboratorial em faixa critica."
+    - id: paciente_pediatrico_ou_gestante
+      peso: 0.50
+      descricao: "Populacao especial, com ajustes de dose e contraindicacoes proprias."
+    - id: evidencia_fraca_ou_ausente
+      peso: 0.45
+      descricao: "O RAG nao encontrou fonte suficiente para embasar a resposta."
+    - id: guardrail_reprovou_alguma_vez
+      peso: 0.30
+      descricao: "A resposta precisou ser reescrita ao menos uma vez."
+
+# -----------------------------------------------------------------------------
+# TEXTOS PADRONIZADOS
+# -----------------------------------------------------------------------------
+# Ficam aqui, e nao espalhados pelo codigo, para que a redacao possa ser
+# revisada por quem entende de comunicacao clinica.
+textos:
+  disclaimer: >-
+    Este conteudo e uma sugestao gerada por sistema de apoio a decisao clinica,
+    baseada em evidencia cientifica e nos protocolos internos do Hospital Vida
+    Plena. NAO substitui o julgamento clinico do medico assistente nem constitui
+    prescricao. A responsabilidade pela conduta permanece integralmente com o
+    profissional responsavel pelo paciente.
+
+  aviso_validacao_humana: >-
+    ATENCAO: esta resposta contem conteudo classificado como de alto risco e
+    esta AGUARDANDO VALIDACAO de um medico responsavel. Ela nao deve ser
+    utilizada em decisao assistencial ate que a validacao seja registrada.
+
+  recusa_fora_de_escopo: >-
+    Nao posso ajudar com esse assunto. O MedGraph atende exclusivamente duvidas
+    clinicas do corpo medico do Hospital Vida Plena, com base em evidencia
+    cientifica e nos protocolos internos.
+
+  recusa_prescricao_direta: >-
+    Nao emito prescricoes. Posso apresentar o que dizem os protocolos internos e
+    a evidencia cientifica sobre as opcoes terapeuticas, mas a prescricao e ato
+    privativo do medico responsavel pelo paciente.
+
+  recusa_dados_em_massa: >-
+    Nao realizo consultas em massa a base de pacientes. Posso consultar o
+    prontuario de um paciente especifico quando ha justificativa assistencial.
+
+  alerta_emergencia: >-
+    SITUACAO POTENCIALMENTE CRITICA IDENTIFICADA. Acione imediatamente o Time de
+    Resposta Rapida (ramal 2222) antes de prosseguir. As informacoes abaixo sao
+    complementares e nao devem atrasar o atendimento.
+
+  sem_evidencia_suficiente: >-
+    Nao encontrei evidencia suficiente na base de conhecimento do hospital para
+    responder com seguranca. Recomendo consultar a Comissao de Protocolos
+    Clinicos ou a literatura primaria antes de tomar a conduta.
