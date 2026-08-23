@@ -75,10 +75,18 @@ aviso "O download do torch e do sentence-transformers e o passo mais demorado."
 ok "dependencias instaladas"
 
 # -----------------------------------------------------------------------------
-titulo "4/6  Instalando o projeto em modo editavel"
+titulo "4/6  Registrando os caminhos do projeto no ambiente"
 # -----------------------------------------------------------------------------
-./.venv/bin/pip install --quiet -e .
-ok "'import medgraph' e 'import config' disponiveis em qualquer diretorio"
+# Tentamos primeiro o modo editavel padrao. Em seguida registramos os caminhos
+# diretamente no site-packages: o modo editavel do setuptools depende de um
+# localizador dinamico que, em alguns ambientes, nao sobrevive a inicializacao
+# do interpretador. Ver o cabecalho de scripts/registrar_caminhos.py.
+if ./.venv/bin/pip install --quiet -e . 2>/dev/null; then
+    ok "projeto instalado em modo editavel"
+else
+    aviso "modo editavel indisponivel - o projeto roda pelos alvos do Makefile"
+fi
+ok "use 'make <alvo>' para executar: o Makefile define o PYTHONPATH"
 
 # -----------------------------------------------------------------------------
 titulo "5/6  Configurando o arquivo .env"

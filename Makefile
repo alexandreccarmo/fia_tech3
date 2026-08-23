@@ -8,8 +8,11 @@
 
 PYTHON := .venv/bin/python
 PIP    := .venv/bin/pip
-# Garante que `medgraph` e `config` sejam importaveis mesmo sem `pip install -e .`
-export PYTHONPATH := .:src
+# Todos os alvos rodam com o repositorio no PYTHONPATH. Esse e o contrato do
+# projeto: nao dependemos de `pip install -e .` ter funcionado, porque o modo
+# editavel do setuptools se mostrou intermitente (ver caminhos.py).
+RAIZ := $(shell pwd)
+export PYTHONPATH := $(RAIZ):$(RAIZ)/src
 
 .DEFAULT_GOAL := ajuda
 .PHONY: ajuda setup ambiente testes lint formatar limpar limpar-logs \

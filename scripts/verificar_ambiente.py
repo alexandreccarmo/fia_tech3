@@ -105,6 +105,49 @@ def verificar_python() -> None:
             f"{versao} - testado em 3.12; wheels de ML podem faltar",
         )
 
+    # Confere, em um processo NOVO, se os pacotes do projeto sao importaveis.
+    # Testar no processo atual nao provaria nada: este script ja inseriu os
+    # caminhos manualmente no inicio.
+    #
+    # O teste roda de um diretorio NEUTRO e com PYTHONPATH apontando para o
+    # repositorio - que e exatamente como o Makefile executa tudo. Esse e o
+    # contrato real do projeto; a instalacao com pip e um extra.
+    import os
+    import subprocess
+
+    ambiente = {**os.environ, "PYTHONPATH": f"{RAIZ}:{RAIZ / 'src'}"}
+    teste = subprocess.run(
+        [sys.executable, "-c", "import medgraph, config"],
+        capture_output=True,
+        text=True,
+        cwd=str(Path.home()),
+        env=ambiente,
+    )
+    checar(
+        "Interpretador",
+        "Pacotes do projeto",
+        OK if teste.returncode == 0 else FALHA,
+        "medgraph e config importaveis" if teste.returncode == 0
+        else teste.stderr.strip().splitlines()[-1],
+    )
+
+    # Instalacao com pip: informativo. Quando funciona, o projeto roda de
+    # qualquer diretorio sem PYTHONPATH; quando nao, o Makefile cobre.
+    sem_pythonpath = subprocess.run(
+        [sys.executable, "-c", "import medgraph"],
+        capture_output=True,
+        text=True,
+        cwd=str(Path.home()),
+        env={k: v for k, v in os.environ.items() if k != "PYTHONPATH"},
+    )
+    checar(
+        "Interpretador",
+        "Instalacao com pip",
+        OK if sem_pythonpath.returncode == 0 else AVISO,
+        "ativa - funciona de qualquer diretorio" if sem_pythonpath.returncode == 0
+        else "inativa - use os alvos do Makefile, que definem PYTHONPATH",
+    )
+
     em_venv = sys.prefix != getattr(sys, "base_prefix", sys.prefix)
     checar(
         "Interpretador",
