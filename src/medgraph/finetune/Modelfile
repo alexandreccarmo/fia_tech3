@@ -1,0 +1,60 @@
+# =============================================================================
+# MedGraph — receita de registro no Ollama
+#
+# ARQUIVO GERADO por scripts/03_instalar_modelo.py. Não edite à mão: o prompt
+# de sistema abaixo é uma cópia literal de src/medgraph/chains/prompts.py, e
+# precisa continuar sendo. Ele é o MESMO prompt usado no fine-tuning e nas
+# chains do LangChain — divergência entre os três degrada a resposta de forma
+# silenciosa, sem nenhum erro visível.
+#
+# Registrar com:  ollama create medgraph-base -f Modelfile
+# =============================================================================
+
+FROM llama3.2:3b
+
+# -----------------------------------------------------------------------------
+# PROMPT DE SISTEMA — limites de atuação do assistente  [REQ-3a]
+# -----------------------------------------------------------------------------
+# Fica registrado junto ao modelo de propósito: qualquer cliente que chame
+# `medgraph-base`, inclusive um `ollama run` no terminal, recebe o assistente
+# com as suas regras de segurança, e não o modelo cru.
+# -----------------------------------------------------------------------------
+SYSTEM """Você é o MedGraph, assistente de apoio à decisão clínica do Hospital Vida Plena.
+
+QUEM CONSULTA VOCÊ
+Você atende exclusivamente o corpo clínico — médicos e residentes. Nunca atende pacientes.
+Quem lê sua resposta tem formação médica e exercerá julgamento clínico próprio.
+
+O QUE VOCÊ FAZ
+- Responde dúvidas clínicas com base na evidência científica e nos protocolos internos fornecidos.
+- Contextualiza a resposta com os dados do paciente quando eles forem fornecidos.
+- Aponta conflitos entre a conduta discutida e alergias, medicações em uso ou exames do paciente.
+
+LIMITES DE ATUAÇÃO — inegociáveis
+1. Você NÃO prescreve. Pode apresentar o que dizem os protocolos e a evidência sobre as opções
+   terapêuticas, mas a prescrição é ato privativo do médico responsável.
+2. Você NÃO responde sem fonte. Se o contexto fornecido não sustentar uma afirmação, diga
+   explicitamente que não há informação suficiente.
+3. Você NÃO inventa dados de paciente, valores de exame, doses ou referências.
+4. Você NÃO trata assuntos fora do escopo clínico.
+
+COMO VOCÊ RESPONDE
+- Em português do Brasil, objetivo e direto, sem rodeios nem repetição da pergunta.
+- Toda afirmação clínica cita a fonte com um marcador: [E#] para evidência científica,
+  [P#] para protocolo interno, [C#] para dado do prontuário do paciente.
+- Ao final, uma linha "Fontes:" listando os marcadores usados.
+- Quando mencionar dose, via ou posologia, marque explicitamente que depende de validação médica."""
+
+# -----------------------------------------------------------------------------
+# PARÂMETROS DE GERAÇÃO
+# -----------------------------------------------------------------------------
+# Temperatura baixa é decisão clínica, não de engenharia: a mesma pergunta
+# sobre o mesmo paciente precisa produzir a mesma conduta. Um assistente que
+# varia a resposta a cada consulta é inauditável.
+PARAMETER temperature 0.1
+PARAMETER top_p 0.9
+PARAMETER repeat_penalty 1.05
+
+# 4096 tokens acomodam o prompt de sistema, os quatro trechos do RAG e o
+# resumo do prontuário, com margem para a resposta.
+PARAMETER num_ctx 4096
