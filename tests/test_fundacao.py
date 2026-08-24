@@ -98,6 +98,39 @@ class TestSettings:
         assert resumo["openai_api_key"] == "(nao definido)"
 
 
+    def test_env_example_documenta_todas_as_variaveis(self):
+        """
+        Toda variável lida por Settings precisa estar no .env.example.
+
+        O .env.example é a única documentação que a pessoa que clona o
+        repositório tem sobre o que pode configurar. Uma variável adicionada
+        ao código sem entrada correspondente ali fica invisível: existe,
+        afeta o comportamento, e ninguém sabe que pode mexer nela.
+
+        As três exceções são constantes de identidade do projeto — nome,
+        versão e hospital. Não são configuração: mudá-las por variável de
+        ambiente não faz sentido, e listá-las convidaria a isso.
+        """
+        import re
+
+        from config.settings import RAIZ_PROJETO, Settings
+
+        IDENTIDADE = {"NOME_PROJETO", "VERSAO", "HOSPITAL"}
+
+        campos = {nome.upper() for nome in Settings.model_fields} - IDENTIDADE
+        texto = (RAIZ_PROJETO / ".env.example").read_text(encoding="utf-8")
+        documentadas = set(re.findall(r"^([A-Z_][A-Z0-9_]*)=", texto, re.MULTILINE))
+
+        assert not (campos - documentadas), (
+            "variáveis lidas por Settings e ausentes do .env.example: "
+            f"{sorted(campos - documentadas)}"
+        )
+        assert not (documentadas - campos - IDENTIDADE), (
+            "variáveis no .env.example que o código não lê (documentação morta): "
+            f"{sorted(documentadas - campos - IDENTIDADE)}"
+        )
+
+
 # =============================================================================
 # CATALOGO DE REQUISITOS
 # =============================================================================
