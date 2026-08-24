@@ -17,7 +17,7 @@ export PYTHONPATH := $(RAIZ):$(RAIZ)/src
 .DEFAULT_GOAL := ajuda
 .PHONY: ajuda setup ambiente testes lint formatar limpar limpar-logs \
         dados finetune-prep modelo avaliar indexar grafo diagrama app \
-        rastreabilidade tudo
+        rastreabilidade relatorio tudo
 
 # -----------------------------------------------------------------------------
 ajuda:  ## Lista os comandos disponiveis
@@ -71,6 +71,9 @@ diagrama:  ## Etapa 7 - gera os diagramas do grafo (ASCII, Mermaid e PNG)
 app:  ## Etapa 8 - abre o painel visual em Streamlit
 	.venv/bin/streamlit run src/medgraph/ui/app_streamlit.py
 
+relatorio:  ## Gera docs/relatorio_tecnico.md com os numeros dos artefatos
+	$(PYTHON) scripts/gerar_relatorio.py
+
 rastreabilidade:  ## Gera docs/rastreabilidade.md a partir das tags [REQ-xx]
 	$(PYTHON) scripts/gerar_rastreabilidade.py
 
@@ -84,5 +87,5 @@ limpar-logs:  ## Apaga logs e traces (cuidado: descarta a trilha de auditoria)
 	@echo "Logs e traces removidos."
 
 # --- Execucao completa -------------------------------------------------------
-tudo: dados finetune-prep indexar avaliar diagrama  ## Roda o pipeline inteiro
+tudo: dados finetune-prep indexar avaliar diagrama rastreabilidade relatorio  ## Roda o pipeline inteiro
 	@echo "Pipeline concluido. Abra o painel com: make app"

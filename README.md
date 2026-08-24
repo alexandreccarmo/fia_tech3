@@ -56,15 +56,28 @@ O projeto é entregue em nove etapas, cada uma correspondendo a um commit no rep
 
 | # | Etapa | Status |
 | --- | --- | --- |
-| 0 | **Fundação** — estrutura, configuração, logging, auditoria, controle de custo | ✅ concluída |
-| 1 | **Dados** — PubMedQA, anonimização, curadoria, corpus hospitalar sintético | ⏳ pendente |
-| 2 | **Fine-tuning** — QLoRA sobre Llama-3.2-3B-Instruct no Google Colab | ⏳ pendente |
-| 3 | **Export + Serve** — GGUF, Hugging Face Hub, Ollama | ⏳ pendente |
-| 4 | **Avaliação** — comparativo de quatro sistemas, métricas e gráficos | ⏳ pendente |
-| 5 | **RAG + Chains** — índice FAISS e pipelines LangChain com citação | ⏳ pendente |
-| 6 | **Prontuário + Regras** — base SQLite e regras clínicas de segurança | ⏳ pendente |
-| 7 | **LangGraph** — fluxo de 12 nós com guardrails e validação humana | ⏳ pendente |
-| 8 | **UI + Documentação** — painel Streamlit, relatório técnico, roteiro do vídeo | ⏳ pendente |
+| 0 | **Fundação** — estrutura, configuração, logging, auditoria, controle de custo | ✅ |
+| 1 | **Dados** — PubMedQA, anonimização, curadoria, corpus hospitalar sintético | ✅ |
+| 2 | **Fine-tuning** — QLoRA sobre Llama-3.2-3B-Instruct no Google Colab | 📓 notebook pronto |
+| 3 | **Export + Serve** — GGUF, Hugging Face Hub, Ollama | ✅ (modelo base servido) |
+| 4 | **Avaliação** — comparativo de quatro sistemas, métricas e gráficos | ✅ |
+| 5 | **RAG + Chains** — índice FAISS e pipelines LangChain com citação | ✅ |
+| 6 | **Prontuário + Regras** — base SQLite e regras clínicas de segurança | ✅ |
+| 7 | **LangGraph** — fluxo de 14 nós com guardrails e validação humana | ✅ |
+| 8 | **UI + Documentação** — painel Streamlit, relatório técnico, roteiro do vídeo | ✅ |
+
+### Sobre a Etapa 2
+
+O fine-tuning é a **única** etapa que não roda no MacBook: exige GPU com CUDA. Os
+notebooks estão prontos e documentados em `notebooks/colab/`, e o dataset de treino
+está versionado no repositório — treinar é um `git clone` no Colab.
+
+Enquanto o adapter não é produzido, o projeto roda de ponta a ponta com o **modelo
+base servido sob a mesma persona e os mesmos parâmetros**, registrado no Ollama como
+`medgraph-base`. Não é um atalho: é a coluna de referência que o comparativo da
+Etapa 4 precisa de qualquer forma, servida em condições idênticas às do modelo
+ajustado. Quando o GGUF ficar pronto, `make modelo --ajustado` o registra e a mesma
+tabela de avaliação passa a trazer as duas colunas.
 
 ---
 
@@ -174,16 +187,58 @@ make ajuda
 | `make ambiente` | Diagnóstico visual do ambiente |
 | `make testes` | Roda a suíte de testes |
 | `make lint` / `make formatar` | Verifica e corrige estilo |
-| `make dados` | **Etapa 1** — prepara os dados |
-| `make finetune-prep` | **Etapa 2** — monta o dataset de fine-tuning |
-| `make modelo` | **Etapa 3** — baixa o GGUF e registra no Ollama |
-| `make avaliar` | **Etapa 4** — avaliação e gráficos |
+| `make dados` | **Etapa 1** — baixa, anonimiza, cura e monta todos os datasets |
+| `make finetune-prep` | **Etapa 2** — remonta o dataset de fine-tuning |
+| `make modelo` | **Etapa 3** — registra o modelo no Ollama |
+| `make avaliar` | **Etapa 4** — avaliação comparativa e gráficos |
 | `make indexar` | **Etapa 5** — constrói o índice FAISS |
-| `make grafo` | **Etapa 7** — executa o fluxo no terminal |
+| `make grafo` | **Etapa 7** — roteiro de demonstração no terminal |
 | `make diagrama` | **Etapa 7** — gera os diagramas do grafo |
 | `make app` | **Etapa 8** — abre o painel Streamlit |
+| `make relatorio` | Regenera `docs/relatorio_tecnico.md` com os números atuais |
 | `make rastreabilidade` | Regenera `docs/rastreabilidade.md` |
+| `make tudo` | Pipeline completo, do download aos documentos |
 | `make limpar-logs` | Apaga logs e *traces* |
+
+### Demonstrações rápidas
+
+```bash
+make grafo                          # 4 casos, cada um por um caminho do grafo
+make grafo -- --diagrama            # só desenha o fluxo
+make grafo -- --pendentes           # fila de validação médica
+make avaliar -- --rapido            # avaliação em 30 casos (~3 min)
+.venv/bin/python scripts/demo_fundacao.py   # infraestrutura de auditoria
+```
+
+---
+
+## 5.1 O que o assistente faz, em um exemplo
+
+Pergunta de um médico, com o paciente `PAC-0001` vinculado:
+
+> *"Qual a conduta antibiótica inicial para sepse de foco pulmonar neste paciente?"*
+
+O que acontece:
+
+1. **guardrail de entrada** — a pergunta é limpa de identificadores e aprovada
+2. **classificar intenção** — `conduta_terapeutica`, a de maior risco
+3. **consultar prontuário** — 72 anos, UTI, **alergia grave a penicilina
+   (anafilaxia)**, lactato 4,5 mmol/L crítico, creatinina alterada
+4. **recuperar evidência** — trechos de protocolo interno e literatura, marcados
+   `[P1]`, `[P2]`, `[E1]`
+5. **raciocínio clínico** — a LLM responde citando as fontes
+6. **regras clínicas** — a resposta sugere uma cefalosporina; a tabela
+   farmacológica identifica que **ceftriaxona é betalactâmico, a mesma classe da
+   penicilina** → conflito **CRÍTICO**
+7. **guardrail de saída** — citação presente, fontes existem, posologia marcada
+8. **triagem de risco** — escore 1,0, acima do limiar de 0,6
+9. **emitir alertas** — 3 alertas, o primeiro deles o conflito de alergia
+10. **a execução PARA** — aguardando validação de um médico responsável
+
+O médico validador vê os alertas, registra o parecer, e só então o fluxo retoma e
+a resposta é liberada.
+
+---
 
 ---
 
@@ -387,6 +442,23 @@ A suíte cobre a validação da configuração, a integridade do catálogo de re
 destinos de logging, o ciclo de vida da trilha de auditoria, o cálculo de custo, a trava de
 orçamento e a consistência do arquivo de políticas — incluindo uma verificação de que
 `conduta_terapeutica` **sempre** exige validação humana.
+
+---
+
+## 11.1 Documentação do projeto
+
+| Documento | Conteúdo |
+| --- | --- |
+| [`docs/relatorio_tecnico.md`](docs/relatorio_tecnico.md) | Relatório técnico completo — arquitetura, fine-tuning, avaliação, defeitos encontrados e limitações declaradas |
+| [`docs/rastreabilidade.md`](docs/rastreabilidade.md) | Matriz requisito → arquivo → linha, gerada do código |
+| [`docs/roteiro_video.md`](docs/roteiro_video.md) | Roteiro cronometrado do vídeo de entrega, com divisão entre os integrantes |
+| [`docs/diagramas/`](docs/diagramas/) | Diagrama do grafo em PNG, Mermaid e ASCII |
+| [`docs/graficos/`](docs/graficos/) | Gráficos da avaliação |
+
+O relatório técnico é **gerado**: a narrativa está em `docs/relatorio_base.md` e os
+números são lidos dos artefatos que o pipeline produziu. Um relatório com números
+digitados à mão começa correto e envelhece errado — basta reexecutar a avaliação
+para que a tabela deixe de corresponder aos arquivos, sem que ninguém perceba.
 
 ---
 
