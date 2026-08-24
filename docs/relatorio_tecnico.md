@@ -454,13 +454,13 @@ aceitável e macro-F1 baixo.
 
 ### 7.2 Resultados
 
-Conjunto de teste: **30 casos** de 500 disponíveis · distribuição `{'yes': 15, 'no': 12, 'maybe': 3}`
+Conjunto de teste: **150 casos** de 500 disponíveis · distribuição `{'yes': 80, 'no': 52, 'maybe': 18}`
 
 | Sistema | N | Accuracy | Macro-F1 | F1 yes | F1 no | F1 maybe | Formato | Latência |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| classe majoritária ('yes') | 30 | 0.500 | **0.222** | 0.667 | 0.000 | 0.000 | 100% | 0 ms |
-| modelo base (Llama-3.2-3B) | 30 | 0.700 | **0.490** | 0.750 | 0.720 | 0.000 | 100% | 6,554 ms |
-| gpt-4o-mini (teto de referência) | 20 | 0.650 | **0.512** | 0.737 | 0.800 | 0.000 | 100% | 1,440 ms |
+| classe majoritária ('yes') | 150 | 0.533 | **0.232** | 0.696 | 0.000 | 0.000 | 100% | 0 ms |
+| modelo base (Llama-3.2-3B) | 150 | 0.680 | **0.477** | 0.764 | 0.667 | 0.000 | 100% | 5,725 ms |
+| gpt-4o-mini (teto de referência) | 100 | 0.720 | **0.617** | 0.844 | 0.772 | 0.235 | 100% | 1,426 ms |
 
 Referência externa: especialistas humanos alcançam **78%** neste mesmo conjunto (Jin et al., 2019 — artigo original do PubMedQA).
 
@@ -470,17 +470,17 @@ Delata o modelo que colapsou numa única classe — o modo de falha mais comum e
 
 | Sistema | yes | no | maybe | sem rótulo |
 | --- | ---: | ---: | ---: | ---: |
-| classe majoritária ('yes') | 30 | 0 | 0 | 0 |
-| modelo base (Llama-3.2-3B) | 17 | 13 | 0 | 0 |
-| gpt-4o-mini (teto de referência) | 9 | 8 | 3 | 0 |
+| classe majoritária ('yes') | 150 | 0 | 0 | 0 |
+| modelo base (Llama-3.2-3B) | 85 | 65 | 0 | 0 |
+| gpt-4o-mini (teto de referência) | 55 | 26 | 19 | 0 |
 
 #### Custo desta avaliação
 
 | Modelo | Chamadas | Tokens entrada | Tokens saída | Custo |
 | --- | ---: | ---: | ---: | ---: |
-| `gpt-4o-mini` | 20 | 16,729 | 1,738 | US$ 0.003552 |
-| `medgraph-base` | 30 | 29,886 | 3,061 | US$ 0.000000 |
-| **Total** | | | | **US$ 0.003552** |
+| `gpt-4o-mini` | 100 | 91,274 | 9,141 | US$ 0.019176 |
+| `medgraph-base` | 150 | 158,437 | 14,784 | US$ 0.000000 |
+| **Total** | | | | **US$ 0.019176** |
 
 O modelo local aparece com custo zero e o volume processado registrado — é o que permite comparar o custo por consulta entre o modelo servido localmente e a API paga.
 
@@ -501,6 +501,31 @@ cem vezes maior, executado em nuvem paga, diz mais do que o número absoluto.
 **Custo por consulta.** O modelo local processa o mesmo volume com custo
 financeiro zero. A tabela de custo registra ambos justamente para tornar essa
 comparação explícita.
+
+**A lacuna que o fine-tuning existe para fechar.** O resultado mais informativo
+desta avaliação não é a accuracy do modelo base — é a sua **distribuição de
+previsões**: ele responde apenas `yes` e `no`, e **nunca** `maybe`. O F1 dessa
+classe é exatamente zero.
+
+Isso não é um detalhe. Como o macro-F1 dá o mesmo peso às três classes, uma
+classe com F1 zero limita a métrica a cerca de 0,67 por construção — e é
+precisamente onde o modelo base parou. O `gpt-4o-mini`, que prevê `maybe` em 19
+dos 100 casos, é o único a ultrapassar essa barreira.
+
+O diagnóstico torna a contribuição esperada do fine-tuning **concreta e
+mensurável**, em vez de uma promessa vaga de "melhorar o desempenho":
+
+| | Modelo base | Alvo do fine-tuning |
+| --- | --- | --- |
+| Prevê `maybe`? | nunca | espera-se que sim — o dataset tem 9,6% de `maybe` |
+| F1 da classe `maybe` | 0,000 | qualquer valor acima de zero é ganho real |
+| Teto de macro-F1 | ~0,67 por construção | acima disso |
+
+Foi para atacar exatamente essa lacuna que o dataset de treino recebeu repetição
+inversamente proporcional à frequência da classe (Seção 4.4). Se, após o
+fine-tuning, o modelo continuar sem prever `maybe`, a hipótese estará refutada e
+isso também será um resultado — reportável, e mais útil do que um ganho difuso de
+alguns pontos de accuracy.
 
 ### 7.4 Gráficos
 
@@ -643,7 +668,7 @@ varrendo as tags `[REQ-xx]` das docstrings.
 ### Suíte de testes
 
 ```
-======================== 136 passed, 1 warning in 6.01s ========================
+======================== 137 passed, 1 warning in 3.63s ========================
 ```
 
 ---

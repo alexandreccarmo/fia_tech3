@@ -13,7 +13,7 @@ ao ponto exato do código onde ela é atendida. As referências vêm das tags
 | --- | --- |
 | **Com implementação identificada** | **12** |
 | Ainda sem implementação | 1 |
-| Total de referências no código | 141 |
+| Total de referências no código | 148 |
 
 ### Requisitos ainda sem cobertura
 
@@ -59,7 +59,7 @@ São itens previstos para etapas seguintes do projeto.
 | `src/medgraph/guardrails/saida.py` | 221 | --- 4. Vazamento de dado pessoal  [REQ-1a] ---------------------------- |
 | `tests/test_dados.py` | 27 | ANONIMIZAÇÃO  [REQ-1a] |
 | `tests/test_dados.py` | 152 | CURADORIA  [REQ-1a] |
-| `tests/test_fundacao.py` | 422 | """[REQ-1a] Nenhum dado pessoal chega ao disco pela trilha.""" |
+| `tests/test_fundacao.py` | 455 | """[REQ-1a] Nenhum dado pessoal chega ao disco pela trilha.""" |
 | `tests/test_seguranca.py` | 208 | """[REQ-1a] Nada identificável pode entrar no prompt.""" |
 
 ### Assistente LangChain
@@ -145,9 +145,10 @@ São itens previstos para etapas seguintes do projeto.
 | `src/medgraph/guardrails/saida.py` | 2 | [REQ-3a][REQ-3c] Guardrail de saída. |
 | `src/medgraph/guardrails/saida.py` | 186 | --- 2. Posologia sem marcação de revisão  [REQ-3a] -------------------- |
 | `src/medgraph/prontuario/repositorio.py` | 242 | Alergias que colidem com um fármaco ou classe citada.  [REQ-3a] |
+| `src/medgraph/ui/app_streamlit.py` | 2 | [REQ-E1][REQ-3a][REQ-3b][REQ-3c] Painel visual do MedGraph.  [Etapa 8] |
 | `tests/test_dados.py` | 356 | """[REQ-3a] O limite mais importante precisa estar no prompt.""" |
-| `tests/test_fundacao.py` | 538 | POLITICAS  [REQ-3a] |
-| `tests/test_fundacao.py` | 574 | """[REQ-3a] O item mais sensivel do enunciado, verificado por teste.""" |
+| `tests/test_fundacao.py` | 571 | POLITICAS  [REQ-3a] |
+| `tests/test_fundacao.py` | 607 | """[REQ-3a] O item mais sensivel do enunciado, verificado por teste.""" |
 | `tests/test_seguranca.py` | 60 | REGRAS CLÍNICAS  [REQ-3a] |
 | `tests/test_seguranca.py` | 182 | GUARDRAIL DE ENTRADA  [REQ-3a] |
 | `tests/test_seguranca.py` | 255 | GUARDRAIL DE SAÍDA  [REQ-3a][REQ-3c] |
@@ -174,11 +175,12 @@ São itens previstos para etapas seguintes do projeto.
 | `src/medgraph/llm/provider.py` | 78 | CALLBACK DE CUSTO  [REQ-3b] |
 | `src/medgraph/logging_config.py` | 2 | [REQ-3b] Configuracao de logging do MedGraph. |
 | `src/medgraph/requisitos.py` | 23 | Uma docstring que comeca com "[REQ-3b][REQ-3c]" significa que aquele |
+| `src/medgraph/ui/app_streamlit.py` | 2 | [REQ-E1][REQ-3a][REQ-3b][REQ-3c] Painel visual do MedGraph.  [Etapa 8] |
 | `tests/test_fundacao.py` | 84 | """[REQ-3b] A configuracao vai para a auditoria; o segredo, nunca.""" |
-| `tests/test_fundacao.py` | 143 | LOGGING  [REQ-3b] |
-| `tests/test_fundacao.py` | 239 | TRILHA DE AUDITORIA  [REQ-3b] |
-| `tests/test_fundacao.py` | 434 | CONTROLE DE CUSTO  [REQ-3b] |
-| `tests/test_fundacao.py` | 510 | """[REQ-3b] Consumo tambem e informacao auditavel.""" |
+| `tests/test_fundacao.py` | 176 | LOGGING  [REQ-3b] |
+| `tests/test_fundacao.py` | 272 | TRILHA DE AUDITORIA  [REQ-3b] |
+| `tests/test_fundacao.py` | 467 | CONTROLE DE CUSTO  [REQ-3b] |
+| `tests/test_fundacao.py` | 543 | """[REQ-3b] Consumo tambem e informacao auditavel.""" |
 
 #### ✅ `REQ-3c` — Garantir explainability das respostas da LLM (exemplo: indicar a fonte da informacao utilizada na resposta).
 
@@ -203,8 +205,10 @@ São itens previstos para etapas seguintes do projeto.
 | `src/medgraph/rag/indexar.py` | 17 | MARCADORES DE FONTE — o mecanismo de explainability  [REQ-3c]: |
 | `src/medgraph/rag/recuperador.py` | 2 | [REQ-3c] Recuperação de evidência com rastreabilidade de fonte. |
 | `src/medgraph/requisitos.py` | 23 | Uma docstring que comeca com "[REQ-3b][REQ-3c]" significa que aquele |
-| `tests/test_fundacao.py` | 353 | requisito e explainability por citacao, isso e inaceitavel. [REQ-3c] |
-| `tests/test_fundacao.py` | 399 | que se quer poder auditar depois, item por item. [REQ-3c] |
+| `src/medgraph/ui/app_streamlit.py` | 2 | [REQ-E1][REQ-3a][REQ-3b][REQ-3c] Painel visual do MedGraph.  [Etapa 8] |
+| `src/medgraph/ui/componentes.py` | 2 | [REQ-E1][REQ-3c] Componentes visuais reutilizados pelo painel Streamlit. |
+| `tests/test_fundacao.py` | 386 | requisito e explainability por citacao, isso e inaceitavel. [REQ-3c] |
+| `tests/test_fundacao.py` | 432 | que se quer poder auditar depois, item por item. [REQ-3c] |
 | `tests/test_seguranca.py` | 255 | GUARDRAIL DE SAÍDA  [REQ-3a][REQ-3c] |
 | `tests/test_seguranca.py` | 268 | """[REQ-3c] Explainability não é opcional.""" |
 
@@ -234,6 +238,8 @@ São itens previstos para etapas seguintes do projeto.
 | `src/medgraph/grafo/executar.py` | 2 | [REQ-E1] Execução do fluxo clínico. |
 | `src/medgraph/grafo/nos.py` | 2 | [REQ-E1] Nós do fluxo de decisão clínica. |
 | `src/medgraph/grafo/rotas.py` | 2 | [REQ-E1] Roteamento condicional do fluxo. |
+| `src/medgraph/ui/app_streamlit.py` | 2 | [REQ-E1][REQ-3a][REQ-3b][REQ-3c] Painel visual do MedGraph.  [Etapa 8] |
+| `src/medgraph/ui/componentes.py` | 2 | [REQ-E1][REQ-3c] Componentes visuais reutilizados pelo painel Streamlit. |
 | `tests/test_seguranca.py` | 374 | ROTEAMENTO DO GRAFO  [REQ-E1] |
 | `tests/test_seguranca.py` | 447 | TOPOLOGIA DO GRAFO  [REQ-E1] |
 
@@ -253,6 +259,7 @@ São itens previstos para etapas seguintes do projeto.
 
 | Arquivo | Linha | Contexto |
 | --- | ---: | --- |
+| `scripts/gerar_relatorio.py` | 3 | [REQ-E3] Gerador do relatório técnico. |
 | `src/medgraph/__init__.py` | 21 | avaliacao/        metricas e graficos do relatorio            [REQ-E3] |
 | `src/medgraph/avaliacao/__init__.py` | 1 | """[REQ-E3] Metricas, comparativos e graficos do relatorio tecnico.""" |
 | `src/medgraph/avaliacao/avaliar.py` | 2 | [REQ-E3] Avaliação comparativa dos sistemas. |

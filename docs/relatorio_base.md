@@ -412,6 +412,31 @@ cem vezes maior, executado em nuvem paga, diz mais do que o número absoluto.
 financeiro zero. A tabela de custo registra ambos justamente para tornar essa
 comparação explícita.
 
+**A lacuna que o fine-tuning existe para fechar.** O resultado mais informativo
+desta avaliação não é a accuracy do modelo base — é a sua **distribuição de
+previsões**: ele responde apenas `yes` e `no`, e **nunca** `maybe`. O F1 dessa
+classe é exatamente zero.
+
+Isso não é um detalhe. Como o macro-F1 dá o mesmo peso às três classes, uma
+classe com F1 zero limita a métrica a cerca de 0,67 por construção — e é
+precisamente onde o modelo base parou. O `gpt-4o-mini`, que prevê `maybe` em 19
+dos 100 casos, é o único a ultrapassar essa barreira.
+
+O diagnóstico torna a contribuição esperada do fine-tuning **concreta e
+mensurável**, em vez de uma promessa vaga de "melhorar o desempenho":
+
+| | Modelo base | Alvo do fine-tuning |
+| --- | --- | --- |
+| Prevê `maybe`? | nunca | espera-se que sim — o dataset tem 9,6% de `maybe` |
+| F1 da classe `maybe` | 0,000 | qualquer valor acima de zero é ganho real |
+| Teto de macro-F1 | ~0,67 por construção | acima disso |
+
+Foi para atacar exatamente essa lacuna que o dataset de treino recebeu repetição
+inversamente proporcional à frequência da classe (Seção 4.4). Se, após o
+fine-tuning, o modelo continuar sem prever `maybe`, a hipótese estará refutada e
+isso também será um resultado — reportável, e mais útil do que um ganho difuso de
+alguns pontos de accuracy.
+
 ### 7.4 Gráficos
 
 | Figura | O que mostra |
