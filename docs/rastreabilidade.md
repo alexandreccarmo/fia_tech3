@@ -11,9 +11,9 @@ ao ponto exato do código onde ela é atendida. As referências vêm das tags
 
 | Requisitos no catálogo | 13 |
 | --- | --- |
-| **Com implementação identificada** | **9** |
-| Ainda sem implementação | 4 |
-| Total de referências no código | 80 |
+| **Com implementação identificada** | **12** |
+| Ainda sem implementação | 1 |
+| Total de referências no código | 141 |
 
 ### Requisitos ainda sem cobertura
 
@@ -21,9 +21,6 @@ São itens previstos para etapas seguintes do projeto.
 
 | Código | Categoria | Descrição |
 | --- | --- | --- |
-| `REQ-E1` | Entregaveis | Codigo-fonte com os fluxos do LangGraph. |
-| `REQ-E2` | Entregaveis | Dataset anonimizado ou exemplo de dados sinteticos. |
-| `REQ-E3` | Entregaveis | Relatorio tecnico detalhado com explicacao do processo de fine-tuning, descricao do assistente medico criado, diagrama do fluxo LangChain e avaliacao do modelo com analise dos resultados. |
 | `REQ-E4` | Entregaveis | Video de ate 15 minutos demonstrando o treinamento e funcionamento da LLM personalizada, a execucao de um fluxo automatizado, respostas a perguntas clinicas contextualizadas e os logs e a validacao das respostas. |
 
 ## Detalhamento por requisito
@@ -56,11 +53,14 @@ São itens previstos para etapas seguintes do projeto.
 | `src/medgraph/auditoria.py` | 140 | Chamada uma vez no bootstrap, pelo modulo de anonimizacao. [REQ-1a] |
 | `src/medgraph/dados/__init__.py` | 1 | """[REQ-1a][REQ-E2] Aquisicao, anonimizacao e curadoria dos dados.""" |
 | `src/medgraph/dados/anonimizador.py` | 2 | [REQ-1a] Anonimizacao de dados pessoais e de saude. |
-| `src/medgraph/dados/anonimizador.py` | 453 | [REQ-1a][REQ-3b] Faz a trilha de auditoria passar por este modulo. |
+| `src/medgraph/dados/anonimizador.py` | 492 | [REQ-1a][REQ-3b] Faz a trilha de auditoria passar por este modulo. |
 | `src/medgraph/dados/curadoria.py` | 2 | [REQ-1a] Curadoria e divisao do PubMedQA. |
+| `src/medgraph/grafo/nos.py` | 117 | Filtra a pergunta antes de qualquer processamento.  [REQ-3a][REQ-1a] |
+| `src/medgraph/guardrails/saida.py` | 221 | --- 4. Vazamento de dado pessoal  [REQ-1a] ---------------------------- |
 | `tests/test_dados.py` | 27 | ANONIMIZAÇÃO  [REQ-1a] |
 | `tests/test_dados.py` | 152 | CURADORIA  [REQ-1a] |
 | `tests/test_fundacao.py` | 422 | """[REQ-1a] Nenhum dado pessoal chega ao disco pela trilha.""" |
+| `tests/test_seguranca.py` | 208 | """[REQ-1a] Nada identificável pode entrar no prompt.""" |
 
 ### Assistente LangChain
 
@@ -73,10 +73,14 @@ São itens previstos para etapas seguintes do projeto.
 | `src/medgraph/__init__.py` | 22 | llm/              provedores de modelo e controle de custo    [REQ-2] |
 | `src/medgraph/__init__.py` | 25 | chains/           pipelines LangChain                         [REQ-2] |
 | `src/medgraph/chains/__init__.py` | 1 | """[REQ-2] Pipelines LangChain: triagem, RAG e geracao de documentos.""" |
+| `src/medgraph/chains/chain_rag.py` | 2 | [REQ-2][REQ-3c] Chain de resposta ancorada em fontes. |
+| `src/medgraph/chains/chain_triagem.py` | 2 | [REQ-2] Chain de triagem — classificação da intenção. |
 | `src/medgraph/chains/prompts.py` | 2 | [REQ-2][REQ-3a][REQ-3c] Prompts do MedGraph. |
+| `src/medgraph/grafo/nos.py` | 277 | Gera a resposta com a LLM customizada.  [REQ-2] |
 | `src/medgraph/llm/__init__.py` | 1 | """[REQ-2] Provedores de modelo de linguagem e controle de consumo.""" |
 | `src/medgraph/llm/provider.py` | 2 | [REQ-2] Provedor de modelo de linguagem. |
 | `src/medgraph/rag/__init__.py` | 1 | """[REQ-2][REQ-3c] Indexacao vetorial e recuperacao de evidencia com fontes.""" |
+| `src/medgraph/rag/indexar.py` | 2 | [REQ-2][REQ-3c] Construção do índice vetorial. |
 
 #### ✅ `REQ-2a` — Realizar consultas em base de dados estruturadas (como prontuarios e registros).
 
@@ -89,7 +93,10 @@ São itens previstos para etapas seguintes do projeto.
 | `src/medgraph/__init__.py` | 24 | prontuario/       acesso a base estruturada de pacientes      [REQ-2a] |
 | `src/medgraph/auditoria.py` | 100 | BANCO = "banco"                # consulta ao prontuario            [REQ-2a] |
 | `src/medgraph/dados/construir_banco.py` | 2 | [REQ-2a][REQ-E2] Construcao da base estruturada de prontuarios. |
+| `src/medgraph/grafo/nos.py` | 188 | Carrega o quadro clínico do paciente.  [REQ-2a][REQ-2b] |
 | `src/medgraph/prontuario/__init__.py` | 1 | """[REQ-2a][REQ-2b] Acesso a base estruturada de prontuarios do hospital.""" |
+| `src/medgraph/prontuario/modelos.py` | 2 | [REQ-2a] Modelos de domínio do prontuário. |
+| `src/medgraph/prontuario/repositorio.py` | 2 | [REQ-2a][REQ-2b] Consulta à base estruturada de prontuários. |
 | `tests/test_dados.py` | 266 | BASE DE PRONTUÁRIOS  [REQ-2a] |
 
 #### ✅ `REQ-2b` — Contextualizar as respostas da LLM com informacoes atualizadas do paciente.
@@ -98,7 +105,11 @@ São itens previstos para etapas seguintes do projeto.
 
 | Arquivo | Linha | Contexto |
 | --- | ---: | --- |
+| `src/medgraph/grafo/nos.py` | 188 | Carrega o quadro clínico do paciente.  [REQ-2a][REQ-2b] |
 | `src/medgraph/prontuario/__init__.py` | 1 | """[REQ-2a][REQ-2b] Acesso a base estruturada de prontuarios do hospital.""" |
+| `src/medgraph/prontuario/modelos.py` | 289 | Bloco de contexto do paciente injetado no prompt do modelo.  [REQ-2b] |
+| `src/medgraph/prontuario/repositorio.py` | 2 | [REQ-2a][REQ-2b] Consulta à base estruturada de prontuários. |
+| `src/medgraph/prontuario/repositorio.py` | 97 | Carrega um paciente com todo o seu registro clínico.  [REQ-2b] |
 
 ### Seguranca e validacao
 
@@ -119,10 +130,28 @@ São itens previstos para etapas seguintes do projeto.
 | `src/medgraph/auditoria.py` | 96 | GUARDRAIL = "guardrail"        # aprovacao/reprovacao de politica  [REQ-3a] |
 | `src/medgraph/auditoria.py` | 103 | VALIDACAO_HUMANA = "validacao_humana"  # human-in-the-loop         [REQ-3a] |
 | `src/medgraph/chains/prompts.py` | 2 | [REQ-2][REQ-3a][REQ-3c] Prompts do MedGraph. |
+| `src/medgraph/grafo/executar.py` | 134 | Registra a validação médica e retoma o fluxo interrompido.  [REQ-3a] |
+| `src/medgraph/grafo/nos.py` | 117 | Filtra a pergunta antes de qualquer processamento.  [REQ-3a][REQ-1a] |
+| `src/medgraph/grafo/nos.py` | 342 | Verificações determinísticas de segurança.  [REQ-3a] |
+| `src/medgraph/grafo/nos.py` | 366 | """Verifica as quatro invariantes da resposta.  [REQ-3a][REQ-3c]""" |
+| `src/medgraph/grafo/nos.py` | 447 | Decide se a resposta exige validação humana antes de ser entregue.  [REQ-3a] |
+| `src/medgraph/grafo/nos.py` | 522 | Ponto de parada para validação médica.  [REQ-3a] |
+| `src/medgraph/grafo/rotas.py` | 126 | Alto risco pausa o fluxo para validação médica.  [REQ-3a] |
 | `src/medgraph/guardrails/__init__.py` | 1 | """[REQ-3a] Limites de atuacao: guardrails de entrada, de saida e regras clinicas.""" |
+| `src/medgraph/guardrails/entrada.py` | 2 | [REQ-3a] Guardrail de entrada. |
+| `src/medgraph/guardrails/politicas.py` | 2 | [REQ-3a] Carregamento das políticas declarativas. |
+| `src/medgraph/guardrails/regras_clinicas.py` | 2 | [REQ-3a] Regras clínicas de segurança. |
+| `src/medgraph/guardrails/regras_clinicas.py` | 326 | Conflito entre a conduta discutida e as alergias registradas.  [REQ-3a] |
+| `src/medgraph/guardrails/saida.py` | 2 | [REQ-3a][REQ-3c] Guardrail de saída. |
+| `src/medgraph/guardrails/saida.py` | 186 | --- 2. Posologia sem marcação de revisão  [REQ-3a] -------------------- |
+| `src/medgraph/prontuario/repositorio.py` | 242 | Alergias que colidem com um fármaco ou classe citada.  [REQ-3a] |
 | `tests/test_dados.py` | 356 | """[REQ-3a] O limite mais importante precisa estar no prompt.""" |
-| `tests/test_fundacao.py` | 521 | POLITICAS  [REQ-3a] |
-| `tests/test_fundacao.py` | 557 | """[REQ-3a] O item mais sensivel do enunciado, verificado por teste.""" |
+| `tests/test_fundacao.py` | 538 | POLITICAS  [REQ-3a] |
+| `tests/test_fundacao.py` | 574 | """[REQ-3a] O item mais sensivel do enunciado, verificado por teste.""" |
+| `tests/test_seguranca.py` | 60 | REGRAS CLÍNICAS  [REQ-3a] |
+| `tests/test_seguranca.py` | 182 | GUARDRAIL DE ENTRADA  [REQ-3a] |
+| `tests/test_seguranca.py` | 255 | GUARDRAIL DE SAÍDA  [REQ-3a][REQ-3c] |
+| `tests/test_seguranca.py` | 291 | """[REQ-3a] O requisito mais destacado do enunciado.""" |
 
 #### ✅ `REQ-3b` — Implementar logging detalhado para rastreamento e auditoria.
 
@@ -139,8 +168,8 @@ São itens previstos para etapas seguintes do projeto.
 | `src/medgraph/__init__.py` | 18 | auditoria.py      trilha de auditoria e trace por consulta    [REQ-3b] |
 | `src/medgraph/auditoria.py` | 2 | [REQ-3b] Trilha de auditoria do MedGraph. |
 | `src/medgraph/auditoria.py` | 513 | [REQ-3b] Decorator que audita automaticamente um no do grafo. |
-| `src/medgraph/dados/anonimizador.py` | 435 | """Publica o resumo da anonimizacao na trilha de auditoria. [REQ-3b]""" |
-| `src/medgraph/dados/anonimizador.py` | 453 | [REQ-1a][REQ-3b] Faz a trilha de auditoria passar por este modulo. |
+| `src/medgraph/dados/anonimizador.py` | 474 | """Publica o resumo da anonimizacao na trilha de auditoria. [REQ-3b]""" |
+| `src/medgraph/dados/anonimizador.py` | 492 | [REQ-1a][REQ-3b] Faz a trilha de auditoria passar por este modulo. |
 | `src/medgraph/llm/custo.py` | 2 | [REQ-3b] Contabilidade de consumo e trava de orcamento. |
 | `src/medgraph/llm/provider.py` | 78 | CALLBACK DE CUSTO  [REQ-3b] |
 | `src/medgraph/logging_config.py` | 2 | [REQ-3b] Configuracao de logging do MedGraph. |
@@ -149,7 +178,7 @@ São itens previstos para etapas seguintes do projeto.
 | `tests/test_fundacao.py` | 143 | LOGGING  [REQ-3b] |
 | `tests/test_fundacao.py` | 239 | TRILHA DE AUDITORIA  [REQ-3b] |
 | `tests/test_fundacao.py` | 434 | CONTROLE DE CUSTO  [REQ-3b] |
-| `tests/test_fundacao.py` | 493 | """[REQ-3b] Consumo tambem e informacao auditavel.""" |
+| `tests/test_fundacao.py` | 510 | """[REQ-3b] Consumo tambem e informacao auditavel.""" |
 
 #### ✅ `REQ-3c` — Garantir explainability das respostas da LLM (exemplo: indicar a fonte da informacao utilizada na resposta).
 
@@ -162,11 +191,22 @@ São itens previstos para etapas seguintes do projeto.
 | `scripts/demo_fundacao.py` | 128 | """Simula a validacao da resposta antes da entrega. [REQ-3a][REQ-3c]""" |
 | `src/medgraph/__init__.py` | 23 | rag/              indice vetorial e recuperacao com fontes    [REQ-3c] |
 | `src/medgraph/auditoria.py` | 99 | RECUPERACAO = "recuperacao"    # busca no indice vetorial          [REQ-3c] |
+| `src/medgraph/chains/chain_rag.py` | 2 | [REQ-2][REQ-3c] Chain de resposta ancorada em fontes. |
 | `src/medgraph/chains/prompts.py` | 2 | [REQ-2][REQ-3a][REQ-3c] Prompts do MedGraph. |
+| `src/medgraph/grafo/nos.py` | 238 | Busca protocolos internos e evidência científica.  [REQ-3c] |
+| `src/medgraph/grafo/nos.py` | 366 | """Verifica as quatro invariantes da resposta.  [REQ-3a][REQ-3c]""" |
+| `src/medgraph/grafo/nos.py` | 632 | Compõe o texto entregue ao médico.  [REQ-3c] |
+| `src/medgraph/guardrails/saida.py` | 2 | [REQ-3a][REQ-3c] Guardrail de saída. |
+| `src/medgraph/guardrails/saida.py` | 148 | --- 1. Citação de fonte  [REQ-3c] ------------------------------------- |
 | `src/medgraph/rag/__init__.py` | 1 | """[REQ-2][REQ-3c] Indexacao vetorial e recuperacao de evidencia com fontes.""" |
+| `src/medgraph/rag/indexar.py` | 2 | [REQ-2][REQ-3c] Construção do índice vetorial. |
+| `src/medgraph/rag/indexar.py` | 17 | MARCADORES DE FONTE — o mecanismo de explainability  [REQ-3c]: |
+| `src/medgraph/rag/recuperador.py` | 2 | [REQ-3c] Recuperação de evidência com rastreabilidade de fonte. |
 | `src/medgraph/requisitos.py` | 23 | Uma docstring que comeca com "[REQ-3b][REQ-3c]" significa que aquele |
 | `tests/test_fundacao.py` | 353 | requisito e explainability por citacao, isso e inaceitavel. [REQ-3c] |
 | `tests/test_fundacao.py` | 399 | que se quer poder auditar depois, item por item. [REQ-3c] |
+| `tests/test_seguranca.py` | 255 | GUARDRAIL DE SAÍDA  [REQ-3a][REQ-3c] |
+| `tests/test_seguranca.py` | 268 | """[REQ-3c] Explainability não é opcional.""" |
 
 ### Organizacao do codigo
 
@@ -181,23 +221,44 @@ São itens previstos para etapas seguintes do projeto.
 
 ### Entregaveis
 
-#### ⏳ `REQ-E1` — Codigo-fonte com os fluxos do LangGraph.
+#### ✅ `REQ-E1` — Codigo-fonte com os fluxos do LangGraph.
 
 *Origem no PDF: PDF pag. 3, Entregaveis / Repositorio Git*
 
-_Sem implementação identificada até o momento._
+| Arquivo | Linha | Contexto |
+| --- | ---: | --- |
+| `src/medgraph/__init__.py` | 27 | grafo/            fluxo LangGraph                             [REQ-E1] |
+| `src/medgraph/grafo/__init__.py` | 1 | """[REQ-E1] Fluxo de decisao clinica orquestrado com LangGraph.""" |
+| `src/medgraph/grafo/construir.py` | 2 | [REQ-E1] Montagem do grafo LangGraph. |
+| `src/medgraph/grafo/estado.py` | 2 | [REQ-E1] Estado compartilhado do fluxo clínico. |
+| `src/medgraph/grafo/executar.py` | 2 | [REQ-E1] Execução do fluxo clínico. |
+| `src/medgraph/grafo/nos.py` | 2 | [REQ-E1] Nós do fluxo de decisão clínica. |
+| `src/medgraph/grafo/rotas.py` | 2 | [REQ-E1] Roteamento condicional do fluxo. |
+| `tests/test_seguranca.py` | 374 | ROTEAMENTO DO GRAFO  [REQ-E1] |
+| `tests/test_seguranca.py` | 447 | TOPOLOGIA DO GRAFO  [REQ-E1] |
 
-#### ⏳ `REQ-E2` — Dataset anonimizado ou exemplo de dados sinteticos.
+#### ✅ `REQ-E2` — Dataset anonimizado ou exemplo de dados sinteticos.
 
 *Origem no PDF: PDF pag. 3, Entregaveis / Repositorio Git*
 
-_Sem implementação identificada até o momento._
+| Arquivo | Linha | Contexto |
+| --- | ---: | --- |
+| `src/medgraph/dados/__init__.py` | 1 | """[REQ-1a][REQ-E2] Aquisicao, anonimizacao e curadoria dos dados.""" |
+| `src/medgraph/dados/baixar_pubmedqa.py` | 2 | [REQ-1][REQ-E2] Download do PubMedQA. |
+| `src/medgraph/dados/construir_banco.py` | 2 | [REQ-2a][REQ-E2] Construcao da base estruturada de prontuarios. |
 
-#### ⏳ `REQ-E3` — Relatorio tecnico detalhado com explicacao do processo de fine-tuning, descricao do assistente medico criado, diagrama do fluxo LangChain e avaliacao do modelo com analise dos resultados.
+#### ✅ `REQ-E3` — Relatorio tecnico detalhado com explicacao do processo de fine-tuning, descricao do assistente medico criado, diagrama do fluxo LangChain e avaliacao do modelo com analise dos resultados.
 
 *Origem no PDF: PDF pag. 3-4, Entregaveis*
 
-_Sem implementação identificada até o momento._
+| Arquivo | Linha | Contexto |
+| --- | ---: | --- |
+| `src/medgraph/__init__.py` | 21 | avaliacao/        metricas e graficos do relatorio            [REQ-E3] |
+| `src/medgraph/avaliacao/__init__.py` | 1 | """[REQ-E3] Metricas, comparativos e graficos do relatorio tecnico.""" |
+| `src/medgraph/avaliacao/avaliar.py` | 2 | [REQ-E3] Avaliação comparativa dos sistemas. |
+| `src/medgraph/avaliacao/graficos.py` | 2 | [REQ-E3] Gráficos da avaliação. |
+| `src/medgraph/avaliacao/metricas.py` | 2 | [REQ-E3] Métricas de avaliação do modelo. |
+| `src/medgraph/grafo/diagrama.py` | 2 | [REQ-E3] Geração dos diagramas do fluxo. |
 
 #### ⏳ `REQ-E4` — Video de ate 15 minutos demonstrando o treinamento e funcionamento da LLM personalizada, a execucao de um fluxo automatizado, respostas a perguntas clinicas contextualizadas e os logs e a validacao das respostas.
 

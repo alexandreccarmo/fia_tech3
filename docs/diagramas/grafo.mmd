@@ -1,0 +1,45 @@
+---
+config:
+  flowchart:
+    curve: linear
+---
+graph TD;
+	__start__([<p>__start__</p>]):::first
+	guardrail_entrada(guardrail_entrada)
+	responder_recusa(responder_recusa)
+	classificar_intencao(classificar_intencao)
+	consultar_prontuario(consultar_prontuario)
+	recuperar_evidencia(recuperar_evidencia)
+	raciocinio_clinico(raciocinio_clinico)
+	regras_clinicas(regras_clinicas)
+	guardrail_saida(guardrail_saida)
+	reescrever(reescrever)
+	degradar_resposta(degradar_resposta)
+	triagem_risco(triagem_risco)
+	aguardar_validacao(aguardar_validacao)
+	emitir_alertas(emitir_alertas)
+	montar_resposta(montar_resposta)
+	__end__([<p>__end__</p>]):::last
+	__start__ --> guardrail_entrada;
+	aguardar_validacao --> montar_resposta;
+	classificar_intencao -.-> consultar_prontuario;
+	classificar_intencao -.-> recuperar_evidencia;
+	consultar_prontuario --> recuperar_evidencia;
+	degradar_resposta --> triagem_risco;
+	emitir_alertas -.-> aguardar_validacao;
+	emitir_alertas -.-> montar_resposta;
+	guardrail_entrada -.-> classificar_intencao;
+	guardrail_entrada -.-> responder_recusa;
+	guardrail_saida -.-> degradar_resposta;
+	guardrail_saida -.-> reescrever;
+	guardrail_saida -.-> triagem_risco;
+	raciocinio_clinico --> regras_clinicas;
+	recuperar_evidencia --> raciocinio_clinico;
+	reescrever --> raciocinio_clinico;
+	regras_clinicas --> guardrail_saida;
+	triagem_risco --> emitir_alertas;
+	montar_resposta --> __end__;
+	responder_recusa --> __end__;
+	classDef default fill:#f2f0ff,line-height:1.2
+	classDef first fill-opacity:0
+	classDef last fill:#bfb6fc

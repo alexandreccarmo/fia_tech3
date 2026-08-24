@@ -44,8 +44,19 @@ from medgraph.requisitos import CATALOGO, POR_CODIGO, listar_categorias  # noqa:
 PASTAS_VARRIDAS = ("src", "config", "tests", "scripts", "notebooks")
 EXTENSOES = {".py", ".yaml", ".yml", ".ipynb", ".md", ".sh"}
 
-# Uma tag e sempre [REQ-] seguido de digitos e, opcionalmente, uma letra.
-PADRAO_TAG = re.compile(r"\[(REQ-[0-9]+[a-zA-Z]?)\]")
+# Uma tag e [REQ-] seguido de um sufixo alfanumerico: REQ-1, REQ-3b, REQ-E1.
+#
+# A primeira versao usava r"REQ-[0-9]+[a-zA-Z]?", que exigia digito no inicio
+# do sufixo. Com isso, NENHUMA tag de entregavel (REQ-E1 a REQ-E4) era
+# reconhecida, e a matriz reportava esses quatro requisitos como sem
+# cobertura mesmo com dezenas de referencias no codigo. Um relatorio de
+# cobertura que erra para menos e pior do que nenhum: ele leva a procurar um
+# problema que nao existe, e mascara o que existe.
+PADRAO_TAG = re.compile(r"\[(REQ-[A-Za-z0-9]+)\]")
+
+# Marcadores usados em PROSA para falar sobre as tags, e nao como tag.
+# Ex.: "as docstrings declaram qual requisito atendem, no formato [REQ-xx]".
+PLACEHOLDERS = frozenset({"REQ-xx", "REQ-XX", "REQ-x"})
 
 
 @dataclass(frozen=True)
@@ -84,6 +95,8 @@ def varrer() -> tuple[list[Ocorrencia], set[str]]:
 
             for numero, texto in enumerate(linhas, start=1):
                 for codigo in PADRAO_TAG.findall(texto):
+                    if codigo in PLACEHOLDERS:
+                        continue
                     if codigo not in POR_CODIGO:
                         desconhecidos.add(f"{codigo} ({arquivo.relative_to(RAIZ)}:{numero})")
                         continue

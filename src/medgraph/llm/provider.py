@@ -91,9 +91,10 @@ class CallbackCusto(BaseCallbackHandler):
     provedor nao informa (caso do Ollama), estimamos pelo texto.
     """
 
-    def __init__(self, modelo: str, origem: str = "nao_informada") -> None:
+    def __init__(self, modelo: str, origem: str = "nao_informada", provedor: str = "") -> None:
         self.modelo = modelo
         self.origem = origem
+        self.provedor = provedor
 
     def on_llm_end(self, response, **kwargs: Any) -> None:  # noqa: ANN001
         uso: dict[str, Any] = {}
@@ -125,7 +126,7 @@ class CallbackCusto(BaseCallbackHandler):
             saida_tokens = estimar_tokens(texto, self.modelo)
 
         contador().registrar_uso(
-            self.modelo, entrada, saida_tokens, origem=self.origem
+            self.modelo, entrada, saida_tokens, origem=self.origem, provedor=self.provedor
         )
 
 
@@ -281,7 +282,7 @@ def obter_llm(
             base_url=cfg.ollama_base_url,
             temperature=temperatura,
             num_predict=cfg.llm_max_tokens,
-            callbacks=[CallbackCusto(cfg.ollama_model, origem)],
+            callbacks=[CallbackCusto(cfg.ollama_model, origem, provedor="ollama")],
         )
 
     # -------------------------------------------------------------------------
@@ -312,7 +313,7 @@ def obter_llm(
             temperature=temperatura,
             max_tokens=cfg.llm_max_tokens,
             timeout=cfg.llm_timeout_s,
-            callbacks=[CallbackCusto(cfg.openai_model, origem)],
+            callbacks=[CallbackCusto(cfg.openai_model, origem, provedor="openai")],
         )
 
     raise ValueError(

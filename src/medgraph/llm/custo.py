@@ -71,10 +71,20 @@ PRECOS_USD_POR_MILHAO: Final[dict[str, tuple[float, float]]] = {
     "text-embedding-3-small": (0.02, 0.00),
     "text-embedding-3-large": (0.13, 0.00),
     # --- Modelos locais: sem custo financeiro ---
-    "medgraph": (0.00, 0.00),
     "local": (0.00, 0.00),
     "eco": (0.00, 0.00),
 }
+
+# Provedores que rodam na própria máquina. Qualquer modelo servido por eles
+# tem custo financeiro zero, independentemente do nome que receba.
+#
+# Identificar pelo PROVEDOR, e não por uma lista de nomes, é o que torna isso
+# correto: o nome do modelo local vem do .env e pode ser qualquer coisa
+# ("medgraph", "medgraph-base", "medgraph-v2"). Uma lista de nomes deixaria
+# de fora o primeiro nome novo que alguém escolhesse — e o contador atribuiria
+# a ele o preço da OpenAI, inflando a tabela de custo do relatório com um
+# gasto que nunca existiu.
+PROVEDORES_LOCAIS: Final[frozenset[str]] = frozenset({"ollama", "eco", "local"})
 
 # Preco assumido para um modelo desconhecido. Escolhemos o do gpt-4o-mini
 # (o mais provavel neste projeto) e registramos um aviso, em vez de assumir
@@ -103,6 +113,9 @@ class RegistroUso:
     origem: str
     """Onde no projeto a chamada nasceu. Ex.: 'avaliacao', 'grafo.raciocinio_clinico'."""
 
+    provedor: str = ""
+    """ollama, openai ou eco. Determina se a chamada tem custo financeiro."""
+
 
 @dataclass
 class ContadorCusto:
@@ -119,8 +132,23 @@ class ContadorCusto:
 
     # -- calculo -------------------------------------------------------------
     @staticmethod
-    def calcular_custo(modelo: str, tokens_entrada: int, tokens_saida: int) -> float:
-        """Custo em USD de uma chamada, segundo a tabela de precos local."""
+    def calcular_custo(
+        modelo: str,
+        tokens_entrada: int,
+        tokens_saida: int,
+        *,
+        provedor: str | None = None,
+    ) -> float:
+        """
+        Custo em USD de uma chamada, segundo a tabela de precos local.
+
+        Args:
+            provedor: quando informado e local (ollama/eco), o custo e zero
+                qualquer que seja o nome do modelo.
+        """
+        if provedor and provedor.lower() in PROVEDORES_LOCAIS:
+            return 0.0
+
         preco = PRECOS_USD_POR_MILHAO.get(modelo)
         if preco is None:
             log.warning(
@@ -141,6 +169,7 @@ class ContadorCusto:
         tokens_saida: int = 0,
         *,
         origem: str = "nao_informada",
+        provedor: str | None = None,
     ) -> RegistroUso:
         """
         Contabiliza uma chamada ja realizada e publica o evento na auditoria.
@@ -149,7 +178,7 @@ class ContadorCusto:
         permitir ou barrar uma chamada e de `verificar_orcamento()`, que deve
         ser consultado ANTES de chamar o modelo.
         """
-        custo = self.calcular_custo(modelo, tokens_entrada, tokens_saida)
+        custo = self.calcular_custo(modelo, tokens_entrada, tokens_saida, provedor=provedor)
         registro = RegistroUso(
             ts=datetime.now(UTC).isoformat(),
             modelo=modelo,
@@ -157,6 +186,7 @@ class ContadorCusto:
             tokens_saida=tokens_saida,
             custo_usd=custo,
             origem=origem,
+            provedor=provedor or "",
         )
         with self._lock:
             self.registros.append(registro)

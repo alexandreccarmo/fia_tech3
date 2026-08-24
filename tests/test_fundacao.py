@@ -444,9 +444,26 @@ class TestCusto:
         assert custo == pytest.approx(0.75)
 
     def test_modelo_local_nao_gera_custo(self):
+        """
+        O custo zero é decidido pelo PROVEDOR, não pelo nome do modelo.
+
+        Uma lista de nomes deixaria de fora o primeiro nome novo que alguém
+        escolhesse no .env — e o contador atribuiria a ele o preço da OpenAI,
+        inflando a tabela do relatório com um gasto que nunca existiu.
+        """
         from medgraph.llm.custo import ContadorCusto
 
-        assert ContadorCusto.calcular_custo("medgraph", 500_000, 500_000) == 0.0
+        for nome in ("medgraph", "medgraph-base", "medgraph-v2-experimental"):
+            assert ContadorCusto.calcular_custo(
+                nome, 500_000, 500_000, provedor="ollama"
+            ) == 0.0
+
+    def test_provedor_pago_gera_custo(self):
+        from medgraph.llm.custo import ContadorCusto
+
+        assert ContadorCusto.calcular_custo(
+            "gpt-4o-mini", 1_000_000, 0, provedor="openai"
+        ) == pytest.approx(0.15)
 
     def test_modelo_desconhecido_usa_preco_padrao(self):
         """Melhor superestimar do que assumir zero e furar o orcamento."""
@@ -481,7 +498,7 @@ class TestCusto:
         c = reiniciar_contador(limite_usd=10.0)
         c.registrar_uso("gpt-4o-mini", 1000, 200, origem="avaliacao")
         c.registrar_uso("gpt-4o-mini", 2000, 400, origem="avaliacao")
-        c.registrar_uso("medgraph", 5000, 900, origem="grafo")
+        c.registrar_uso("medgraph", 5000, 900, origem="grafo", provedor="ollama")
 
         por_modelo = c.por_modelo()
         assert por_modelo["gpt-4o-mini"]["chamadas"] == 2

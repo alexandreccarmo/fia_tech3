@@ -196,12 +196,29 @@ MARCADORES_NOME: Final[tuple[str, ...]] = (
     "doutora", "enf", "enfermeiro", "enfermeira", "acompanhante", "responsavel",
 )
 
+# ATENÇÃO À AUSÊNCIA DE re.IGNORECASE — foi um defeito real deste projeto.
+#
+#   A primeira versão deste padrão usava re.IGNORECASE achando que isso só
+#   tornava o MARCADOR insensível a caixa. Não é o que acontece: a flag vale
+#   para a expressão inteira e anula as classes [A-Z] e [a-z], que são
+#   justamente o que distingue um nome próprio de uma palavra comum.
+#
+#   O efeito foi grave e silencioso. Em "a avaliação do paciente deve incluir
+#   a coleta", o trecho "paciente deve incluir" passava a casar como
+#   "marcador + Nome Sobrenome", e o guardrail de saída reprovava toda
+#   resposta do modelo por suposto vazamento de dado pessoal. O fluxo entrava
+#   no ciclo de reescrita, esgotava as tentativas e degradava — em TODAS as
+#   consultas.
+#
+#   A correção usa o grupo inline (?i:...) para tornar insensível a caixa
+#   apenas a lista de marcadores, preservando a distinção de maiúsculas no
+#   restante, que é o que identifica o nome próprio.
 PADRAO_NOME_ROTULADO: Final[Pattern[str]] = re.compile(
-    r"\b(?:" + "|".join(MARCADORES_NOME) + r")\.?\s+"
+    r"\b(?i:" + "|".join(MARCADORES_NOME) + r")\.?\s+"
     r"((?:[A-ZÁÀÂÃÉÊÍÓÔÕÚÇ][a-zàáâãéêíóôõúç]{2,}\s+)"
     r"(?:(?:d[aeo]s?|e)\s+)?"
     r"(?:[A-ZÁÀÂÃÉÊÍÓÔÕÚÇ][a-zàáâãéêíóôõúç]{2,}(?:\s+|$))+)",
-    re.IGNORECASE | re.UNICODE,
+    re.UNICODE,
 )
 
 # Palavras capitalizadas que NUNCA devem ser tratadas como nome de pessoa,
@@ -365,6 +382,28 @@ class Anonimizador:
                         substituicao=self._token(TipoPII.NOME, m.group()),
                     )
                 )
+
+        # A heurística de nome rotulado também precisa entrar aqui: sem ela,
+        # `analisar()` e `redigir()` dariam respostas diferentes sobre o mesmo
+        # texto — e foi essa divergência que escondeu o defeito do IGNORACASE
+        # durante a depuração, porque `analisar()` não encontrava nada e
+        # `redigir()` encontrava.
+        for m in PADRAO_NOME_ROTULADO.finditer(texto):
+            candidato = m.group(1).strip()
+            palavras = [p for p in candidato.split() if len(p) > 2]
+            if not palavras or all(self._normalizar(p) in NAO_SAO_NOMES for p in palavras):
+                continue
+            achados.append(
+                Achado(
+                    tipo=TipoPII.NOME,
+                    inicio=m.start(1),
+                    fim=m.end(1),
+                    tamanho=len(candidato),
+                    hash_valor=self._hash(candidato),
+                    substituicao=self._token(TipoPII.NOME, candidato),
+                )
+            )
+
         return sorted(achados, key=lambda a: a.inicio)
 
     def redigir(self, texto: str) -> str:
