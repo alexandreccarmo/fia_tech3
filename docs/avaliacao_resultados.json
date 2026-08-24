@@ -1,0 +1,568 @@
+{
+  "conjunto_de_teste": {
+    "arquivo": "data/processed/pubmedqa_teste.jsonl",
+    "casos_avaliados": 30,
+    "casos_disponiveis": 500,
+    "distribuicao": {
+      "yes": 15,
+      "no": 12,
+      "maybe": 3
+    }
+  },
+  "referencia_externa": {
+    "especialista_humano": 0.78,
+    "fonte": "Jin et al., 2019 — artigo original do PubMedQA"
+  },
+  "sistemas": [
+    {
+      "sistema": "classe majoritária ('yes')",
+      "total": 30,
+      "accuracy": 0.5,
+      "accuracy_entre_extraidos": 0.5,
+      "macro_f1": 0.2222,
+      "taxa_extracao": 1.0,
+      "taxa_adesao_formato": 1.0,
+      "erros_de_execucao": 0,
+      "latencia_media_ms": 0.0,
+      "latencia_mediana_ms": 0.0,
+      "por_classe": {
+        "yes": {
+          "precisao": 0.5,
+          "revocacao": 1.0,
+          "f1": 0.6667,
+          "suporte": 15
+        },
+        "no": {
+          "precisao": 0.0,
+          "revocacao": 0.0,
+          "f1": 0.0,
+          "suporte": 12
+        },
+        "maybe": {
+          "precisao": 0.0,
+          "revocacao": 0.0,
+          "f1": 0.0,
+          "suporte": 3
+        }
+      },
+      "matriz_confusao": {
+        "yes": {
+          "yes": 15,
+          "no": 0,
+          "maybe": 0,
+          "(sem rótulo)": 0
+        },
+        "no": {
+          "yes": 12,
+          "no": 0,
+          "maybe": 0,
+          "(sem rótulo)": 0
+        },
+        "maybe": {
+          "yes": 3,
+          "no": 0,
+          "maybe": 0,
+          "(sem rótulo)": 0
+        }
+      },
+      "distribuicao_previsoes": {
+        "yes": 30
+      },
+      "amostra_de_respostas": [
+        {
+          "pergunta": "(baseline determinístico)",
+          "esperado": "no",
+          "previsto": "yes",
+          "resposta": "Decisão: yes"
+        },
+        {
+          "pergunta": "(baseline determinístico)",
+          "esperado": "maybe",
+          "previsto": "yes",
+          "resposta": "Decisão: yes"
+        },
+        {
+          "pergunta": "(baseline determinístico)",
+          "esperado": "no",
+          "previsto": "yes",
+          "resposta": "Decisão: yes"
+        },
+        {
+          "pergunta": "(baseline determinístico)",
+          "esperado": "yes",
+          "previsto": "yes",
+          "resposta": "Decisão: yes"
+        },
+        {
+          "pergunta": "(baseline determinístico)",
+          "esperado": "yes",
+          "previsto": "yes",
+          "resposta": "Decisão: yes"
+        },
+        {
+          "pergunta": "(baseline determinístico)",
+          "esperado": "no",
+          "previsto": "yes",
+          "resposta": "Decisão: yes"
+        },
+        {
+          "pergunta": "(baseline determinístico)",
+          "esperado": "maybe",
+          "previsto": "yes",
+          "resposta": "Decisão: yes"
+        },
+        {
+          "pergunta": "(baseline determinístico)",
+          "esperado": "yes",
+          "previsto": "yes",
+          "resposta": "Decisão: yes"
+        },
+        {
+          "pergunta": "(baseline determinístico)",
+          "esperado": "yes",
+          "previsto": "yes",
+          "resposta": "Decisão: yes"
+        },
+        {
+          "pergunta": "(baseline determinístico)",
+          "esperado": "yes",
+          "previsto": "yes",
+          "resposta": "Decisão: yes"
+        },
+        {
+          "pergunta": "(baseline determinístico)",
+          "esperado": "maybe",
+          "previsto": "yes",
+          "resposta": "Decisão: yes"
+        },
+        {
+          "pergunta": "(baseline determinístico)",
+          "esperado": "no",
+          "previsto": "yes",
+          "resposta": "Decisão: yes"
+        },
+        {
+          "pergunta": "(baseline determinístico)",
+          "esperado": "yes",
+          "previsto": "yes",
+          "resposta": "Decisão: yes"
+        },
+        {
+          "pergunta": "(baseline determinístico)",
+          "esperado": "yes",
+          "previsto": "yes",
+          "resposta": "Decisão: yes"
+        },
+        {
+          "pergunta": "(baseline determinístico)",
+          "esperado": "no",
+          "previsto": "yes",
+          "resposta": "Decisão: yes"
+        },
+        {
+          "pergunta": "(baseline determinístico)",
+          "esperado": "yes",
+          "previsto": "yes",
+          "resposta": "Decisão: yes"
+        },
+        {
+          "pergunta": "(baseline determinístico)",
+          "esperado": "yes",
+          "previsto": "yes",
+          "resposta": "Decisão: yes"
+        },
+        {
+          "pergunta": "(baseline determinístico)",
+          "esperado": "no",
+          "previsto": "yes",
+          "resposta": "Decisão: yes"
+        },
+        {
+          "pergunta": "(baseline determinístico)",
+          "esperado": "no",
+          "previsto": "yes",
+          "resposta": "Decisão: yes"
+        },
+        {
+          "pergunta": "(baseline determinístico)",
+          "esperado": "yes",
+          "previsto": "yes",
+          "resposta": "Decisão: yes"
+        }
+      ]
+    },
+    {
+      "sistema": "modelo base (Llama-3.2-3B)",
+      "total": 30,
+      "accuracy": 0.7,
+      "accuracy_entre_extraidos": 0.7,
+      "macro_f1": 0.49,
+      "taxa_extracao": 1.0,
+      "taxa_adesao_formato": 1.0,
+      "erros_de_execucao": 0,
+      "latencia_media_ms": 6553.5,
+      "latencia_mediana_ms": 6608.3,
+      "por_classe": {
+        "yes": {
+          "precisao": 0.7059,
+          "revocacao": 0.8,
+          "f1": 0.75,
+          "suporte": 15
+        },
+        "no": {
+          "precisao": 0.6923,
+          "revocacao": 0.75,
+          "f1": 0.72,
+          "suporte": 12
+        },
+        "maybe": {
+          "precisao": 0.0,
+          "revocacao": 0.0,
+          "f1": 0.0,
+          "suporte": 3
+        }
+      },
+      "matriz_confusao": {
+        "yes": {
+          "yes": 12,
+          "no": 3,
+          "maybe": 0,
+          "(sem rótulo)": 0
+        },
+        "no": {
+          "yes": 3,
+          "no": 9,
+          "maybe": 0,
+          "(sem rótulo)": 0
+        },
+        "maybe": {
+          "yes": 2,
+          "no": 1,
+          "maybe": 0,
+          "(sem rótulo)": 0
+        }
+      },
+      "distribuicao_previsoes": {
+        "no": 13,
+        "yes": 17
+      },
+      "amostra_de_respostas": [
+        {
+          "pergunta": "Risk factors for avascular necrosis of bone in patients with systemic lupus erythematosus: is there a role for antiphospholipid antibodies?",
+          "esperado": "no",
+          "previsto": "no",
+          "resposta": "Decisão: no\nA evidência não mostra associação significativa entre a presença de anticardiolipinas ou lupus anticoagulante e o risco de avascular necrosis de bone em pacientes com SLE.\n\nFontes: [E1]"
+        },
+        {
+          "pergunta": "Are the elderly with oropharyngeal carcinoma undertreated?",
+          "esperado": "maybe",
+          "previsto": "yes",
+          "resposta": "Decisão: yes\nA evidência sugere que os idosos com carcinoma de células escamosas do orofaringe (OPSCC) podem estar subtratados, especialmente após a idade de 55 anos, quando se observa uma significativa aumento no número de pacientes que não receberam tratamento. Além disso, a análise de Kaplan-Meier mostrou benefícios substanciais na sobrevivência específica ao doença (DSS) nos idosos com mais de 65 anos que receberam tratamento. [E1]"
+        },
+        {
+          "pergunta": "Is the advanced age a contraindication to GERD laparoscopic surgery?",
+          "esperado": "no",
+          "previsto": "no",
+          "resposta": "Decisão: no\nA evidência não sugere que a idade avançada seja uma contraindicação para a cirurgia laparoscópica da doença do esôfago gastroesofágico (GERD), pois os resultados mostram que tanto os pacientes mais jovens quanto os mais velhos têm um alto nível de sucesso pós-operatório, com diferenças estatisticamente não significativas entre as duas faixas etárias.\n\nFontes: [E1]"
+        },
+        {
+          "pergunta": "Does insulin resistance drive the association between hyperglycemia and cardiovascular risk?",
+          "esperado": "yes",
+          "previsto": "yes",
+          "resposta": "Decisão: yes\nA evidência sugere que a resistência à insulina não é o principal fator que explica a associação entre a hiperglicemia e o risco cardiovascular. Em vez disso, a resistência à insulina parece ser um fator independente que contribui para o risco cardiovascular, mesmo após ajuste por níveis de glicose.\n\nFontes: [E1]"
+        },
+        {
+          "pergunta": "Does the manic/mixed episode distinction in bipolar disorder patients run true over time?",
+          "esperado": "yes",
+          "previsto": "yes",
+          "resposta": "Decisão: yes\n\nA evidência apresentada sugere que a distinção entre episódios maníacos e mistos em pacientes com transtorno bipolar é consistente ao longo do tempo, pois os episódios são consistentes (tanto todos maníacos quanto todos mistos) em uma proporção significativamente maior do que o esperado por acaso. Fontes: [E1]"
+        },
+        {
+          "pergunta": "Does a colonoscopy after acute diverticulitis affect its management?",
+          "esperado": "no",
+          "previsto": "no",
+          "resposta": "Decisão: no\nA evidência não sugere que a colonoscopia após diverticulitis acuta afete significativamente sua gestão, pois não há diferenças estatisticamente significativas nos resultados de sobrevivência entre os pacientes com e sem colonoscopia. Além disso, não foram detectados colônias malignas em nenhum dos pacientes que passaram pela colonoscopia.\n\nFontes: [E1]"
+        },
+        {
+          "pergunta": "Can bisphosphonate treatment be stopped in a growing child with skeletal fragility?",
+          "esperado": "maybe",
+          "previsto": "no",
+          "resposta": "Decisão: no\nA evidência apresentada não sustenta a possibilidade de parar o tratamento com bisfosfonatos em um criança com fragilidade óssea que está crescendo, pois o caso reportado apresentou uma recaída nos valores de densidade óssea após a interrupção do tratamento. [E1]\n\nFontes: [E1]"
+        },
+        {
+          "pergunta": "Convulsions and retinal haemorrhage: should we look further?",
+          "esperado": "yes",
+          "previsto": "no",
+          "resposta": "Decisão: no\nA evidência disponível não sugere uma associação causal entre convulsões e retinal haemorrhage, e o estudo em questão não encontrou nenhuma relação entre os dois eventos. Além disso, a presença de retinal haemorrhage é considerada característica de abuso de crianças, o que pode levar a uma investigação mais aprofundada. Portanto, não há evidência suficiente para sugerir que devemos procurar por outras causas para retinal haemorrhage em casos de convulsões.\n\nFontes: [E1]"
+        },
+        {
+          "pergunta": "Can predilatation in transcatheter aortic valve implantation be omitted?",
+          "esperado": "yes",
+          "previsto": "yes",
+          "resposta": "Decisão: yes\nA ausência de diferenças significativas entre os grupos em termos de resultados hemodinâmicos tempranos e taxas de complicações sugere que a predilatação de balão pode ser omitida sem impacto negativo nos resultados do procedimento. [E1]\n\nFontes: [E1]"
+        },
+        {
+          "pergunta": "Is aerobic workload positively related to ambulatory blood pressure?",
+          "esperado": "yes",
+          "previsto": "yes",
+          "resposta": "Decisão: yes\nA evidência apresentada mostra uma relação positiva entre o workload aeróbico e a pressão arterial ambulatoria, com um aumento de 0,42 mmHg em pressão sistólica e 0,30 mmHg em pressão diastólica por cada 1% de aumento no workload aeróbico. [E1]\n\nFontes: [E1]"
+        },
+        {
+          "pergunta": "Actinobaculum schaalii, a cause of urinary tract infections in children?",
+          "esperado": "maybe",
+          "previsto": "yes",
+          "resposta": "Decisão: yes\nA evidência apresentada sugere que Actinobaculum schaalii pode ser uma causa de infecções urinárias em crianças, especialmente em casos com grande número de leucócitos presentes na urina. A presença do gênero em quantidades ≥ 10^6 CFU/mL tanto por cultura quanto por PCR em dois casos de infecção urária confirma a relação entre o gênero e a doença.\n\nFontes: [E1]"
+        },
+        {
+          "pergunta": "Sternal skin conductance: a reasonable surrogate for hot flash measurement?",
+          "esperado": "no",
+          "previsto": "no",
+          "resposta": "Decisão: no\nA evidência disponível não sustenta a ideia de que a sternal skin conductance seja uma surrogate razoável para medir calores quentes, pois apenas um estudo piloto foi realizado e apresentou uma taxa de concordância relativamente baixa entre os relatos dos pacientes e os dados registrados pelo dispositivo. Além disso, o primeiro protótipo não conseguiu coletar dados analisáveis devido a problemas técnicos. [E1]"
+        },
+        {
+          "pergunta": "Can myometrial electrical activity identify patients in preterm labor?",
+          "esperado": "yes",
+          "previsto": "yes",
+          "resposta": "Decisão: yes\nA evidência apresentada sugere que a atividade elétrica do miometrio pode ser um indicador útil para identificar pacientes em trabalho de parto prematuro, pois pacientes com maior index e média de RMS tinham um risco aumentado de preterm delivery. Além disso, a combinação da atividade elétrica com outros fatores, como a length cervical, aumentou a predictabilidade.\n\nFontes: [E1]"
+        },
+        {
+          "pergunta": "Does induction chemotherapy have a role in the management of nasopharyngeal carcinoma?",
+          "esperado": "yes",
+          "previsto": "yes",
+          "resposta": "Decisão: yes\nA evidência sugere que a quimioterapia de indução tem um papel importante no manejo do carcinoma de nasofaringe, especialmente em pacientes com doença avançada (Stage IV), onde a sobrevivência, liberdade de recorrência e controle local são significativamente maiores nos pacientes que receberam quimioterapia de indução. [E1]\n\nFontes: [E1]"
+        },
+        {
+          "pergunta": "Cholestasis associated with small bowel atresia: do we always need to investigate?",
+          "esperado": "no",
+          "previsto": "yes",
+          "resposta": "Decisão: yes\nA evidência sugere que a cholestasis é frequentemente associada à atresia do intestino delgado (SBA) e que pacientes com SBA podem desenvolver cholestasis após cirurgia, especialmente se tiverem short bowel ou atrasos na alimentação enteral. Além disso, a cholestasis resolveu-se espontaneamente em todos os sobreviventes. [E1]"
+        },
+        {
+          "pergunta": "Are even impaired fasting blood glucose levels preoperatively associated with increased mortality after CABG surgery?",
+          "esperado": "yes",
+          "previsto": "yes",
+          "resposta": "Decisão: yes\nA evidência sugere que os níveis de glicose no jejum pré-operatórios estão associados a uma maior mortalidade após cirurgia de bypass coronário (CABG), independentemente da categoria de glicemia. A análise do estudo mostrou um risco de mortalidade aumentado nos pacientes com glicemia alterada em comparação com aqueles com níveis normais de glicose.\n\nFontes: [E1]"
+        },
+        {
+          "pergunta": "Remote ischemic postconditioning: does it protect against ischemic damage in percutaneous coronary revascularization?",
+          "esperado": "yes",
+          "previsto": "yes",
+          "resposta": "Decisão: yes\nA evidência sugere que o remote ischemic postconditioning pode reduzir a lesão miocárdica associada à intervenção coronária percutânea (PCI), embora com ressalvas para pacientes diabéticos. A intervenção foi capaz de reduzir a lesão miocárdica e diminuir a mortalidade cardiovascular no longo prazo.\n\nFontes: [E1]"
+        },
+        {
+          "pergunta": "Is patient outcome compromised during the initial experience with robot-assisted radical cystectomy?",
+          "esperado": "no",
+          "previsto": "no",
+          "resposta": "Decisão: no\nA evidência não sugere que o resultado do paciente seja comprometido durante a primeira experiência com robot-assistida radicalo-cistectomia, pois não há associação significativa entre o número de caso e complicações, sangramento cirúrgico ou margens quirúrgicas positivas. \nFontes: [E1]"
+        },
+        {
+          "pergunta": "Are patients with Werlhof's disease at increased risk for bleeding complications when undergoing cardiac surgery?",
+          "esperado": "no",
+          "previsto": "yes",
+          "resposta": "Decisão: yes\nA evidência sugere que pacientes com doença de Werlhof estão em risco aumentado de complicações hemorrágicas durante a cirurgia cardíaca com circulação extracorporeal, apesar de um menor número de complicações hemorrágicas observadas em relação ao grupo sem doença. [E1]\n\nFontes: [E1]"
+        },
+        {
+          "pergunta": "Risk stratification in emergency surgical patients: is the APACHE II score a reliable marker of physiological impairment?",
+          "esperado": "yes",
+          "previsto": "no",
+          "resposta": "Decisão: no\nA evidência sugere que o APACHE II score pode não ser um marcador confiável de impairemento físico nos pacientes cirúrgicos de emergência, pois pode estar influenciado pelos efeitos da tratamento e levar a uma análise sesgada dos grupos de pacientes definidos e das políticas de tratamento. Além disso, o estudo conclui que a monitorização pós-operatória com o APACHE II score é irrelevante clínica.\n\nFontes: [E1]"
+        }
+      ]
+    },
+    {
+      "sistema": "gpt-4o-mini (teto de referência)",
+      "total": 20,
+      "accuracy": 0.65,
+      "accuracy_entre_extraidos": 0.65,
+      "macro_f1": 0.5123,
+      "taxa_extracao": 1.0,
+      "taxa_adesao_formato": 1.0,
+      "erros_de_execucao": 0,
+      "latencia_media_ms": 1439.9,
+      "latencia_mediana_ms": 1379.5,
+      "por_classe": {
+        "yes": {
+          "precisao": 0.7778,
+          "revocacao": 0.7,
+          "f1": 0.7368,
+          "suporte": 10
+        },
+        "no": {
+          "precisao": 0.75,
+          "revocacao": 0.8571,
+          "f1": 0.8,
+          "suporte": 7
+        },
+        "maybe": {
+          "precisao": 0.0,
+          "revocacao": 0.0,
+          "f1": 0.0,
+          "suporte": 3
+        }
+      },
+      "matriz_confusao": {
+        "yes": {
+          "yes": 7,
+          "no": 1,
+          "maybe": 2,
+          "(sem rótulo)": 0
+        },
+        "no": {
+          "yes": 0,
+          "no": 6,
+          "maybe": 1,
+          "(sem rótulo)": 0
+        },
+        "maybe": {
+          "yes": 2,
+          "no": 1,
+          "maybe": 0,
+          "(sem rótulo)": 0
+        }
+      },
+      "distribuicao_previsoes": {
+        "no": 8,
+        "yes": 9,
+        "maybe": 3
+      },
+      "amostra_de_respostas": [
+        {
+          "pergunta": "Risk factors for avascular necrosis of bone in patients with systemic lupus erythematosus: is there a role for antiphospholipid antibodies?",
+          "esperado": "no",
+          "previsto": "no",
+          "resposta": "Decisão: no  \nA evidência indica que não houve diferenças significativas na presença de anticorpos antifosfolípides entre pacientes com necrose avascular e os grupos controle, sugerindo que esses anticorpos não são fatores de risco para a necrose avascular em pacientes com lúpus eritematoso sistêmico.  \nFontes: [E1]"
+        },
+        {
+          "pergunta": "Are the elderly with oropharyngeal carcinoma undertreated?",
+          "esperado": "maybe",
+          "previsto": "yes",
+          "resposta": "Decisão: yes  \nA evidência sugere que pacientes idosos com carcinoma orofaríngeo estão recebendo menos tratamento, especialmente após os 55 anos, e que aqueles nas faixas etárias de 65 a 84 anos se beneficiam significativamente de terapias agressivas. Isso indica que a população idosa pode estar subtratada.  \nFontes: [E1]"
+        },
+        {
+          "pergunta": "Is the advanced age a contraindication to GERD laparoscopic surgery?",
+          "esperado": "no",
+          "previsto": "no",
+          "resposta": "Decisão: no  \nA evidência sugere que a idade avançada não é uma contraindicação para a cirurgia laparoscópica de GERD, pois não houve diferença significativa na incidência de complicações ou nos resultados entre pacientes mais velhos e mais jovens. Além disso, a maioria dos pacientes idosos apresentou resultados positivos após a cirurgia.  \nFontes: [E1]"
+        },
+        {
+          "pergunta": "Does insulin resistance drive the association between hyperglycemia and cardiovascular risk?",
+          "esperado": "yes",
+          "previsto": "yes",
+          "resposta": "Decisão: yes  \nA evidência sugere que a resistência à insulina pode explicar a associação entre hiperglicemia e risco cardiovascular, uma vez que a correção para a sensibilidade à insulina tornou a associação entre os níveis de glicose e o escore de risco de Framingham não significativa. Isso indica que a resistência à insulina é um fator importante na relação entre hiperglicemia e risco cardiovascular.  \nFontes: [E1]"
+        },
+        {
+          "pergunta": "Does the manic/mixed episode distinction in bipolar disorder patients run true over time?",
+          "esperado": "yes",
+          "previsto": "yes",
+          "resposta": "Decisão: yes  \nA evidência sugere que a distinção entre episódios maníacos e mistos em pacientes com transtorno bipolar se mantém ao longo do tempo, uma vez que a distribuição observada foi consistente em mais pacientes do que o esperado por acaso.  \nFontes: [E1]"
+        },
+        {
+          "pergunta": "Does a colonoscopy after acute diverticulitis affect its management?",
+          "esperado": "no",
+          "previsto": "no",
+          "resposta": "Decisão: no  \nA evidência sugere que a realização de uma colonoscopia após a diverticulite aguda não altera o manejo dos pacientes, pois não houve diferenças significativas nas características dos pacientes ou nos desfechos a longo prazo entre aqueles que realizaram ou não o exame. Além disso, não foram detectados novos diagnósticos relevantes.  \nFontes: [E1]"
+        },
+        {
+          "pergunta": "Can bisphosphonate treatment be stopped in a growing child with skeletal fragility?",
+          "esperado": "maybe",
+          "previsto": "no",
+          "resposta": "Decisão: no  \nA evidência sugere que a interrupção do tratamento com bisfosfonatos em uma criança em crescimento com fragilidade esquelética pode levar a uma diminuição acentuada da densidade mineral óssea (DMO) e ao surgimento de fraturas, indicando que a suspensão do tratamento não é recomendada. A DMO do paciente diminuiu rapidamente após a interrupção do tratamento, levantando preocupações sobre a continuidade da terapia em crianças com fragilidade esquelética.  \nFontes: [E1]"
+        },
+        {
+          "pergunta": "Convulsions and retinal haemorrhage: should we look further?",
+          "esperado": "yes",
+          "previsto": "maybe",
+          "resposta": "Decisão: maybe  \nA evidência sugere que a ocorrência de hemorragias retinianas após convulsões não é bem estabelecida e, embora um caso tenha sido identificado, não há dados suficientes para concluir que a presença de hemorragias retinianas deva sempre levar a investigações adicionais.  \nFontes: [E1]"
+        },
+        {
+          "pergunta": "Can predilatation in transcatheter aortic valve implantation be omitted?",
+          "esperado": "yes",
+          "previsto": "yes",
+          "resposta": "Decisão: yes  \nA evidência sugere que a omissão da predilatação com balão em pacientes submetidos à implantação de válvula aórtica transcateter (TAVI) não resulta em diferenças significativas nos resultados hemodinâmicos iniciais ou nas taxas de complicações, indicando que a predilatação pode ser omitida.  \nFontes: [E1]"
+        },
+        {
+          "pergunta": "Is aerobic workload positively related to ambulatory blood pressure?",
+          "esperado": "yes",
+          "previsto": "yes",
+          "resposta": "Decisão: yes  \nA evidência sugere que um aumento no trabalho aeróbico relativo está positivamente relacionado à pressão arterial ambulatorial, com um aumento significativo na pressão arterial sistólica e diastólica associado a um aumento percentual no trabalho aeróbico.  \nFontes: [E1]"
+        },
+        {
+          "pergunta": "Actinobaculum schaalii, a cause of urinary tract infections in children?",
+          "esperado": "maybe",
+          "previsto": "yes",
+          "resposta": "Decisão: yes  \nA evidência sugere que Actinobaculum schaalii pode ser um agente causador de infecções do trato urinário em crianças, uma vez que foi identificado em quantidades significativas em urinas de crianças com infecção urinária e leucocitúria.  \nFontes: [E1]"
+        },
+        {
+          "pergunta": "Sternal skin conductance: a reasonable surrogate for hot flash measurement?",
+          "esperado": "no",
+          "previsto": "maybe",
+          "resposta": "Decisão: maybe  \nA evidência sugere que o dispositivo de condutância da pele esternal (SSC) teve uma taxa de concordância de 24% entre os relatos de calor e os dados registrados pelo dispositivo, indicando que ele pode não ser um substituto confiável para a medição de flashes de calor. Além disso, a aceitação do dispositivo foi mista, com 31% das participantes relatando interferência em suas atividades diárias.  \nFontes: [E1]"
+        },
+        {
+          "pergunta": "Can myometrial electrical activity identify patients in preterm labor?",
+          "esperado": "yes",
+          "previsto": "yes",
+          "resposta": "Decisão: yes  \nA evidência sugere que a atividade elétrica miometrial pode diferenciar entre trabalho de parto falso e verdadeiro, com um índice de previsão que se correlaciona com a entrega prematura em até 14 dias. A combinação desse índice com outros fatores, como comprimento cervical e fFN, aumenta a preditividade do parto prematuro.  \nFontes: [E1]"
+        },
+        {
+          "pergunta": "Does induction chemotherapy have a role in the management of nasopharyngeal carcinoma?",
+          "esperado": "yes",
+          "previsto": "yes",
+          "resposta": "Decisão: yes  \nA evidência sugere que a quimioterapia de indução tem um papel positivo no manejo do carcinoma nasofaríngeo, especialmente em pacientes com doença em estágio IV, onde a sobrevida geral e a taxa de controle local foram significativamente melhores em comparação aos que não receberam quimioterapia de indução (68% vs. 56% e 86% vs. 56%, respectivamente) [E1].  \nFontes: [E1]"
+        },
+        {
+          "pergunta": "Cholestasis associated with small bowel atresia: do we always need to investigate?",
+          "esperado": "no",
+          "previsto": "no",
+          "resposta": "Decisão: no  \nA evidência sugere que a investigação intensiva ou invasiva em pacientes com colestase associada à atresia do intestino delgado pode ser desnecessária, uma vez que a colestase se resolve espontaneamente na maioria dos casos e não está associada a complicações graves, como a atresia biliar. Portanto, a necessidade de investigação não é sempre justificada.  \nFontes: [E1]"
+        },
+        {
+          "pergunta": "Are even impaired fasting blood glucose levels preoperatively associated with increased mortality after CABG surgery?",
+          "esperado": "yes",
+          "previsto": "yes",
+          "resposta": "Decisão: yes  \nA evidência sugere que níveis de glicose em jejum alterados (IFG) estão associados a um aumento da mortalidade após cirurgia de revascularização do miocárdio (CABG), com um risco relativo de mortalidade em 1 ano de 2.9 em comparação com pacientes com glicose normal. Embora os intervalos de confiança sejam amplos, a associação é estatisticamente significativa.  \nFontes: [E1]"
+        },
+        {
+          "pergunta": "Remote ischemic postconditioning: does it protect against ischemic damage in percutaneous coronary revascularization?",
+          "esperado": "yes",
+          "previsto": "maybe",
+          "resposta": "Decisão: maybe  \nA evidência sugere que o condicionamento isquêmico remoto pode reduzir lesões miocárdicas associadas à intervenção coronária percutânea, mas os resultados são menos claros em pacientes diabéticos e a proteção não é garantida em todos os casos. Portanto, a conclusão sobre sua eficácia é inconclusiva.  \nFontes: [E1]"
+        },
+        {
+          "pergunta": "Is patient outcome compromised during the initial experience with robot-assisted radical cystectomy?",
+          "esperado": "no",
+          "previsto": "no",
+          "resposta": "Decisão: no  \nA evidência sugere que a experiência inicial com a cistectomia radical assistida por robô não compromete os desfechos oncológicos, pois não houve associação significativa entre o número de casos sequenciais e a incidência de complicações, perda sanguínea cirúrgica ou margens cirúrgicas positivas. Além disso, a mortalidade não foi significativamente associada ao número de casos, mas sim a fatores como estágio tumoral e presença de metástases linfonodais.  \nFontes: [E1]"
+        },
+        {
+          "pergunta": "Are patients with Werlhof's disease at increased risk for bleeding complications when undergoing cardiac surgery?",
+          "esperado": "no",
+          "previsto": "no",
+          "resposta": "Decisão: no  \nA evidência sugere que, apesar de pacientes com a doença de Werlhof apresentarem contagens de plaquetas significativamente mais baixas e receberem mais concentrados de plaquetas, a perda total de drenagem mediastinal foi quase idêntica entre os grupos, e as complicações hemorrágicas não foram significativamente mais frequentes no grupo com WD. Portanto, não há suporte para a hipótese de que esses pacientes estão em maior risco de complicações hemorrágicas durante a cirurgia cardíaca.  \nFontes: [E1]"
+        },
+        {
+          "pergunta": "Risk stratification in emergency surgical patients: is the APACHE II score a reliable marker of physiological impairment?",
+          "esperado": "yes",
+          "previsto": "no",
+          "resposta": "Decisão: no  \nA evidência sugere que o escore APACHE II não é um marcador confiável de comprometimento fisiológico em pacientes cirúrgicos de emergência, pois sua utilização pode levar a viés considerável na comparação de grupos e na avaliação de políticas de tratamento. Além disso, a monitorização pós-operatória com o escore APACHE II é considerada clinicamente irrelevante.  \nFontes: [E1]"
+        }
+      ]
+    }
+  ],
+  "tabela": "Sistema                                N     Acc  MacroF1  F1 yes   F1 no  F1 maybe  Formato      ms\n----------------------------------------------------------------------------------------------------\nclasse majoritária ('yes')            30   0.500    0.222   0.667   0.000     0.000  100.0%       0\nmodelo base (Llama-3.2-3B)            30   0.700    0.490   0.750   0.720     0.000  100.0%    6554\ngpt-4o-mini (teto de referência)      20   0.650    0.512   0.737   0.800     0.000  100.0%    1440",
+  "custo": {
+    "medgraph-base": {
+      "chamadas": 30,
+      "tokens_entrada": 29886,
+      "tokens_saida": 3061,
+      "custo_usd": 0.0
+    },
+    "gpt-4o-mini": {
+      "chamadas": 20,
+      "tokens_entrada": 16729,
+      "tokens_saida": 1738,
+      "custo_usd": 0.0035521499999999996
+    }
+  },
+  "custo_total_usd": 0.003552
+}

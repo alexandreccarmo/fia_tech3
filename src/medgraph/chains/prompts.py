@@ -68,6 +68,8 @@ LIMITES DE ATUAÇÃO — inegociáveis
 
 COMO VOCÊ RESPONDE
 - Em português do Brasil, objetivo e direto, sem rodeios nem repetição da pergunta.
+- No máximo 200 palavras. Quem lê é médico e está no meio do plantão: vá ao ponto.
+- Não repita o enunciado da pergunta nem liste o que você vai fazer antes de fazer.
 - Toda afirmação clínica cita a fonte com um marcador: [E#] para evidência científica,
   [P#] para protocolo interno, [C#] para dado do prontuário do paciente.
 - Ao final, uma linha "Fontes:" listando os marcadores usados.
@@ -81,6 +83,25 @@ COMO VOCÊ RESPONDE
 # depois a justificativa. Fixar a primeira linha torna a extracao do rotulo
 # na avaliacao triviais e deterministica - nao precisamos de um segundo
 # modelo para interpretar a resposta do primeiro.
+# NOTA METODOLÓGICA — por que o critério de rótulo está redigido assim:
+#
+#   A primeira versão desta instrução dizia apenas: "use maybe quando a
+#   evidência for inconclusiva, parcial ou contraditória — não force uma
+#   resposta definitiva". Parecia prudente, e produziu um resultado revelador
+#   na primeira avaliação: o gpt-4o-mini respondeu "maybe" em 80% dos casos,
+#   quando o rótulo verdadeiro era "maybe" em apenas 15%. Sua accuracy caiu
+#   para 35% — ABAIXO do piso de responder sempre a classe majoritária.
+#
+#   A causa não era incapacidade do modelo. Era o prompt: um empurrão
+#   unilateral na direção da dúvida, obedecido à risca por um modelo bom em
+#   seguir instrução. O modelo de 3B, que segue instruções com menos rigor,
+#   paradoxalmente se saiu melhor.
+#
+#   Estávamos medindo obediência, não raciocínio clínico.
+#
+#   O critério abaixo é simétrico: descreve as três classes com o mesmo peso e
+#   explicita que "no" inclui o achado de AUSÊNCIA de efeito — que é o caso
+#   mais comum de "no" no PubMedQA e o que mais se confundia com "maybe".
 INSTRUCAO_DECISAO = """Com base exclusivamente na evidência fornecida, responda à pergunta de pesquisa.
 
 Formato obrigatório da resposta:
@@ -88,8 +109,16 @@ Decisão: yes | no | maybe
 <justificativa em 1 a 3 frases, citando a evidência>
 Fontes: [E1]
 
-Use "maybe" quando a evidência for inconclusiva, parcial ou contraditória — não force uma
-resposta definitiva onde o estudo não a sustenta."""
+Critério para escolher o rótulo:
+- yes    a evidência sustenta uma resposta afirmativa à pergunta
+- no     a evidência sustenta uma resposta negativa — inclusive quando o achado do
+         estudo é a AUSÊNCIA de efeito, de diferença ou de associação significativa
+- maybe  a evidência é genuinamente inconclusiva, contraditória ou insuficiente para
+         apontar qualquer direção
+
+Escolha yes ou no sempre que o estudo apontar uma direção, ainda que com ressalvas ou
+limitações. Reserve "maybe" para os casos em que o próprio estudo declara não ser
+possível concluir."""
 
 
 def montar_contexto(fontes: Iterable[Mapping[str, str]]) -> str:
