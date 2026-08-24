@@ -13,7 +13,7 @@ ao ponto exato do código onde ela é atendida. As referências vêm das tags
 | --- | --- |
 | **Com implementação identificada** | **12** |
 | Ainda sem implementação | 1 |
-| Total de referências no código | 148 |
+| Total de referências no código | 149 |
 
 ### Requisitos ainda sem cobertura
 
@@ -153,6 +153,7 @@ São itens previstos para etapas seguintes do projeto.
 | `tests/test_seguranca.py` | 182 | GUARDRAIL DE ENTRADA  [REQ-3a] |
 | `tests/test_seguranca.py` | 255 | GUARDRAIL DE SAÍDA  [REQ-3a][REQ-3c] |
 | `tests/test_seguranca.py` | 291 | """[REQ-3a] O requisito mais destacado do enunciado.""" |
+| `tests/test_seguranca.py` | 447 | MONTAGEM DA RESPOSTA APÓS VALIDAÇÃO  [REQ-3a] |
 
 #### ✅ `REQ-3b` — Implementar logging detalhado para rastreamento e auditoria.
 
@@ -241,7 +242,7 @@ São itens previstos para etapas seguintes do projeto.
 | `src/medgraph/ui/app_streamlit.py` | 2 | [REQ-E1][REQ-3a][REQ-3b][REQ-3c] Painel visual do MedGraph.  [Etapa 8] |
 | `src/medgraph/ui/componentes.py` | 2 | [REQ-E1][REQ-3c] Componentes visuais reutilizados pelo painel Streamlit. |
 | `tests/test_seguranca.py` | 374 | ROTEAMENTO DO GRAFO  [REQ-E1] |
-| `tests/test_seguranca.py` | 447 | TOPOLOGIA DO GRAFO  [REQ-E1] |
+| `tests/test_seguranca.py` | 522 | TOPOLOGIA DO GRAFO  [REQ-E1] |
 
 #### ✅ `REQ-E2` — Dataset anonimizado ou exemplo de dados sinteticos.
 

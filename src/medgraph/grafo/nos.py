@@ -646,13 +646,30 @@ def no_montar_resposta(estado: EstadoClinico) -> EstadoClinico:
     pendente = estado.get("exige_validacao_humana") and not estado.get("validado_por")
     if pendente:
         partes.append(f"⚠️ {pol.texto('aviso_validacao_humana')}\n")
+    elif estado.get("validado_por"):
+        # Registro visível de quem liberou a resposta. O médico que a lê precisa
+        # saber que ela passou por validação e por quem — é o que diferencia uma
+        # resposta liberada de uma que nunca precisou de validação.
+        parecer = estado.get("parecer_validacao", "")
+        partes.append(
+            f"✅ **Validada por {estado['validado_por']}**"
+            + (f" — {parecer}" if parecer else "")
+            + "\n"
+        )
 
     if estado.get("emergencia"):
         partes.append(f"🚨 {pol.texto('alerta_emergencia')}\n")
 
     partes.append(estado.get("resposta_bruta", "").strip())
 
-    alertas = estado.get("alertas", [])
+    # O nó de alertas roda ANTES da validação e não é reexecutado na retomada.
+    # Sem este filtro, uma consulta já validada continuaria exibindo o alerta
+    # "Resposta retida para validação médica" — a resposta contradiria o próprio
+    # cabeçalho, e o médico não saberia se o texto está liberado ou não.
+    alertas = [
+        a for a in estado.get("alertas", [])
+        if not (a.get("tipo") == "validacao_pendente" and estado.get("validado_por"))
+    ]
     if alertas:
         partes.append("\n---\n**Alertas de segurança**\n")
         for alerta in alertas:
@@ -708,6 +725,7 @@ def no_montar_resposta(estado: EstadoClinico) -> EstadoClinico:
     return {
         "resposta_final": "\n".join(partes).strip(),
         "fontes_citadas": fontes_citadas,
+        "alertas": alertas,
         "desfecho": desfecho,
         "historico": [_marca(f"montar_resposta:{desfecho}")],
     }

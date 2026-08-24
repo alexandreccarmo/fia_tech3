@@ -20,7 +20,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from config.settings import Settings, obter_settings
-from medgraph.auditoria import Desfecho, abrir_trilha
+from medgraph.auditoria import Desfecho, TipoEvento, abrir_trilha, registrar
 from medgraph.grafo.construir import NOME_ARQUIVO_CHECKPOINT, obter_grafo
 from medgraph.grafo.estado import EstadoClinico, estado_inicial
 from medgraph.logging_config import obter_logger
@@ -138,6 +138,18 @@ def validar(
         continua a execução do ponto em que parou. O `None` é o que diz ao
         LangGraph "não comece uma execução nova, retome a existente".
 
+    POR QUE O EVENTO DE AUDITORIA É REGISTRADO AQUI, E NÃO SÓ NO NÓ:
+        Descobrimos, testando a retomada, que o nó `aguardar_validacao` NÃO
+        executa. O `update_state()` grava os valores como se viessem do nó
+        pendente, o que faz o LangGraph considerar aquela tarefa cumprida e
+        pular direto para a seguinte. O corpo do nó — e portanto o evento
+        VALIDACAO_HUMANA que ele registrava — nunca rodava.
+
+        O registro de QUEM validou uma conduta clínica de alto risco é o
+        artefato de auditoria mais importante deste fluxo. Ele não pode
+        depender de um detalhe do mecanismo de retomada de uma biblioteca.
+        Passa a ser registrado aqui, explicitamente, antes da retomada.
+
     Esta função é a contrapartida do requisito "nunca prescrever sem validação
     humana": a resposta só é liberada depois que uma pessoa identificada
     passou por aqui.
@@ -149,6 +161,22 @@ def validar(
     with abrir_trilha(
         pergunta=f"[validação da thread {thread_id}]", usuario=validado_por, cfg=cfg
     ) as trilha:
+        anterior = app.get_state(config)
+        registrar(
+            TipoEvento.VALIDACAO_HUMANA,
+            f"Validação registrada por {validado_por}",
+            etapa="aguardar_validacao",
+            conclusao=True,
+            thread_id=thread_id,
+            validado_por=validado_por,
+            parecer=parecer,
+            escore_risco=anterior.values.get("escore_risco"),
+            gatilhos=anterior.values.get("gatilhos_risco", []),
+            achados=[a["titulo"] for a in anterior.values.get("achados_clinicos", [])],
+            pergunta=anterior.values.get("pergunta", ""),
+            paciente_id=anterior.values.get("paciente_id"),
+        )
+
         app.update_state(
             config,
             {"validado_por": validado_por, "parecer_validacao": parecer},

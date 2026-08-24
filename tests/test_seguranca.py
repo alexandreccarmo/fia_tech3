@@ -444,6 +444,81 @@ class TestRoteamento:
 
 
 # =============================================================================
+# MONTAGEM DA RESPOSTA APÓS VALIDAÇÃO  [REQ-3a]
+# =============================================================================
+class TestRespostaValidada:
+    """
+    REGRESSÃO — o nó de alertas roda ANTES da validação e não é reexecutado na
+    retomada. Sem tratamento, uma consulta já validada continuava exibindo
+    "Resposta retida para validação médica": o corpo do texto contradizia o
+    próprio cabeçalho, e o médico não saberia se a resposta está liberada.
+    """
+
+    def _estado(self, **sobrescritas):
+        base = {
+            "pergunta": "teste",
+            "resposta_bruta": "Conduta conforme [P1]. Fontes: [P1]",
+            "exige_validacao_humana": True,
+            "escore_risco": 0.9,
+            "citacoes_usadas": ["P1"],
+            "trechos": [],
+            "marcadores": ["P1"],
+            "alertas": [
+                {
+                    "severidade": "critica", "tipo": "valor_critico",
+                    "titulo": "Valor crítico: Lactato", "detalhe": "4.5 mmol/L", "acao": "",
+                },
+                {
+                    "severidade": "alta", "tipo": "validacao_pendente",
+                    "titulo": "Resposta retida para validação médica",
+                    "detalhe": "Escore acima do limiar", "acao": "",
+                },
+            ],
+        }
+        base.update(sobrescritas)
+        return base
+
+    def test_pendente_exibe_o_aviso_de_retencao(self):
+        from medgraph.grafo.nos import no_montar_resposta
+
+        delta = no_montar_resposta(self._estado(validado_por=""))
+        assert "AGUARDANDO VALIDA" in delta["resposta_final"].upper()
+        assert delta["desfecho"] == "aguardando_validacao"
+
+    def test_validada_remove_o_alerta_de_pendencia(self):
+        from medgraph.grafo.nos import no_montar_resposta
+
+        delta = no_montar_resposta(self._estado(validado_por="dra.helena"))
+        tipos = [a["tipo"] for a in delta["alertas"]]
+
+        assert "validacao_pendente" not in tipos, "alerta obsoleto sobreviveu à validação"
+        assert "valor_critico" in tipos, "o alerta clínico real não pode ser descartado"
+        assert "retida" not in delta["resposta_final"]
+        assert delta["desfecho"] == "respondida"
+
+    def test_validada_registra_quem_liberou(self):
+        """
+        O médico que lê precisa saber que a resposta passou por validação e por
+        quem — é o que a diferencia de uma que nunca precisou de validação.
+        """
+        from medgraph.grafo.nos import no_montar_resposta
+
+        delta = no_montar_resposta(
+            self._estado(validado_por="dra.helena (CRM/SP 000000)", parecer_validacao="Revisada.")
+        )
+        assert "dra.helena (CRM/SP 000000)" in delta["resposta_final"]
+        assert "Revisada." in delta["resposta_final"]
+
+    def test_disclaimer_sempre_presente(self):
+        """Anexado pelo sistema, não pedido ao modelo."""
+        from medgraph.grafo.nos import no_montar_resposta
+
+        for validado in ("", "dra.helena"):
+            texto = no_montar_resposta(self._estado(validado_por=validado))["resposta_final"]
+            assert "não substitui" in texto.lower() or "nao substitui" in texto.lower()
+
+
+# =============================================================================
 # TOPOLOGIA DO GRAFO  [REQ-E1]
 # =============================================================================
 class TestTopologiaGrafo:

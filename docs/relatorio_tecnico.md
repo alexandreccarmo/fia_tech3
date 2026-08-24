@@ -659,7 +659,7 @@ por validação clínica e não deve ser utilizado em assistência a pacientes.
 | --- | --- |
 | **Com implementação identificada** | **12** |
 | Ainda sem implementação | 1 |
-| Total de referências no código | 141 |
+| Total de referências no código | 148 |
 
 A matriz completa, ligando cada exigência do enunciado ao arquivo e à linha onde é
 atendida, está em [`docs/rastreabilidade.md`](rastreabilidade.md) e é gerada
@@ -668,7 +668,7 @@ varrendo as tags `[REQ-xx]` das docstrings.
 ### Suíte de testes
 
 ```
-======================== 137 passed, 1 warning in 3.63s ========================
+======================== 141 passed, 1 warning in 2.96s ========================
 ```
 
 ---
