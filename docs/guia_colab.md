@@ -75,7 +75,7 @@ baixando o modelo.
 | 2 | Instala as bibliotecas | ~3 min | **Reinicie a sessão depois** ⚠️ |
 | 3 | Clona o repositório | ~30 s | Traz o dataset junto |
 | 4 | Confere GPU e versões | instantâneo | Avisa que a T4 não tem bfloat16 — é esperado |
-| 5 | Login no Hugging Face | ~30 s | Cole o token quando pedir |
+| 5 | Login no Hugging Face | ~1 min | **Autorização por código** — veja abaixo |
 | 6 | Carrega o dataset | ~20 s | Mostra um exemplo completo |
 | 7 | Baixa o modelo em 4 bits | ~5 min | ~2 GB |
 | 8 | Configura o LoRA | instantâneo | Mostra quantos parâmetros treinam |
@@ -85,6 +85,33 @@ baixando o modelo.
 | 12 | Testa o formato em 5 exemplos | ~1 min | Espera-se 4 ou 5 acertos de formato |
 | 13 | Grava o adapter | ~10 s | ~50 MB |
 | 14 | Baixa o `.zip` | ~20 s | Guarde este arquivo |
+
+### A célula 5 não pede o token — pede um código
+
+As versões recentes do `huggingface_hub` abandonaram o campo de texto para o
+token e usam **autorização por dispositivo**. A célula imprime algo assim:
+
+```
+To log in, open this URL and enter the code:
+https://hf.co/oauth/device
+
+    AOAH-6YNV
+
+Waiting for authorization...
+```
+
+1. Abra **[hf.co/oauth/device](https://hf.co/oauth/device)** em outra aba
+   (é preciso estar logado no huggingface.co nela)
+2. Digite o código **com o hífen** — os espaços na tela são só visuais
+3. Clique em **Authorize**
+4. Volte ao Colab: a célula termina sozinha e imprime `Autenticado como: ...`
+
+O código **expira em poucos minutos**. Se passar do prazo, reexecute a célula 5
+para gerar outro.
+
+> Neste fluxo o token que você criou **não é usado aqui** — a autenticação vem da
+> sessão do navegador. Guarde-o mesmo assim: ele vai para o `.env` na sua máquina
+> ao final, e o segundo notebook pode pedi-lo para publicar no Hub.
 
 ### ⚠️ O ponto onde todo mundo tropeça
 
@@ -160,6 +187,7 @@ cd ~/Desktop/FIAP/projeto/tech_challenge_fiap3/fia_tech3
 | --- | --- | --- |
 | `Nenhuma GPU disponível` | Runtime sem acelerador | Ambiente de execução → T4 GPU |
 | `401` ao carregar o modelo | Licença do Llama não aceita | Aceite em huggingface.co e refaça o login |
+| Célula 5 travada em `Waiting for authorization` | Código expirou ou não foi autorizado | Reexecute a célula 5 e autorize o código novo |
 | `ModuleNotFoundError` na célula 4 | Sessão não foi reiniciada | Reinicie e continue da célula 3 |
 | `CUDA out of memory` | Sequência longa demais | Antes da célula 9: `colab_utils.CONFIG_PADRAO["max_seq_length"] = 768` |
 | Sessão desconectou | Ociosidade do Colab gratuito | `treinador.train(resume_from_checkpoint=True)` |
