@@ -88,7 +88,7 @@ São itens previstos para etapas seguintes do projeto.
 
 | Arquivo | Linha | Contexto |
 | --- | ---: | --- |
-| `config/settings.py` | 227 | """Base SQLite com os prontuarios estruturados. [REQ-2a]""" |
+| `config/settings.py` | 231 | """Base SQLite com os prontuarios estruturados. [REQ-2a]""" |
 | `scripts/demo_fundacao.py` | 88 | """Simula a leitura da base estruturada de pacientes. [REQ-2a]""" |
 | `src/medgraph/__init__.py` | 24 | prontuario/       acesso a base estruturada de pacientes      [REQ-2a] |
 | `src/medgraph/auditoria.py` | 100 | BANCO = "banco"                # consulta ao prontuario            [REQ-2a] |
@@ -122,7 +122,7 @@ São itens previstos para etapas seguintes do projeto.
 | `config/politicas.yaml` | 2 | [REQ-3a] POLITICAS DE ATUACAO DO ASSISTENTE MEDGRAPH |
 | `config/politicas.yaml` | 128 | [REQ-3a] Nenhuma posologia sai sem marcacao explicita de revisao humana. |
 | `config/settings.py` | 116 | 4) COMPORTAMENTO DO GRAFO  [REQ-3a] |
-| `config/settings.py` | 284 | """Regras declarativas de guardrail. [REQ-3a]""" |
+| `config/settings.py` | 288 | """Regras declarativas de guardrail. [REQ-3a]""" |
 | `scripts/03_instalar_modelo.py` | 101 | PROMPT DE SISTEMA — limites de atuação do assistente  [REQ-3a] |
 | `scripts/demo_fundacao.py` | 75 | """Simula a verificacao de escopo e a anonimizacao da pergunta. [REQ-3a]""" |
 | `scripts/demo_fundacao.py` | 128 | """Simula a validacao da resposta antes da entrega. [REQ-3a][REQ-3c]""" |
@@ -163,9 +163,9 @@ São itens previstos para etapas seguintes do projeto.
 | --- | ---: | --- |
 | `config/settings.py` | 95 | 2) CONTROLE DE CUSTO  [REQ-3b] |
 | `config/settings.py` | 122 | 5) LOGGING E AUDITORIA  [REQ-3b] |
-| `config/settings.py` | 238 | """Trilha de auditoria em JSONL, um arquivo por dia. [REQ-3b]""" |
-| `config/settings.py` | 244 | """Trace completo de cada consulta, um JSON por trace_id. [REQ-3b]""" |
-| `config/settings.py` | 330 | disco. [REQ-3b] |
+| `config/settings.py` | 242 | """Trilha de auditoria em JSONL, um arquivo por dia. [REQ-3b]""" |
+| `config/settings.py` | 248 | """Trace completo de cada consulta, um JSON por trace_id. [REQ-3b]""" |
+| `config/settings.py` | 334 | disco. [REQ-3b] |
 | `src/medgraph/__init__.py` | 17 | logging_config.py logging em tres destinos                    [REQ-3b] |
 | `src/medgraph/__init__.py` | 18 | auditoria.py      trilha de auditoria e trace por consulta    [REQ-3b] |
 | `src/medgraph/auditoria.py` | 2 | [REQ-3b] Trilha de auditoria do MedGraph. |

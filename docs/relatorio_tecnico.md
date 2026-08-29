@@ -459,8 +459,8 @@ Conjunto de teste: **150 casos** de 500 disponíveis · distribuição `{'yes': 
 | Sistema | N | Accuracy | Macro-F1 | F1 yes | F1 no | F1 maybe | Formato | Latência |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | classe majoritária ('yes') | 150 | 0.533 | **0.232** | 0.696 | 0.000 | 0.000 | 100% | 0 ms |
-| modelo base (Llama-3.2-3B) | 150 | 0.680 | **0.477** | 0.764 | 0.667 | 0.000 | 100% | 5,725 ms |
-| gpt-4o-mini (teto de referência) | 100 | 0.720 | **0.617** | 0.844 | 0.772 | 0.235 | 100% | 1,426 ms |
+| modelo base (Llama-3.2-3B) | 150 | 0.680 | **0.477** | 0.764 | 0.667 | 0.000 | 100% | 6,281 ms |
+| gpt-4o-mini (teto de referência) | 100 | 0.710 | **0.605** | 0.844 | 0.737 | 0.235 | 100% | 1,310 ms |
 
 Referência externa: especialistas humanos alcançam **78%** neste mesmo conjunto (Jin et al., 2019 — artigo original do PubMedQA).
 
@@ -478,9 +478,9 @@ Delata o modelo que colapsou numa única classe — o modo de falha mais comum e
 
 | Modelo | Chamadas | Tokens entrada | Tokens saída | Custo |
 | --- | ---: | ---: | ---: | ---: |
-| `gpt-4o-mini` | 100 | 91,274 | 9,141 | US$ 0.019176 |
+| `gpt-4o-mini` | 100 | 91,274 | 9,145 | US$ 0.019178 |
 | `medgraph-base` | 150 | 158,437 | 14,784 | US$ 0.000000 |
-| **Total** | | | | **US$ 0.019176** |
+| **Total** | | | | **US$ 0.019178** |
 
 O modelo local aparece com custo zero e o volume processado registrado — é o que permite comparar o custo por consulta entre o modelo servido localmente e a API paga.
 
@@ -501,6 +501,30 @@ cem vezes maior, executado em nuvem paga, diz mais do que o número absoluto.
 **Custo por consulta.** O modelo local processa o mesmo volume com custo
 financeiro zero. A tabela de custo registra ambos justamente para tornar essa
 comparação explícita.
+
+**Reprodutibilidade — um resultado que não estava previsto.** O pipeline completo
+foi executado duas vezes, com a mesma amostra e temperatura 0,0 em todos os
+sistemas. O modelo local devolveu **exatamente os mesmos números** nas duas
+execuções; o `gpt-4o-mini` variou:
+
+| Sistema | 1ª execução | 2ª execução |
+| --- | --- | --- |
+| Classe majoritária | 0,533 / 0,232 | 0,533 / 0,232 |
+| **Modelo local (Ollama)** | **0,680 / 0,477** | **0,680 / 0,477** |
+| `gpt-4o-mini` (API) | 0,720 / 0,617 | 0,710 / 0,605 |
+
+*(accuracy / macro-F1)*
+
+A variação da API é pequena e esperada — temperatura zero não garante determinismo
+em infraestrutura distribuída, com balanceamento entre réplicas e otimizações de
+lote. Mas a diferença importa no contexto deste projeto.
+
+Um assistente clínico auditável precisa poder responder à pergunta *"por que o
+sistema disse isso naquele dia?"*. Com o modelo servido localmente, a resposta é
+reconstruível: mesmos pesos, mesmo prompt, mesma saída. Com a API, a
+reconstrução é aproximada. Isso não invalida o uso da API como teto de
+referência — mas é mais um argumento, ao lado do custo e da privacidade, para a
+LLM customizada rodar localmente.
 
 **A lacuna que o fine-tuning existe para fechar.** O resultado mais informativo
 desta avaliação não é a accuracy do modelo base — é a sua **distribuição de
@@ -735,7 +759,7 @@ varrendo as tags `[REQ-xx]` das docstrings.
 ### Suíte de testes
 
 ```
-======================== 156 passed, 1 warning in 2.24s ========================
+======================== 168 passed, 1 warning in 3.34s ========================
 ```
 
 ---

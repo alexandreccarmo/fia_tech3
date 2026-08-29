@@ -200,8 +200,8 @@
       "taxa_extracao": 1.0,
       "taxa_adesao_formato": 1.0,
       "erros_de_execucao": 0,
-      "latencia_media_ms": 5725.1,
-      "latencia_mediana_ms": 5721.4,
+      "latencia_media_ms": 6280.9,
+      "latencia_mediana_ms": 6014.4,
       "por_classe": {
         "yes": {
           "precisao": 0.7412,
@@ -372,14 +372,14 @@
     {
       "sistema": "gpt-4o-mini (teto de referência)",
       "total": 100,
-      "accuracy": 0.72,
-      "accuracy_entre_extraidos": 0.72,
-      "macro_f1": 0.6171,
+      "accuracy": 0.71,
+      "accuracy_entre_extraidos": 0.71,
+      "macro_f1": 0.6054,
       "taxa_extracao": 1.0,
       "taxa_adesao_formato": 1.0,
       "erros_de_execucao": 0,
-      "latencia_media_ms": 1426.4,
-      "latencia_mediana_ms": 1375.9,
+      "latencia_media_ms": 1310.1,
+      "latencia_mediana_ms": 1218.2,
       "por_classe": {
         "yes": {
           "precisao": 0.8364,
@@ -388,9 +388,9 @@
           "suporte": 54
         },
         "no": {
-          "precisao": 0.8462,
-          "revocacao": 0.7097,
-          "f1": 0.7719,
+          "precisao": 0.8077,
+          "revocacao": 0.6774,
+          "f1": 0.7368,
           "suporte": 31
         },
         "maybe": {
@@ -403,14 +403,14 @@
       "matriz_confusao": {
         "yes": {
           "yes": 46,
-          "no": 1,
-          "maybe": 7,
+          "no": 2,
+          "maybe": 6,
           "(sem rótulo)": 0
         },
         "no": {
           "yes": 1,
-          "no": 22,
-          "maybe": 8,
+          "no": 21,
+          "maybe": 9,
           "(sem rótulo)": 0
         },
         "maybe": {
@@ -466,19 +466,19 @@
           "pergunta": "Can bisphosphonate treatment be stopped in a growing child with skeletal fragility?",
           "esperado": "maybe",
           "previsto": "no",
-          "resposta": "Decisão: no  \nA evidência sugere que a interrupção do tratamento com bisfosfonatos em uma criança em crescimento com fragilidade esquelética pode levar a uma diminuição acentuada da densidade mineral óssea (DMO) e ao surgimento de fraturas, indicando que a suspensão do tratamento não é recomendada. O caso relatado mostra que, após a descontinuação do tratamento, houve uma queda significativa na DMO em 24 meses, resultando em fraturas adicionais.  \nFontes: [E1]"
+          "resposta": "Decisão: no  \nA evidência sugere que a interrupção do tratamento com bisfosfonatos em uma criança em crescimento com fragilidade esquelética pode levar a uma diminuição acentuada da densidade mineral óssea (DMO) e ao surgimento de fraturas, indicando que a suspensão do tratamento não é recomendada. O caso relatado mostra que a DMO caiu drasticamente dentro de 24 meses após a interrupção do tratamento, resultando em fraturas adicionais.  \nFontes: [E1]"
         },
         {
           "pergunta": "Convulsions and retinal haemorrhage: should we look further?",
           "esperado": "yes",
           "previsto": "maybe",
-          "resposta": "Decisão: maybe  \nA evidência sugere que a ocorrência de hemorragias retinianas após convulsões não é bem estabelecida e, embora um caso tenha sido identificado, não há dados suficientes para concluir que a presença de hemorragias retinianas deva sempre levar a investigações adicionais. O estudo não fornece uma relação clara entre convulsões e hemorragias retinianas em todos os casos.  \nFontes: [E1]"
+          "resposta": "Decisão: maybe  \nA evidência sugere que a ocorrência de hemorragias retinianas após convulsões não é bem estabelecida e, embora um caso tenha sido identificado, não há dados suficientes para concluir que a presença de hemorragias retinianas deva sempre levar a investigações adicionais. A relação entre hemorragias retinianas e abuso infantil é complexa e requer mais estudos para uma conclusão definitiva.  \nFontes: [E1]"
         },
         {
           "pergunta": "Can predilatation in transcatheter aortic valve implantation be omitted?",
           "esperado": "yes",
           "previsto": "yes",
-          "resposta": "Decisão: yes  \nA evidência sugere que a omissão da predilatação com balão durante a implantação da válvula aórtica transcateter (TAVI) não resulta em diferenças significativas nos resultados hemodinâmicos iniciais ou nas taxas de complicações, indicando que pode ser considerada a omissão desse passo em alguns casos.  \nFontes: [E1]"
+          "resposta": "Decisão: yes  \nA evidência sugere que a omissão da predilatação com balão durante a implantação da válvula aórtica transcateter (TAVI) não resulta em diferenças significativas nos resultados hemodinâmicos iniciais ou nas taxas de complicações, indicando que pode ser considerada a omissão desse passo.  \nFontes: [E1]"
         },
         {
           "pergunta": "Is aerobic workload positively related to ambulatory blood pressure?",
@@ -514,13 +514,13 @@
           "pergunta": "Cholestasis associated with small bowel atresia: do we always need to investigate?",
           "esperado": "no",
           "previsto": "no",
-          "resposta": "Decisão: no  \nA evidência sugere que a investigação intensiva de colestase em pacientes com atresia do intestino delgado pode ser desnecessária, uma vez que a colestase se resolve espontaneamente na maioria dos casos, sem associação com complicações graves como a atresia biliar. A maioria dos pacientes não apresentou morte relacionada à colestase isolada, indicando que a investigação pode ser evitada em muitos casos.  \nFontes: [E1]"
+          "resposta": "Decisão: no  \nA evidência sugere que a investigação intensiva de colestase em pacientes com atresia do intestino delgado pode ser desnecessária, uma vez que a colestase se resolve espontaneamente na maioria dos casos, sem associação com complicações graves como a atresia biliar. Apenas 36% dos pacientes foram submetidos a avaliações aprofundadas, e não houve mortes relacionadas à colestase isolada.  \nFontes: [E1]"
         },
         {
           "pergunta": "Are even impaired fasting blood glucose levels preoperatively associated with increased mortality after CABG surgery?",
           "esperado": "yes",
           "previsto": "yes",
-          "resposta": "Decisão: yes  \nImpaired fasting glucose (IFG) pré-operatório está associado a um aumento do risco de mortalidade após cirurgia de revascularização do miocárdio (CABG), com um risco relativo de 2.9 para mortalidade em um ano em comparação com pacientes com glicose normal. Embora os intervalos de confiança sejam amplos, a evidência sugere uma associação significativa.  \nFontes: [E1]"
+          "resposta": "Decisão: yes  \nImpaired fasting glucose (IFG) pré-operatório está associado a um aumento da mortalidade após cirurgia de revascularização do miocárdio (CABG), com riscos relativos de mortalidade de 1.7 em 30 dias e 2.9 em um ano em comparação com pacientes com glicose normal. Esses dados sugerem uma relação significativa entre IFG e mortalidade pós-CABG.  \nFontes: [E1]"
         },
         {
           "pergunta": "Remote ischemic postconditioning: does it protect against ischemic damage in percutaneous coronary revascularization?",
@@ -532,7 +532,7 @@
           "pergunta": "Is patient outcome compromised during the initial experience with robot-assisted radical cystectomy?",
           "esperado": "no",
           "previsto": "no",
-          "resposta": "Decisão: no  \nA evidência sugere que a experiência inicial com a cistectomia radical assistida por robô não compromete os desfechos oncológicos, pois não houve associação significativa entre o número de casos sequenciais e complicações, perda sanguínea cirúrgica ou margens cirúrgicas positivas. Além disso, a mortalidade não foi significativamente afetada pela experiência inicial, embora fatores como estágio tumoral e metástases linfonodais tenham mostrado associação com a morte [E1].  \nFontes: [E1]"
+          "resposta": "Decisão: no  \nA evidência sugere que a experiência inicial com a cistectomia radical assistida por robô não compromete os desfechos oncológicos, pois não houve associação significativa entre o número de casos sequenciais e a incidência de complicações, perda sanguínea cirúrgica ou margens cirúrgicas positivas. Além disso, a mortalidade não foi significativamente afetada pela experiência inicial, embora fatores como estágio tumoral e metástases linfonodais tenham mostrado associação com a morte [E1].  \nFontes: [E1]"
         },
         {
           "pergunta": "Are patients with Werlhof's disease at increased risk for bleeding complications when undergoing cardiac surgery?",
@@ -544,12 +544,12 @@
           "pergunta": "Risk stratification in emergency surgical patients: is the APACHE II score a reliable marker of physiological impairment?",
           "esperado": "yes",
           "previsto": "no",
-          "resposta": "Decisão: no  \nA evidência sugere que o escore APACHE II não é um marcador confiável de comprometimento fisiológico em pacientes cirúrgicos de emergência, pois sua utilização pode levar a viés significativo na comparação de grupos e na avaliação de políticas de tratamento. Além disso, a monitorização pós-operatória com o escore APACHE II é considerada clinicamente irrelevante.  \nFontes: [E1]"
+          "resposta": "Decisão: no  \nO escore APACHE II não é um marcador confiável de comprometimento fisiológico em pacientes cirúrgicos de emergência, pois sua utilização pode levar a viés significativo na comparação de grupos e na avaliação de políticas de tratamento. Além disso, a monitorização pós-operatória com o escore é considerada clinicamente irrelevante, conforme evidenciado pela discrepância entre a mortalidade prevista e a observada.  \nFontes: [E1]"
         }
       ]
     }
   ],
-  "tabela": "Sistema                                N     Acc  MacroF1  F1 yes   F1 no  F1 maybe  Formato      ms\n----------------------------------------------------------------------------------------------------\nclasse majoritária ('yes')           150   0.533    0.232   0.696   0.000     0.000  100.0%       0\nmodelo base (Llama-3.2-3B)           150   0.680    0.477   0.764   0.667     0.000  100.0%    5725\ngpt-4o-mini (teto de referência)     100   0.720    0.617   0.844   0.772     0.235  100.0%    1426",
+  "tabela": "Sistema                                N     Acc  MacroF1  F1 yes   F1 no  F1 maybe  Formato      ms\n----------------------------------------------------------------------------------------------------\nclasse majoritária ('yes')           150   0.533    0.232   0.696   0.000     0.000  100.0%       0\nmodelo base (Llama-3.2-3B)           150   0.680    0.477   0.764   0.667     0.000  100.0%    6281\ngpt-4o-mini (teto de referência)     100   0.710    0.605   0.844   0.737     0.235  100.0%    1310",
   "custo": {
     "medgraph-base": {
       "chamadas": 150,
@@ -560,9 +560,9 @@
     "gpt-4o-mini": {
       "chamadas": 100,
       "tokens_entrada": 91274,
-      "tokens_saida": 9141,
-      "custo_usd": 0.019175699999999997
+      "tokens_saida": 9145,
+      "custo_usd": 0.019178100000000003
     }
   },
-  "custo_total_usd": 0.019176
+  "custo_total_usd": 0.019178
 }

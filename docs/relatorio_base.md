@@ -412,6 +412,30 @@ cem vezes maior, executado em nuvem paga, diz mais do que o número absoluto.
 financeiro zero. A tabela de custo registra ambos justamente para tornar essa
 comparação explícita.
 
+**Reprodutibilidade — um resultado que não estava previsto.** O pipeline completo
+foi executado duas vezes, com a mesma amostra e temperatura 0,0 em todos os
+sistemas. O modelo local devolveu **exatamente os mesmos números** nas duas
+execuções; o `gpt-4o-mini` variou:
+
+| Sistema | 1ª execução | 2ª execução |
+| --- | --- | --- |
+| Classe majoritária | 0,533 / 0,232 | 0,533 / 0,232 |
+| **Modelo local (Ollama)** | **0,680 / 0,477** | **0,680 / 0,477** |
+| `gpt-4o-mini` (API) | 0,720 / 0,617 | 0,710 / 0,605 |
+
+*(accuracy / macro-F1)*
+
+A variação da API é pequena e esperada — temperatura zero não garante determinismo
+em infraestrutura distribuída, com balanceamento entre réplicas e otimizações de
+lote. Mas a diferença importa no contexto deste projeto.
+
+Um assistente clínico auditável precisa poder responder à pergunta *"por que o
+sistema disse isso naquele dia?"*. Com o modelo servido localmente, a resposta é
+reconstruível: mesmos pesos, mesmo prompt, mesma saída. Com a API, a
+reconstrução é aproximada. Isso não invalida o uso da API como teto de
+referência — mas é mais um argumento, ao lado do custo e da privacidade, para a
+LLM customizada rodar localmente.
+
 **A lacuna que o fine-tuning existe para fechar.** O resultado mais informativo
 desta avaliação não é a accuracy do modelo base — é a sua **distribuição de
 previsões**: ele responde apenas `yes` e `no`, e **nunca** `maybe`. O F1 dessa
