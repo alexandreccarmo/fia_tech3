@@ -98,14 +98,30 @@ baixando o modelo.
 | 4 | Confere GPU e versões | instantâneo | Avisa que a T4 não tem bfloat16 — é esperado |
 | 5 | Login no Hugging Face | ~1 min | **Autorização por código** — veja abaixo |
 | 6 | Carrega o dataset | ~20 s | Mostra um exemplo completo |
-| 7 | Baixa o modelo em 4 bits | ~5 min | ~2 GB |
+| 7 | Baixa os pesos e quantiza | 3–8 min | Baixa ~6 GB em fp16; a quantização para 4 bits é em memória |
 | 8 | Configura o LoRA | instantâneo | Mostra quantos parâmetros treinam |
 | 9 | Monta o treinador | instantâneo | Informa quantos passos serão dados |
-| **10** | **Treina** | **~50 min** | **Mantenha a aba aberta** |
+| **10** | **Treina** | **~50 min** | A mais demorada, ~10× a célula 7. **Mantenha a aba aberta** |
 | 11 | Desenha a curva de perda | instantâneo | Validação deve cair junto com o treino |
 | 12 | Testa o formato em 5 exemplos | ~1 min | Espera-se 4 ou 5 acertos de formato |
 | 13 | Grava o adapter | ~10 s | ~50 MB |
 | 14 | Baixa o `.zip` | ~20 s | Guarde este arquivo |
+
+### Como saber se a célula 7 travou ou só está lenta
+
+Ela mostra barras de progresso dos arquivos `.safetensors`. Se estiverem
+avançando, está tudo bem — a rede do Colab varia.
+
+Ao terminar, imprime:
+
+```
+Parâmetros: 3.09 B
+VRAM ocupada: 2.2X GB
+```
+
+O `VRAM ocupada` bem abaixo dos ~6 GB baixados é a confirmação de que a
+quantização em 4 bits funcionou. Se ocupasse os 6 GB inteiros, o modelo teria
+carregado em precisão cheia — e o treino não caberia na T4.
 
 ### A célula 5 não pede o token — pede um código
 
