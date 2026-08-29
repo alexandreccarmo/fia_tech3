@@ -226,6 +226,7 @@ cd ~/Desktop/FIAP/projeto/tech_challenge_fiap3/fia_tech3
 | `GatedRepoError` ou `403` na célula 7 | Conta sem acesso ao Llama — pedido não enviado, pendente, ou feito por outra conta | Troque para o Qwen na própria célula 7 (a linha já está lá, comentada) e reexecute a partir dela |
 | Célula 5 travada em `Waiting for authorization` | Código expirou ou não foi autorizado | Reexecute a célula 5 e autorize o código novo |
 | `ModuleNotFoundError` na célula 4 | Sessão não foi reiniciada | Reinicie e continue da célula 3 |
+| `NotImplementedError: ... not implemented for 'BFloat16'` na célula 10 | LoRA aplicado duas vezes | Reexecute a célula 7 (modelo limpo) e depois a 8. Se a célula 9 avisar "modify a model with PEFT for a second time", o modelo ainda está contaminado |
 | `CUDA out of memory` | Sequência longa demais | Antes da célula 9: `colab_utils.CONFIG_PADRAO["max_seq_length"] = 768` |
 | Sessão desconectou | Ociosidade do Colab gratuito | `treinador.train(resume_from_checkpoint=True)` |
 | `TypeError` no `SFTTrainer` | Mudança de API do `trl` | Leia a lista de argumentos ignorados que a célula 9 imprime |

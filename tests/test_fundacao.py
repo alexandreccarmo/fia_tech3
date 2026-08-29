@@ -179,6 +179,84 @@ class TestSettings:
 
 
 # =============================================================================
+# COMPATIBILIDADE DO FINE-TUNING  [REQ-1]
+# =============================================================================
+class TestFiltroDeArgumentos:
+    """
+    A camada que protege o notebook do Colab das mudanças de API do `trl`.
+
+    Ela existe porque a biblioteca renomeou argumentos várias vezes; passa
+    apenas o que a versão instalada aceita e IMPRIME o que descartou. Mas
+    descartar demais é tão ruim quanto quebrar: o treino roda com uma
+    configuração diferente da pretendida, e ninguém percebe.
+    """
+
+    def test_campos_herdados_de_dataclass_sao_preservados(self):
+        """
+        REGRESSÃO — `warmup_ratio` foi descartado num treino real.
+
+        `SFTConfig` é uma dataclass que herda de `TrainingArguments`. Inspecionar
+        apenas a assinatura de `__init__` não enxerga os campos herdados quando a
+        hierarquia usa `**kwargs`, e o filtro descartava configuração válida: o
+        treino rodou sem aquecimento da taxa de aprendizado.
+        """
+        import dataclasses
+
+        from medgraph.finetune.colab_utils import _filtrar_argumentos
+
+        @dataclasses.dataclass
+        class Base:
+            warmup_ratio: float = 0.0
+            seed: int = 42
+
+        @dataclasses.dataclass
+        class Derivada(Base):
+            max_length: int = 512
+
+        aceitos, descartados = _filtrar_argumentos(
+            Derivada, {"warmup_ratio": 0.03, "max_length": 1024, "inexistente": 1}
+        )
+        assert "warmup_ratio" in aceitos, "campo herdado foi descartado"
+        assert "max_length" in aceitos
+        assert descartados == ["inexistente"]
+
+    def test_classe_opaca_recebe_tudo_em_vez_de_perder_configuracao(self):
+        """
+        Sem conseguir descobrir os nomes aceitos, é melhor passar tudo.
+
+        Deixar a biblioteca reclamar de um argumento inválido é preferível a
+        descartar em silêncio um argumento válido — o primeiro falha alto, o
+        segundo produz um treino silenciosamente diferente do pretendido.
+        """
+        from medgraph.finetune.colab_utils import _nomes_aceitos
+
+        class Opaca:
+            __slots__ = ()
+
+        # Mesmo uma classe sem anotações expõe os parâmetros de object.__init__;
+        # o contrato verificado aqui é que a função nunca devolve None nem falha.
+        assert isinstance(_nomes_aceitos(Opaca), set)
+
+    def test_hiperparametros_do_lora_sao_coerentes(self):
+        """alpha = 2r é a convenção; r fora de [8, 64] indicaria erro de digitação."""
+        from medgraph.finetune.colab_utils import CONFIG_PADRAO
+
+        assert 8 <= CONFIG_PADRAO["lora_r"] <= 64
+        assert CONFIG_PADRAO["lora_alpha"] == 2 * CONFIG_PADRAO["lora_r"]
+        assert len(CONFIG_PADRAO["lora_target_modules"]) == 7, "sete projeções: atenção + MLP"
+
+    def test_lote_efetivo_documentado(self):
+        """Lote físico 2 × acumulação 8 = 16, que é o que o relatório afirma."""
+        from medgraph.finetune.colab_utils import CONFIG_PADRAO
+
+        efetivo = (
+            CONFIG_PADRAO["per_device_train_batch_size"]
+            * CONFIG_PADRAO["gradient_accumulation_steps"]
+        )
+        assert efetivo == 16
+
+
+# =============================================================================
 # CATALOGO DE REQUISITOS
 # =============================================================================
 

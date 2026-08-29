@@ -30,6 +30,8 @@ A COMPATIBILIDADE DE VERSOES E O PONTO MAIS FRAGIL:
 
 from __future__ import annotations
 
+import contextlib
+import dataclasses
 import inspect
 import json
 from pathlib import Path
@@ -194,20 +196,54 @@ def config_lora(cfg: dict[str, Any] | None = None):
 # =============================================================================
 # TREINADOR — camada de compatibilidade
 # =============================================================================
+def _nomes_aceitos(classe) -> set[str]:
+    """
+    Descobre todos os nomes de parametro que a classe aceita.
+
+    POR QUE NAO BASTA inspecionar `__init__`:
+        `SFTConfig` e uma dataclass que herda de `TrainingArguments`. Quando o
+        `__init__` gerado usa `**kwargs`, ou quando a hierarquia e montada por
+        composicao, `inspect.signature(classe.__init__)` nao enxerga os campos
+        herdados — e o filtro descarta configuracao valida.
+
+        Foi o que aconteceu num treino real: `warmup_ratio`, um campo classico
+        de `TrainingArguments`, foi silenciosamente descartado, e o treino rodou
+        sem aquecimento da taxa de aprendizado.
+
+        Consultamos entao TRES fontes, da mais confiavel para a menos:
+          1. os campos da dataclass, que incluem os herdados;
+          2. as anotacoes de tipo acumuladas na hierarquia;
+          3. a assinatura de `__init__`, como ultimo recurso.
+    """
+    nomes: set[str] = set()
+
+    if dataclasses.is_dataclass(classe):
+        nomes |= {campo.name for campo in dataclasses.fields(classe)}
+
+    for ancestral in getattr(classe, "__mro__", [classe]):
+        nomes |= set(getattr(ancestral, "__annotations__", {}))
+
+    with contextlib.suppress(TypeError, ValueError):
+        nomes |= set(inspect.signature(classe.__init__).parameters)
+
+    return nomes
+
+
 def _filtrar_argumentos(classe, argumentos: dict[str, Any]) -> tuple[dict[str, Any], list[str]]:
     """
-    Mantem apenas os argumentos que a assinatura da classe realmente aceita.
+    Mantem apenas os argumentos que a classe realmente aceita.
 
     Devolve tambem os descartados, para que o notebook os IMPRIMA. Um
     argumento silenciosamente ignorado e pior do que um erro: o treino roda
     com uma configuracao diferente da pretendida e ninguem percebe.
     """
-    try:
-        parametros = set(inspect.signature(classe.__init__).parameters)
-    except (TypeError, ValueError):
+    aceitos_pela_classe = _nomes_aceitos(classe)
+    if not aceitos_pela_classe:
+        # Nao conseguimos descobrir nada: melhor passar tudo e deixar a
+        # biblioteca reclamar do que descartar em silencio.
         return argumentos, []
 
-    aceitos = {k: v for k, v in argumentos.items() if k in parametros}
+    aceitos = {k: v for k, v in argumentos.items() if k in aceitos_pela_classe}
     descartados = sorted(set(argumentos) - set(aceitos))
     return aceitos, descartados
 
