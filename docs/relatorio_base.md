@@ -530,7 +530,45 @@ de referências no código.
 **A lição:** um relatório de cobertura que erra para menos leva a procurar um
 problema que não existe, e mascara os que existem.
 
-### 8.7 O caractere invisível que corrompia o dataset
+### 8.7 A regra de segurança que punia o acerto
+
+A regra de alergia disparava sobre **qualquer** menção ao fármaco na resposta.
+Quando o assistente fazia a coisa certa — *"evitar penicilina devido à alergia
+registrada"*, *"penicilina está contraindicada neste paciente"* —, o sistema
+emitia um alerta **CRÍTICO** de conflito, como se ele estivesse prescrevendo.
+
+Três de cada quatro alertas críticos eram falsos positivos, e todos apontavam
+para o comportamento correto do modelo.
+
+A consequência é pior do que ruído. Um médico que vê alerta crítico toda vez que
+o assistente acerta aprende, em poucos dias, a ignorar alertas críticos. Isso é
+**fadiga de alarme**, e derrota inteiramente o propósito da regra.
+
+A correção detecta o contexto da menção. Duas decisões de projeto foram
+necessárias:
+
+**Rebaixar, não suprimir.** Detecção de negação em texto clínico é um problema
+conhecidamente difícil — *"não há contraindicação para ceftriaxona"* contém a
+palavra "contraindicação" e é, ainda assim, uma sugestão. Qualquer heurística
+erra em algum caso. Por isso a menção em contexto de evitação é rebaixada para
+severidade informativa, e não descartada: se a heurística errar, o pior que
+acontece é um alerta discreto onde deveria haver um grave, e ele continua
+visível. Suprimir permitiria um conflito real desaparecer da tela.
+
+**A janela é a frase, não a vizinhança.** A primeira implementação procurava
+sinais de evitação numa janela fixa de caracteres ao redor do fármaco. Em
+
+> *"Evitar penicilina. Iniciar Ceftriaxona 2 g EV."*
+
+a janela ao redor de "ceftriaxona" alcançava o "evitar" da frase **anterior**, e
+uma sugestão real de fármaco contraindicado era rebaixada. O erro apontava na
+direção errada — a única inaceitável numa regra de segurança. Evitação é
+propriedade da oração, não da proximidade em caracteres.
+
+**A lição:** uma regra de segurança precisa ser avaliada nos dois sentidos. Só
+testávamos se ela pegava o conflito; nunca se ela deixava passar o acerto.
+
+### 8.8 O caractere invisível que corrompia o dataset
 
 `str.splitlines()` quebra em qualquer separador de linha Unicode — `\x0b`, `\x0c`,
 ` `. Todos são caracteres **válidos** dentro de uma string JSON, e o

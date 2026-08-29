@@ -1,7 +1,7 @@
 # Matriz de rastreabilidade
 
 > **Documento gerado automaticamente.** Não edite à mão — rode `make rastreabilidade`.
-> Última geração: 2026-08-23
+> Última geração: 2026-08-29
 
 Este documento liga cada exigência do enunciado do Tech Challenge (Fase 3 — 8IADT)
 ao ponto exato do código onde ela é atendida. As referências vêm das tags
@@ -60,7 +60,7 @@ São itens previstos para etapas seguintes do projeto.
 | `tests/test_dados.py` | 27 | ANONIMIZAÇÃO  [REQ-1a] |
 | `tests/test_dados.py` | 152 | CURADORIA  [REQ-1a] |
 | `tests/test_fundacao.py` | 455 | """[REQ-1a] Nenhum dado pessoal chega ao disco pela trilha.""" |
-| `tests/test_seguranca.py` | 208 | """[REQ-1a] Nada identificável pode entrar no prompt.""" |
+| `tests/test_seguranca.py` | 295 | """[REQ-1a] Nada identificável pode entrar no prompt.""" |
 
 ### Assistente LangChain
 
@@ -141,7 +141,7 @@ São itens previstos para etapas seguintes do projeto.
 | `src/medgraph/guardrails/entrada.py` | 2 | [REQ-3a] Guardrail de entrada. |
 | `src/medgraph/guardrails/politicas.py` | 2 | [REQ-3a] Carregamento das políticas declarativas. |
 | `src/medgraph/guardrails/regras_clinicas.py` | 2 | [REQ-3a] Regras clínicas de segurança. |
-| `src/medgraph/guardrails/regras_clinicas.py` | 326 | Conflito entre a conduta discutida e as alergias registradas.  [REQ-3a] |
+| `src/medgraph/guardrails/regras_clinicas.py` | 402 | Conflito entre a conduta discutida e as alergias registradas.  [REQ-3a] |
 | `src/medgraph/guardrails/saida.py` | 2 | [REQ-3a][REQ-3c] Guardrail de saída. |
 | `src/medgraph/guardrails/saida.py` | 186 | --- 2. Posologia sem marcação de revisão  [REQ-3a] -------------------- |
 | `src/medgraph/prontuario/repositorio.py` | 242 | Alergias que colidem com um fármaco ou classe citada.  [REQ-3a] |
@@ -150,10 +150,10 @@ São itens previstos para etapas seguintes do projeto.
 | `tests/test_fundacao.py` | 571 | POLITICAS  [REQ-3a] |
 | `tests/test_fundacao.py` | 607 | """[REQ-3a] O item mais sensivel do enunciado, verificado por teste.""" |
 | `tests/test_seguranca.py` | 60 | REGRAS CLÍNICAS  [REQ-3a] |
-| `tests/test_seguranca.py` | 182 | GUARDRAIL DE ENTRADA  [REQ-3a] |
-| `tests/test_seguranca.py` | 255 | GUARDRAIL DE SAÍDA  [REQ-3a][REQ-3c] |
-| `tests/test_seguranca.py` | 291 | """[REQ-3a] O requisito mais destacado do enunciado.""" |
-| `tests/test_seguranca.py` | 447 | MONTAGEM DA RESPOSTA APÓS VALIDAÇÃO  [REQ-3a] |
+| `tests/test_seguranca.py` | 269 | GUARDRAIL DE ENTRADA  [REQ-3a] |
+| `tests/test_seguranca.py` | 342 | GUARDRAIL DE SAÍDA  [REQ-3a][REQ-3c] |
+| `tests/test_seguranca.py` | 378 | """[REQ-3a] O requisito mais destacado do enunciado.""" |
+| `tests/test_seguranca.py` | 534 | MONTAGEM DA RESPOSTA APÓS VALIDAÇÃO  [REQ-3a] |
 
 #### ✅ `REQ-3b` — Implementar logging detalhado para rastreamento e auditoria.
 
@@ -210,8 +210,8 @@ São itens previstos para etapas seguintes do projeto.
 | `src/medgraph/ui/componentes.py` | 2 | [REQ-E1][REQ-3c] Componentes visuais reutilizados pelo painel Streamlit. |
 | `tests/test_fundacao.py` | 386 | requisito e explainability por citacao, isso e inaceitavel. [REQ-3c] |
 | `tests/test_fundacao.py` | 432 | que se quer poder auditar depois, item por item. [REQ-3c] |
-| `tests/test_seguranca.py` | 255 | GUARDRAIL DE SAÍDA  [REQ-3a][REQ-3c] |
-| `tests/test_seguranca.py` | 268 | """[REQ-3c] Explainability não é opcional.""" |
+| `tests/test_seguranca.py` | 342 | GUARDRAIL DE SAÍDA  [REQ-3a][REQ-3c] |
+| `tests/test_seguranca.py` | 355 | """[REQ-3c] Explainability não é opcional.""" |
 
 ### Organizacao do codigo
 
@@ -241,8 +241,8 @@ São itens previstos para etapas seguintes do projeto.
 | `src/medgraph/grafo/rotas.py` | 2 | [REQ-E1] Roteamento condicional do fluxo. |
 | `src/medgraph/ui/app_streamlit.py` | 2 | [REQ-E1][REQ-3a][REQ-3b][REQ-3c] Painel visual do MedGraph.  [Etapa 8] |
 | `src/medgraph/ui/componentes.py` | 2 | [REQ-E1][REQ-3c] Componentes visuais reutilizados pelo painel Streamlit. |
-| `tests/test_seguranca.py` | 374 | ROTEAMENTO DO GRAFO  [REQ-E1] |
-| `tests/test_seguranca.py` | 522 | TOPOLOGIA DO GRAFO  [REQ-E1] |
+| `tests/test_seguranca.py` | 461 | ROTEAMENTO DO GRAFO  [REQ-E1] |
+| `tests/test_seguranca.py` | 609 | TOPOLOGIA DO GRAFO  [REQ-E1] |
 
 #### ✅ `REQ-E2` — Dataset anonimizado ou exemplo de dados sinteticos.
 

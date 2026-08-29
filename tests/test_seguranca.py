@@ -95,6 +95,93 @@ class TestRegrasClinicas:
         achados = rc.verificar_alergias(_paciente(), f"Prescrever {farmaco}.")
         assert bool(achados) is deve_alertar, f"{farmaco}: esperado alerta={deve_alertar}"
 
+    @pytest.mark.parametrize(
+        "texto,severidade_esperada",
+        [
+            # Sugestão genuína — precisa alertar em nível crítico.
+            ("Iniciar Ceftriaxona 2 g EV 1x/dia conforme [P1].", "critica"),
+            ("Prescrever Amoxicilina 500 mg VO 8/8h.", "critica"),
+            # Evitação — o assistente está ACERTANDO; não pode virar alerta crítico.
+            ("Evitar penicilina devido à alergia registrada [C1].", "informativa"),
+            ("Penicilina está contraindicada neste paciente [C1].", "informativa"),
+            ("Atenção: o paciente tem alergia a Penicilina com anafilaxia [C1].", "informativa"),
+            ("Substituir penicilina por Aztreonam 2 g EV.", "informativa"),
+            # Casos mistos — o que importa é a sugestão.
+            ("Evitar penicilina. Iniciar Ceftriaxona 2 g EV [P1].", "critica"),
+            ("Evitar penicilina; iniciar Ceftriaxona 2 g EV [P1].", "critica"),
+            ("Penicilina é contraindicada. Considerar penicilina após dessensibilização.", "critica"),
+        ],
+    )
+    def test_evitacao_nao_vira_alerta_critico(self, texto, severidade_esperada):
+        """
+        REGRESSÃO — o defeito estava invertido, que é o pior tipo.
+
+        A primeira versão da regra disparava sobre QUALQUER menção ao fármaco.
+        Quando o assistente fazia a coisa certa — "evitar penicilina devido à
+        alergia" —, o sistema emitia um alerta CRÍTICO de conflito, como se ele
+        estivesse prescrevendo.
+
+        A consequência é pior do que ruído: um médico que vê alerta crítico toda
+        vez que o assistente ACERTA aprende a ignorar alertas críticos. É fadiga
+        de alarme, e derrota o propósito da regra.
+
+        A menção em contexto de evitação é REBAIXADA, nunca suprimida — se a
+        heurística errar, o pior caso é um alerta discreto onde deveria haver um
+        grave, e ele continua visível. Suprimir permitiria um conflito real
+        desaparecer da tela, que é a falha inaceitável.
+        """
+        from medgraph.guardrails import regras_clinicas as rc
+
+        achados = rc.verificar_alergias(_paciente(), texto)
+        assert achados, "toda menção precisa deixar rastro, mesmo rebaixada"
+
+        ordem = ["informativa", "media", "alta", "critica"]
+        pior = max((a.severidade.value for a in achados), key=ordem.index)
+        assert pior == severidade_esperada, f"{texto!r} -> {pior}"
+
+    def test_janela_de_evitacao_nao_atravessa_frase(self):
+        """
+        REGRESSÃO — o buraco mais perigoso encontrado no projeto.
+
+        A implementação original procurava sinais de evitação numa janela fixa
+        de caracteres ao redor do fármaco. Em "Evitar penicilina. Iniciar
+        Ceftriaxona", a janela ao redor de "ceftriaxona" alcançava o "evitar" da
+        frase ANTERIOR, e uma sugestão real de fármaco contraindicado era
+        rebaixada para informativa.
+
+        O erro apontava na direção errada — a única inaceitável numa regra de
+        segurança. Evitação é propriedade da oração, não da vizinhança em
+        caracteres.
+        """
+        from medgraph.guardrails import regras_clinicas as rc
+
+        assert rc.em_contexto_de_evitacao("Evitar penicilina.", "penicilina")
+        assert not rc.em_contexto_de_evitacao(
+            "Evitar penicilina. Iniciar ceftriaxona 2 g EV.", "ceftriaxona"
+        )
+
+    def test_evitacao_quase_nao_move_o_escore_de_risco(self):
+        """
+        Um achado informativo não pode disparar a validação humana sozinho.
+
+        A verificação é restrita à regra de alergia com `regras=["alergias"]`.
+        Sem isso, o teste mediria o efeito do lactato crítico do paciente de
+        teste — que dispara bloqueio independentemente do texto avaliado — e
+        passaria ou falharia por um motivo que não é o que se quer testar.
+        """
+        from medgraph.guardrails import regras_clinicas as rc
+
+        evitou = rc.verificar(
+            _paciente(), "Evitar penicilina devido à alergia [C1].", regras=["alergias"]
+        )
+        sugeriu = rc.verificar(
+            _paciente(), "Iniciar Ceftriaxona 2 g EV [P1].", regras=["alergias"]
+        )
+
+        assert evitou.escore_risco < sugeriu.escore_risco
+        assert not evitou.tem_bloqueio, "menção de evitação não pode bloquear sozinha"
+        assert sugeriu.tem_bloqueio, "sugestão de fármaco contraindicado precisa bloquear"
+
     def test_interacao_medicamentosa_e_detectada(self):
         """Varfarina em uso + amiodarona sugerida = elevação perigosa do INR."""
         from medgraph.guardrails import regras_clinicas as rc

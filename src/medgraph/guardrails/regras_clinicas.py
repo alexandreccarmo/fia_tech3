@@ -201,6 +201,82 @@ INTERACOES: Final[tuple[Interacao, ...]] = (
 )
 
 
+# =============================================================================
+# CONTEXTO DE EVITAÇÃO
+# =============================================================================
+# O PROBLEMA QUE ISTO RESOLVE:
+#     A primeira versão da regra de alergia disparava sobre QUALQUER menção ao
+#     fármaco na resposta. O resultado era exatamente invertido: quando o
+#     assistente fazia a coisa certa — "evitar penicilina devido à alergia
+#     registrada", "penicilina está contraindicada" —, o sistema emitia um
+#     alerta CRÍTICO de conflito, como se ele estivesse prescrevendo o fármaco.
+#
+#     A consequência é pior do que ruído. Um médico que vê alerta crítico toda
+#     vez que o assistente ACERTA aprende, em poucos dias, a ignorar alertas
+#     críticos. Isso é fadiga de alarme, e derrota o propósito da regra.
+#
+# POR QUE DEGRADAR EM VEZ DE SUPRIMIR:
+#     Detecção de negação em texto clínico é um problema conhecidamente difícil
+#     — "não há contraindicação para ceftriaxona" contém a palavra
+#     "contraindicação" e é, ainda assim, uma sugestão. Qualquer heurística vai
+#     errar em algum caso.
+#
+#     Por isso a menção em contexto de evitação NÃO é descartada: ela é
+#     rebaixada para severidade informativa, com título próprio. Assim, se a
+#     heurística errar, o pior que acontece é um alerta discreto onde deveria
+#     haver um grave — e ele continua visível. Suprimir criaria a possibilidade
+#     de um conflito real desaparecer da tela, que é a falha inaceitável.
+TERMOS_EVITACAO = (
+    "evitar", "evite", "evitada", "evitado", "nao usar", "nao utilizar",
+    "nao administrar", "nao prescrever", "contraindicad", "proscrit",
+    "suspender", "substituir", "alergia a", "alergia à", "alergico a",
+    "alergica a", "em vez de", "ao inves de", "exceto", "abstencao",
+)
+
+# A busca por sinais de evitação é feita dentro da FRASE que contém a menção,
+# nunca através de uma fronteira de frase.
+#
+# A primeira implementação usava uma janela de caracteres fixa ao redor do
+# fármaco, e isso abriu o buraco mais perigoso possível: em
+#
+#     "Evitar penicilina. Iniciar Ceftriaxona 2 g EV."
+#
+# a janela ao redor de "ceftriaxona" alcançava o "evitar" da frase ANTERIOR, e
+# uma sugestão real de fármaco contraindicado era rebaixada para informativa.
+# O erro apontava na direção errada — a única que não se pode aceitar numa
+# regra de segurança.
+#
+# Evitação é uma propriedade da oração, não da vizinhança em caracteres.
+SEPARADORES_DE_FRASE = re.compile(r"[.;:\n!?]+")
+
+
+def _frases_com(texto_normalizado: str, alvo: str) -> list[str]:
+    """Frases do texto que contêm a menção ao fármaco."""
+    return [f for f in SEPARADORES_DE_FRASE.split(texto_normalizado) if alvo in f]
+
+
+def em_contexto_de_evitacao(texto: str, farmaco: str) -> bool:
+    """
+    Diz se TODAS as menções ao fármaco estão em contexto de evitação.
+
+    Basta UMA frase mencionar o fármaco sem sinal de evitação para a resposta
+    ser False. Se o texto evita o fármaco numa frase e o sugere em outra, o que
+    importa é a sugestão — o critério é deliberadamente conservador na direção
+    de alertar.
+    """
+    normalizado = _normalizar(texto)
+    alvo = _normalizar(farmaco)
+
+    frases = _frases_com(normalizado, alvo)
+    if not frases:
+        return False
+
+    return all(
+        any(termo in frase for termo in TERMOS_EVITACAO)
+        for frase in frases
+    )
+
+
 class Severidade(StrEnum):
     """Gravidade de um achado. Ordena a apresentação e pondera o risco."""
 
@@ -358,6 +434,27 @@ def verificar_alergias(paciente: Paciente, texto_conduta: str) -> list[Achado]:
             )
 
             if not (direto or por_classe):
+                continue
+
+            evitacao = em_contexto_de_evitacao(texto_conduta, farmaco)
+
+            if evitacao:
+                # A menção parece ser de evitação. Rebaixada, mas não descartada
+                # — ver a nota em em_contexto_de_evitacao().
+                achados.append(
+                    Achado(
+                        tipo="alergia",
+                        severidade=Severidade.INFORMATIVA,
+                        titulo=f"Menção a {farmaco} em contexto de evitação",
+                        detalhe=(
+                            f"O texto cita '{farmaco}', da mesma classe de "
+                            f"'{alergia.substancia}' (alergia registrada), aparentemente "
+                            f"para indicar que deve ser evitado. Registrado para conferência."
+                        ),
+                        conduta="Confirmar que o fármaco não está sendo sugerido.",
+                        referencia=f"prontuário de {paciente.id}",
+                    )
+                )
                 continue
 
             severidade = (
