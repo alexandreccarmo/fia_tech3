@@ -519,7 +519,7 @@ def instrumentar(
 
     POR QUE UM DECORATOR:
         A alternativa seria repetir o mesmo bloco de log no comeco e no fim
-        dos 12 nos do grafo. Alem de verboso, alguem esqueceria em algum no -
+        dos 14 nos do grafo. Alem de verboso, alguem esqueceria em algum no -
         e um no sem rastro derruba a garantia de auditabilidade que o
         requisito 3 exige. Com o decorator, auditar passa a ser o padrao.
 

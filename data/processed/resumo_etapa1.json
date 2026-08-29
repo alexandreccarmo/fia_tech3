@@ -72,10 +72,10 @@
       "maybe": 392
     },
     "caracteres_por_exemplo": {
-      "media": 3607,
-      "minimo": 2380,
-      "maximo": 7059
+      "media": 4182,
+      "minimo": 2823,
+      "maximo": 7658
     },
-    "tokens_estimados_total": 3674193
+    "tokens_estimados_total": 4259487
   }
 }

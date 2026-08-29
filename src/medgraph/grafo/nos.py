@@ -2,7 +2,7 @@
 [REQ-E1] Nós do fluxo de decisão clínica.
 
 O QUE FAZ:
-    Implementa as doze etapas do grafo. Cada nó recebe o estado, faz UMA
+    Implementa as quatorze etapas do grafo. Cada nó recebe o estado, faz UMA
     coisa, e devolve um delta.
 
 TODOS OS NÓS SÃO INSTRUMENTADOS:

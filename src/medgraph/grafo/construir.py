@@ -2,7 +2,7 @@
 [REQ-E1] Montagem do grafo LangGraph.
 
 O QUE FAZ:
-    Liga os doze nós com as arestas lineares e condicionais, configura o
+    Liga os quatorze nós com as arestas lineares e condicionais, configura o
     checkpointer e compila o fluxo executável.
 
 O DESENHO DO FLUXO:

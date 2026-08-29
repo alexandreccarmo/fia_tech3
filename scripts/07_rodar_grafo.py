@@ -168,7 +168,7 @@ def main() -> int:
 
     iniciar(
         banner="Etapa 7 — Fluxo clínico LangGraph",
-        subtitulo="12 nós, roteamento condicional, ciclo de reescrita e validação humana",
+        subtitulo="14 nós, roteamento condicional, ciclo de reescrita e validação humana",
     )
     obter_settings()
 

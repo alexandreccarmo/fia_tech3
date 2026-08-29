@@ -34,8 +34,7 @@
         "resposta_curta_demais": 5
       },
       "identificadores_anonimizados": {
-        "idade_extrema": 35,
-        "nome": 10
+        "idade_extrema": 35
       },
       "distribuicao_de_rotulos": {
         "yes": 1871,

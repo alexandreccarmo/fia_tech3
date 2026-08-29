@@ -44,7 +44,7 @@ Desfecho = Literal[
 
 
 class EstadoClinico(TypedDict, total=False):
-    """Estado que circula pelos doze nós do fluxo."""
+    """Estado que circula pelos quatorze nós do fluxo."""
 
     # -------------------------------------------------------------------------
     # ENTRADA
