@@ -20,7 +20,20 @@ O modelo é *gated*: exige aceite, gratuito e com aprovação imediata.
 1. Crie uma conta em [huggingface.co/join](https://huggingface.co/join) se ainda não tiver
 2. Acesse **[huggingface.co/meta-llama/Llama-3.2-3B-Instruct](https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct)**
 3. Preencha o formulário e clique em **Submit**
-4. Aguarde o selo mudar para **"You have been granted access to this model"** — costuma ser imediato
+4. Aguarde o selo mudar para **"You have been granted access to this model"**
+
+> ⏳ **A aprovação NÃO é garantida nem instantânea.** Depois de enviar, o mais
+> comum é ver:
+>
+> > *"Your request to access this repository has been submitted and is awaiting a
+> > review from the repository authors."*
+>
+> Isso é a fila da Meta, não um erro seu. Costuma sair rápido, mas pode levar de
+> minutos a horas — e não há como consultar a posição.
+>
+> **Não espere com a sessão do Colab aberta.** Uma sessão com GPU alocada consome
+> a cota diária do plano gratuito mesmo sem estar treinando. Use o Qwen (abaixo)
+> e siga adiante: se o Llama for aprovado depois, não é preciso refazer nada.
 
 > **Se o aceite não sair, ou você não quiser esperar:** a célula 7 traz a
 > alternativa já pronta, comentada. Basta trocar qual das duas linhas está ativa:
