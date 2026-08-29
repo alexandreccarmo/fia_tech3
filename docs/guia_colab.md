@@ -33,7 +33,13 @@ O modelo é *gated*: exige aceite, gratuito e com aprovação imediata.
 >
 > **Não espere com a sessão do Colab aberta.** Uma sessão com GPU alocada consome
 > a cota diária do plano gratuito mesmo sem estar treinando. Use o Qwen (abaixo)
-> e siga adiante: se o Llama for aprovado depois, não é preciso refazer nada.
+> e siga adiante — o pedido continua na fila sozinho, e você não fica parado.
+>
+> **Mas entenda o que isso custa.** Um adapter LoRA são matrizes com as dimensões
+> da arquitetura em que foi treinado: o do Qwen **não serve** para o Llama. Se o
+> aceite sair e você quiser entregar com Llama, o treino é refeito do zero
+> (~50 min) e a exportação também (~25 min). O que você ganha rodando o Qwen é
+> validar o pipeline inteiro antes; o modelo em si é descartável.
 
 > **Se o aceite não sair, ou você não quiser esperar:** a célula 7 traz a
 > alternativa já pronta, comentada. Basta trocar qual das duas linhas está ativa:
@@ -189,6 +195,46 @@ resultado = treinador.train(resume_from_checkpoint=True)
 
 Ele retoma do checkpoint mais recente. Parado no passo 300 de 483, faltam ~20
 minutos em vez de 50.
+
+### Trocar de modelo base depois de já ter treinado
+
+Se você treinou com o Qwen e o aceite do Llama saiu, **não basta trocar a linha
+da célula 7 e continuar dali.** Duas coisas atrapalham.
+
+**A VRAM.** A célula 7 carrega o novo modelo com o antigo ainda na GPU — Python
+avalia `from_pretrained(...)` antes de reatribuir `modelo`. E o antigo não é
+liberado nem depois, porque `treinador.model` continua apontando para ele. Dois
+modelos de 3B mais os estados do otimizador não cabem na T4: o resultado é
+`CUDA out of memory`.
+
+**Os detritos do treino anterior.** Os `checkpoint-N` em `/content/saida_treino`
+são da outra arquitetura. Eles somem aos poucos (`save_total_limit=2`), mas se a
+sessão cair no meio e você usar `resume_from_checkpoint=True`, o Trainer pode
+pegar um checkpoint do modelo antigo. O adapter em `models/adapters/` tem o
+mesmo problema.
+
+O procedimento seguro:
+
+**1.** Se quiser guardar o adapter anterior para comparar, baixe o zip da célula
+14 agora — o passo seguinte o apaga.
+
+**2. Ambiente de execução → Reiniciar sessão.** Isso libera a GPU de forma
+determinística, sem depender de `del` e coleta de lixo.
+
+**3.** Numa célula, limpe o que sobrou em disco:
+
+```python
+!rm -rf /content/saida_treino models/adapters/medgraph-llama32-3b-lora
+```
+
+**4.** Troque a linha ativa da célula 7 e rode **da célula 3 em diante** — não da
+2, os pacotes continuam instalados no disco da VM. O login da célula 5 precisa
+ser refeito, com um código novo.
+
+**5.** Use o mesmo modelo no notebook 02.
+
+Reserve ~75 min de GPU para a rodada completa (treino + exportação) e confira
+quanto de cota você já gastou no dia.
 
 ### Proteger o treino contra a reciclagem da VM
 
