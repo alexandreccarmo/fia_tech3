@@ -203,9 +203,14 @@ da célula 7 e continuar dali.** Duas coisas atrapalham.
 
 **A VRAM.** A célula 7 carrega o novo modelo com o antigo ainda na GPU — Python
 avalia `from_pretrained(...)` antes de reatribuir `modelo`. E o antigo não é
-liberado nem depois, porque `treinador.model` continua apontando para ele. Dois
-modelos de 3B mais os estados do otimizador não cabem na T4: o resultado é
-`CUDA out of memory`.
+liberado nem depois, porque `treinador.model` continua apontando para ele.
+
+Em 4 bits cada modelo ocupa ~2,2 GB, então os dois provavelmente **cabem** na T4
+e o carregamento passa. O problema aparece depois: o treino é o que consome
+memória de verdade — ativações, gradientes e cache —, e ele passa a disputar a
+GPU com um modelo inteiro que ninguém mais usa. Um `CUDA out of memory` na
+célula 10, aos vinte minutos de treino, custa muito mais caro do que um erro no
+carregamento.
 
 **Os detritos do treino anterior.** Os `checkpoint-N` em `/content/saida_treino`
 são da outra arquitetura. Eles somem aos poucos (`save_total_limit=2`), mas se a
