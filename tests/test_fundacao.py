@@ -237,6 +237,65 @@ class TestFiltroDeArgumentos:
         # o contrato verificado aqui é que a função nunca devolve None nem falha.
         assert isinstance(_nomes_aceitos(Opaca), set)
 
+    def test_adaptadores_bf16_sao_convertidos_para_float32(self):
+        """
+        REGRESSÃO — o defeito que derrubou o primeiro treino real.
+
+        Os adaptadores LoRA nascem na precisão do modelo base. Vários modelos
+        declaram `torch_dtype: bfloat16` no próprio config.json — o Qwen2.5 é um
+        deles —, e o argumento que pediria float16 mudou de nome entre versões do
+        transformers. Quando o nome não bate, o modelo carrega em bf16 em
+        silêncio.
+
+        Numa T4, que não tem bfloat16, o treino roda em fp16 com GradScaler — e o
+        scaler não processa gradientes bf16. O treino morre dentro do torch, com
+        uma mensagem que não menciona adaptador, dtype de modelo nem PEFT.
+        """
+        import torch
+
+        from medgraph.finetune.colab_utils import alinhar_precisao_dos_adaptadores
+
+        class ParametroFalso:
+            def __init__(self, dtype, treinavel):
+                self.data = torch.zeros(2, dtype=dtype)
+                self.requires_grad = treinavel
+
+            @property
+            def dtype(self):
+                return self.data.dtype
+
+        class ModeloFalso:
+            def __init__(self, parametros):
+                self._parametros = parametros
+
+            def named_parameters(self):
+                return list(self._parametros.items())
+
+            def parameters(self):
+                return list(self._parametros.values())
+
+        class TreinadorFalso:
+            def __init__(self, modelo):
+                self.model = modelo
+
+        modelo = ModeloFalso({
+            "lora_A": ParametroFalso(torch.bfloat16, True),
+            "lora_B": ParametroFalso(torch.bfloat16, True),
+            "base_congelada": ParametroFalso(torch.bfloat16, False),
+            "ja_correto": ParametroFalso(torch.float32, True),
+        })
+        treinador = TreinadorFalso(modelo)
+
+        convertidos = alinhar_precisao_dos_adaptadores(treinador)
+
+        assert convertidos == 2, "só os treináveis fora de fp32 devem ser convertidos"
+        assert modelo._parametros["lora_A"].dtype == torch.float32
+        assert modelo._parametros["lora_B"].dtype == torch.float32
+        assert modelo._parametros["ja_correto"].dtype == torch.float32
+        assert modelo._parametros["base_congelada"].dtype == torch.bfloat16, (
+            "a base congelada em 4 bits não pode ser convertida: dobraria a VRAM"
+        )
+
     def test_hiperparametros_do_lora_sao_coerentes(self):
         """alpha = 2r é a convenção; r fora de [8, 64] indicaria erro de digitação."""
         from medgraph.finetune.colab_utils import CONFIG_PADRAO

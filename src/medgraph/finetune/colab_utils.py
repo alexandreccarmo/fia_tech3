@@ -299,6 +299,49 @@ def montar_configuracao_sft(diretorio_saida: str, cfg: dict[str, Any] | None = N
     return SFTConfig(**aceitos)
 
 
+def alinhar_precisao_dos_adaptadores(treinador) -> int:
+    """
+    Converte os parametros TREINAVEIS para float32 quando o treino usa fp16.
+
+    O DEFEITO QUE ISTO CORRIGE:
+        Os adaptadores LoRA nascem na precisao do modelo base. Varios modelos
+        declaram `torch_dtype: bfloat16` no proprio config.json - o Qwen2.5 e um
+        deles -, e o argumento que pediria float16 no carregamento mudou de nome
+        entre versoes do transformers (`torch_dtype` virou `dtype`). Quando o
+        nome nao bate, ele cai em **kwargs, e o modelo carrega em bf16
+        silenciosamente.
+
+        Numa GPU sem suporte a bfloat16, como a T4 do Colab gratuito, o treino
+        roda em fp16 com GradScaler. O scaler nao sabe processar gradientes bf16,
+        e o treino morre com:
+
+            NotImplementedError: "_amp_foreach_non_finite_check_and_unscale_cuda"
+            not implemented for 'BFloat16'
+
+        A mensagem nao menciona dtype de adaptador, nao menciona o modelo, e
+        aparece dentro do torch - a tres camadas de distancia da causa.
+
+    POR QUE float32 E NAO float16:
+        E a receita padrao do QLoRA: base congelada em 4 bits, adaptadores em
+        precisao cheia, autocast cuidando da velocidade. Sao ~24 milhoes de
+        parametros treinaveis; mante-los em fp32 custa cerca de 100 MB de VRAM,
+        e evita tanto o problema do scaler quanto a instabilidade numerica de
+        acumular gradientes em meia precisao.
+
+    Returns:
+        Quantos parametros foram convertidos. Zero significa que ja estavam
+        corretos - o que e o caso quando o treino usa bf16 nativo.
+    """
+    import torch
+
+    convertidos = 0
+    for _, parametro in treinador.model.named_parameters():
+        if parametro.requires_grad and parametro.dtype != torch.float32:
+            parametro.data = parametro.data.to(torch.float32)
+            convertidos += 1
+    return convertidos
+
+
 def montar_treinador(modelo, tokenizador, dados_treino, dados_validacao, configuracao, lora):
     """Instancia o SFTTrainer lidando com as renomeacoes de argumento."""
     from trl import SFTTrainer
@@ -321,7 +364,22 @@ def montar_treinador(modelo, tokenizador, dados_treino, dados_validacao, configu
 
     if descartados:
         print(f"Argumentos do SFTTrainer ignorados nesta versao: {descartados}")
-    return SFTTrainer(**aceitos)
+
+    treinador = SFTTrainer(**aceitos)
+
+    # Alinha a precisao dos adaptadores ANTES de devolver o treinador. Feito
+    # aqui, e nao no notebook, para que nenhuma execucao possa esquecer -
+    # o sintoma so apareceria depois, dentro do torch, com uma mensagem que
+    # nao aponta para a causa.
+    if getattr(configuracao, "fp16", False):
+        convertidos = alinhar_precisao_dos_adaptadores(treinador)
+        if convertidos:
+            print(
+                f"{convertidos} parametro(s) treinavel(is) convertido(s) para float32 "
+                f"(treino em fp16 exige gradientes float32 no GradScaler)"
+            )
+
+    return treinador
 
 
 # =============================================================================
