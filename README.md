@@ -80,7 +80,7 @@ Enquanto o adapter não é produzido, o projeto roda de ponta a ponta com o **mo
 base servido sob a mesma persona e os mesmos parâmetros**, registrado no Ollama como
 `medgraph-base`. Não é um atalho: é a coluna de referência que o comparativo da
 Etapa 4 precisa de qualquer forma, servida em condições idênticas às do modelo
-ajustado. Quando o GGUF ficar pronto, `make modelo --ajustado` o registra e a mesma
+ajustado. Quando o GGUF ficar pronto, `make modelo -- --ajustado` o registra e a mesma
 tabela de avaliação passa a trazer as duas colunas.
 
 ---

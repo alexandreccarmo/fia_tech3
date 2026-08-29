@@ -655,6 +655,47 @@ a linha em duas e quebrava o parse do arquivo inteiro.
 Corrigido nos dois lados: leitura por iteração do arquivo, e higienização na
 origem.
 
+### 8.10 As flags que o Makefile engolia
+
+O `make` não repassa argumentos para a receita: ele os interpreta como alvos. O
+Makefile não tinha nada que desfizesse isso, e o comando que o guia do Colab
+manda rodar na hora da entrega —
+
+```bash
+make modelo -- --ajustado
+```
+
+— executava `scripts/03_instalar_modelo.py` **sem** a flag, registrando o modelo
+base no lugar do ajustado, e só então abortava com `No rule to make target
+'--ajustado'`. Valia igualmente para `make grafo -- --diagrama`, `make grafo --
+--pendentes` e `make avaliar -- --rapido`. O README ainda trazia a variante sem o
+separador, `make modelo --ajustado`, que o `make` rejeita de saída como opção
+desconhecida.
+
+O modo de falha é o pior dos dois mundos: **o trabalho errado é feito antes de o
+erro aparecer**, e a mensagem de erro sugere que nada rodou. Quem visse
+`No rule to make target` concluiria que o comando não executou — e teria no
+Ollama um modelo base servido sob o nome do ajustado, com a avaliação toda
+apontando para ele.
+
+A correção colhe de `MAKECMDGOALS` o que parece flag e devolve ao script. A parte
+interessante é a regra que absorve o alvo falso que cada flag cria. A receita
+comum para isso é um `%:` genérico, que casa com qualquer alvo desconhecido — e
+que teria trocado um defeito por outro: `make teste`, o erro de digitação mais
+provável do projeto, viraria um no-op silencioso com código de saída zero. A
+regra é restrita a `--%` justamente para que um alvo inexistente **continue
+falhando alto**, e há um teste que falha se alguém a generalizar.
+
+Este é o mesmo defeito de 8.8, encontrado no mesmo lugar por uma razão que já
+estava escrita ali: o teste que 8.8 gerou verificava se os arquivos citados no
+Makefile existiam, e não se o comando documentado fazia o que promete. Por isso o
+teste novo invoca o `make` de verdade, em modo `-n`, em vez de ler o texto do
+Makefile.
+
+**A lição:** a mesma de 8.8, e ela não tinha sido inteiramente aprendida —
+verificar que as peças de um comando existem não é o mesmo que exercitar o
+comando.
+
 ---
 
 ## 9. Limitações declaradas

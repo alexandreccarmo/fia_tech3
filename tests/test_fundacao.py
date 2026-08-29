@@ -156,6 +156,93 @@ class TestSettings:
         ]
         assert not ausentes, f"o Makefile chama arquivos inexistentes: {ausentes}"
 
+    @pytest.mark.parametrize(
+        ("alvo", "flag"),
+        [
+            ("modelo", "--ajustado"),
+            ("grafo", "--diagrama"),
+            ("grafo", "--pendentes"),
+            ("avaliar", "--rapido"),
+        ],
+    )
+    def test_makefile_repassa_flags_aos_scripts(self, alvo, flag):
+        """
+        REGRESSÃO — as flags que a documentação promete não chegavam ao script.
+
+        O `make` não encaminha argumentos para a receita: ele os interpreta como
+        alvos. Sem a variável `ARGS` e a regra `--%`, o comando que o guia do
+        Colab manda rodar na entrega,
+
+            make modelo -- --ajustado
+
+        executava `03_instalar_modelo.py` **sem** a flag — registrando o modelo
+        base no lugar do ajustado — e só então abortava com "No rule to make
+        target". O modo de falha é o pior possível: o trabalho errado é feito
+        antes do erro aparecer, e o erro sugere que nada rodou.
+
+        É o mesmo padrão do defeito do `finetune-prep` logo acima: cada script
+        foi exercitado direto, e nunca pelo caminho que a documentação descreve.
+        Por isso este teste chama o `make` de verdade, em modo `-n`, em vez de
+        inspecionar o texto do Makefile.
+        """
+        import shutil
+        import subprocess
+
+        from config.settings import RAIZ_PROJETO
+
+        if shutil.which("make") is None:
+            pytest.skip("make nao esta disponivel neste ambiente")
+
+        processo = subprocess.run(
+            ["make", "-n", alvo, "--", flag],
+            cwd=RAIZ_PROJETO,
+            capture_output=True,
+            text=True,
+        )
+
+        assert processo.returncode == 0, (
+            f"`make {alvo} -- {flag}` falhou: {processo.stderr.strip()}"
+        )
+        receita = [
+            linha for linha in processo.stdout.splitlines() if "scripts/" in linha
+        ]
+        assert receita, f"`make -n {alvo}` nao imprimiu nenhuma receita de script"
+        assert flag in receita[0], (
+            f"a flag {flag} nao chegou ao script: {receita[0]!r}"
+        )
+
+    def test_makefile_ainda_falha_em_alvo_inexistente(self):
+        """
+        A correção acima não pode ter virado um engolidor de erro de digitação.
+
+        A receita usual para repassar argumentos no `make` é uma regra `%:` que
+        casa com QUALQUER alvo desconhecido. Ela resolveria o problema e criaria
+        outro: `make teste` — o erro de digitação mais provável de todos — viraria
+        um no-op silencioso, com código de saída zero e nada executado.
+
+        Por isso a regra do projeto é restrita a `--%`. Este teste é a garantia
+        de que ela continua restrita.
+        """
+        import shutil
+        import subprocess
+
+        from config.settings import RAIZ_PROJETO
+
+        if shutil.which("make") is None:
+            pytest.skip("make nao esta disponivel neste ambiente")
+
+        processo = subprocess.run(
+            ["make", "-n", "alvo-que-nao-existe"],
+            cwd=RAIZ_PROJETO,
+            capture_output=True,
+            text=True,
+        )
+
+        assert processo.returncode != 0, (
+            "um alvo inexistente passou silenciosamente - a regra `--%` virou "
+            "catch-all e erros de digitacao deixaram de falhar"
+        )
+
     def test_scripts_do_pipeline_tem_numeracao_continua(self):
         """
         Os scripts numerados formam a sequência que o README documenta.

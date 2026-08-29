@@ -14,6 +14,15 @@ PIP    := .venv/bin/pip
 RAIZ := $(shell pwd)
 export PYTHONPATH := $(RAIZ):$(RAIZ)/src
 
+# Repasse de flags aos scripts: `make avaliar -- --rapido`.
+# O `make` nao encaminha argumentos para a receita; ele os interpreta como
+# alvos. Colhemos aqui os que parecem flag e os devolvemos ao script, e a regra
+# `--%` do fim do arquivo absorve o alvo falso que cada flag cria.
+# Filtramos por `-%` em vez de "tudo que nao e o alvo atual" de proposito:
+# assim `make dados avaliar` continua sendo dois alvos, e nao um alvo com o
+# outro virando argumento.
+ARGS = $(filter -%,$(MAKECMDGOALS))
+
 .DEFAULT_GOAL := ajuda
 .PHONY: ajuda setup ambiente testes lint formatar limpar limpar-logs \
         dados finetune-prep modelo avaliar indexar grafo diagrama app \
@@ -33,14 +42,14 @@ setup:  ## Cria o venv (Python 3.12) e instala todas as dependencias
 	bash scripts/00_setup.sh
 
 ambiente:  ## Verifica se o ambiente esta pronto para rodar o projeto
-	$(PYTHON) scripts/verificar_ambiente.py
+	$(PYTHON) scripts/verificar_ambiente.py $(ARGS)
 
 # --- Qualidade ---------------------------------------------------------------
 testes:  ## Roda a suite de testes automatizados
-	$(PYTHON) -m pytest tests/ -v
+	$(PYTHON) -m pytest tests/ -v $(ARGS)
 
 lint:  ## Verifica estilo e possiveis erros com o ruff
-	$(PYTHON) -m ruff check src/ config/ tests/ scripts/
+	$(PYTHON) -m ruff check src/ config/ tests/ scripts/ $(ARGS)
 
 formatar:  ## Formata o codigo e ordena os imports
 	$(PYTHON) -m ruff format src/ config/ tests/ scripts/
@@ -48,34 +57,34 @@ formatar:  ## Formata o codigo e ordena os imports
 
 # --- Pipeline do projeto (na ordem das etapas) -------------------------------
 dados:  ## Etapa 1 - baixa, anonimiza e cura os dados; gera o corpus hospitalar
-	$(PYTHON) scripts/01_preparar_dados.py
+	$(PYTHON) scripts/01_preparar_dados.py $(ARGS)
 
 finetune-prep:  ## Etapa 2 - monta o dataset de fine-tuning para o Colab
-	$(PYTHON) scripts/02_preparar_finetune.py
+	$(PYTHON) scripts/02_preparar_finetune.py $(ARGS)
 
 modelo:  ## Etapa 3 - baixa o GGUF do HF Hub e registra o modelo no Ollama
-	$(PYTHON) scripts/03_instalar_modelo.py
+	$(PYTHON) scripts/03_instalar_modelo.py $(ARGS)
 
 avaliar:  ## Etapa 4 - compara base vs fine-tunado vs gpt-4o-mini e gera graficos
-	$(PYTHON) scripts/04_avaliar.py
+	$(PYTHON) scripts/04_avaliar.py $(ARGS)
 
 indexar:  ## Etapa 5 - constroi o indice vetorial FAISS
-	$(PYTHON) scripts/05_indexar.py
+	$(PYTHON) scripts/05_indexar.py $(ARGS)
 
 grafo:  ## Etapa 7 - executa o fluxo LangGraph no terminal
-	$(PYTHON) scripts/07_rodar_grafo.py
+	$(PYTHON) scripts/07_rodar_grafo.py $(ARGS)
 
 diagrama:  ## Etapa 7 - gera os diagramas do grafo (ASCII, Mermaid e PNG)
-	$(PYTHON) -m medgraph.grafo.diagrama
+	$(PYTHON) -m medgraph.grafo.diagrama $(ARGS)
 
 app:  ## Etapa 8 - abre o painel visual em Streamlit
 	.venv/bin/streamlit run src/medgraph/ui/app_streamlit.py
 
 relatorio:  ## Gera docs/relatorio_tecnico.md com os numeros dos artefatos
-	$(PYTHON) scripts/gerar_relatorio.py
+	$(PYTHON) scripts/gerar_relatorio.py $(ARGS)
 
 rastreabilidade:  ## Gera docs/rastreabilidade.md a partir das tags [REQ-xx]
-	$(PYTHON) scripts/gerar_rastreabilidade.py
+	$(PYTHON) scripts/gerar_rastreabilidade.py $(ARGS)
 
 # --- Limpeza -----------------------------------------------------------------
 limpar:  ## Remove caches do Python e das ferramentas
@@ -89,3 +98,13 @@ limpar-logs:  ## Apaga logs e traces (cuidado: descarta a trilha de auditoria)
 # --- Execucao completa -------------------------------------------------------
 tudo: dados finetune-prep indexar avaliar diagrama rastreabilidade relatorio  ## Roda o pipeline inteiro
 	@echo "Pipeline concluido. Abra o painel com: make app"
+
+# -----------------------------------------------------------------------------
+# Alvo falso para as flags repassadas via $(ARGS). Sem ele, `make avaliar --
+# --rapido` roda a avaliacao e so entao aborta com "No rule to make target",
+# dando a impressao de que o comando falhou quando ele ja executou.
+# O padrao e restrito a `--%` de proposito: um alvo inexistente que nao comeca
+# com hifen - `make teste` no lugar de `make testes` - continua falhando alto,
+# em vez de virar um no-op silencioso.
+--%:
+	@:
