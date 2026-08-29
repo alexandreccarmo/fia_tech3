@@ -243,3 +243,59 @@ class TestIntegridadeDosDocumentos:
             conteudo = json.loads(caminho.read_text(encoding="utf-8"))
             assert conteudo["nbformat"] == 4
             assert conteudo["cells"], f"{caminho.name} não tem células"
+
+    def test_notebooks_e_env_example_concordam_sobre_o_modelo_base(self):
+        """
+        Os dois notebooks e o `.env.example` precisam nomear o MESMO modelo base.
+
+        O notebook 02 funde o adapter treinado pelo notebook 01 no modelo que ele
+        próprio carrega. Se os dois discordarem, a fusão acontece **sobre a
+        arquitetura errada** — e não falha: gera um GGUF que carrega, responde, e
+        responde mal. O guia do Colab adverte sobre isso em prosa; aqui a
+        advertência vira verificação.
+
+        O risco não é hipotético. O modelo padrão é *gated*, e a saída documentada
+        para quem não tem o aceite é editar a linha de `MODELO_BASE` dentro do
+        Colab. Basta um "Salvar cópia no GitHub" com essa edição para o
+        repositório passar a entregar um modelo diferente do que a Seção 4.2 do
+        relatório afirma — em uma célula, e não na outra.
+
+        O teste NÃO fixa qual modelo é o certo. Fixar "Llama" transformaria uma
+        decisão de projeto em regra de teste, e o enunciado deixa a escolha livre.
+        O que ele exige é que a escolha seja **uma só**: trocar de modelo continua
+        sendo possível, desde que se troque nos três lugares.
+        """
+        import json
+
+        alvo = re.compile(r'^\s*MODELO_BASE\s*=\s*[\'"]([^\'"]+)[\'"]')
+
+        declarados: dict[str, str] = {}
+        for caminho in sorted((RAIZ_PROJETO / "notebooks" / "colab").glob("*.ipynb")):
+            conteudo = json.loads(caminho.read_text(encoding="utf-8"))
+            ativas = [
+                m.group(1)
+                for celula in conteudo["cells"]
+                if celula["cell_type"] == "code"
+                for linha in "".join(celula["source"]).splitlines()
+                if not linha.lstrip().startswith("#") and (m := alvo.match(linha))
+            ]
+            assert len(ativas) == 1, (
+                f"{caminho.name} tem {len(ativas)} atribuições ativas de "
+                f"MODELO_BASE, esperava exatamente uma: {ativas}"
+            )
+            declarados[caminho.name] = ativas[0]
+
+        assert len(set(declarados.values())) == 1, (
+            "os notebooks discordam sobre o modelo base - o notebook 02 fundiria "
+            f"o adapter na arquitetura errada: {declarados}"
+        )
+
+        texto = (RAIZ_PROJETO / ".env.example").read_text(encoding="utf-8")
+        no_env = re.search(r"^MODELO_BASE_HF=(.+)$", texto, re.MULTILINE)
+        assert no_env, "o .env.example não declara MODELO_BASE_HF"
+
+        nos_notebooks = next(iter(declarados.values()))
+        assert no_env.group(1).strip() == nos_notebooks, (
+            "o .env.example e os notebooks nomeiam modelos base diferentes: "
+            f"{no_env.group(1).strip()!r} vs {nos_notebooks!r}"
+        )

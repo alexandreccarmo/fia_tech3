@@ -264,6 +264,18 @@ como chegou a ter numa versão inicial —, trocar de modelo degradaria a respos
 de forma silenciosa: o modelo continuaria respondendo, apenas pior, porque veria
 uma sequência de tokens especiais diferente da que aprendeu.
 
+A troca ser segura não significa que possa ser feita pela metade. O notebook de
+exportação funde o adapter no modelo que ele próprio carrega: se ele e o notebook
+de treino discordarem, a fusão ocorre **sobre a arquitetura errada** e não falha
+— produz um GGUF que carrega, responde, e responde mal. Como a saída documentada
+para quem não tem o aceite do Llama é editar a linha de `MODELO_BASE` dentro do
+Colab, um "Salvar cópia no GitHub" com essa edição em apenas um dos dois
+notebooks bastaria para introduzir a divergência.
+
+Há por isso um teste que exige que os dois notebooks e o `.env.example` nomeiem o
+mesmo modelo. Ele não fixa *qual* — isso engessaria uma decisão que o enunciado
+deixa livre —, apenas que a escolha seja uma só, feita nos três lugares.
+
 ### 4.3 Configuração
 
 O modelo base é carregado em 4 bits com **NF4** e dupla quantização. NF4 é o tipo
@@ -824,7 +836,7 @@ varrendo as tags `[REQ-xx]` das docstrings.
 ### Suíte de testes
 
 ```
-======================== 178 passed, 1 warning in 6.18s ========================
+======================== 179 passed, 1 warning in 2.91s ========================
 ```
 
 ---
