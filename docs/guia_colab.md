@@ -22,13 +22,21 @@ O modelo é *gated*: exige aceite, gratuito e com aprovação imediata.
 3. Preencha o formulário e clique em **Submit**
 4. Aguarde o selo mudar para **"You have been granted access to this model"** — costuma ser imediato
 
-> **Não quer lidar com o *gating*?** Há uma alternativa sem licença. Na célula de
-> código 7 do notebook, troque:
+> **Se o aceite não sair, ou você não quiser esperar:** a célula 7 traz a
+> alternativa já pronta, comentada. Basta trocar qual das duas linhas está ativa:
+>
 > ```python
+> # MODELO_BASE = "meta-llama/Llama-3.2-3B-Instruct"
 > MODELO_BASE = "Qwen/Qwen2.5-3B-Instruct"
 > ```
-> O Qwen2.5-3B é aberto, de tamanho equivalente, e tem suporte a português
-> comparável. O restante do notebook não muda.
+>
+> O Qwen2.5-3B é aberto, do mesmo tamanho e com suporte a português comparável.
+> A troca é segura: os módulos-alvo do LoRA são idênticos nas duas arquiteturas e
+> o Modelfile do Ollama não fixa template. **Use o mesmo valor no notebook 02** —
+> senão ele funde o adapter no modelo errado.
+>
+> O enunciado pede *"um modelo LLM (como LLaMA, Falcon ou um outro)"* — a escolha
+> é livre, e a troca não afeta a avaliação do trabalho.
 
 ### 2. Criar o token do Hugging Face
 
@@ -186,7 +194,7 @@ cd ~/Desktop/FIAP/projeto/tech_challenge_fiap3/fia_tech3
 | Sintoma | Causa provável | O que fazer |
 | --- | --- | --- |
 | `Nenhuma GPU disponível` | Runtime sem acelerador | Ambiente de execução → T4 GPU |
-| `401` ao carregar o modelo | Licença do Llama não aceita | Aceite em huggingface.co e refaça o login |
+| `GatedRepoError` ou `403` na célula 7 | Conta sem acesso ao Llama — pedido não enviado, pendente, ou feito por outra conta | Troque para o Qwen na própria célula 7 (a linha já está lá, comentada) e reexecute a partir dela |
 | Célula 5 travada em `Waiting for authorization` | Código expirou ou não foi autorizado | Reexecute a célula 5 e autorize o código novo |
 | `ModuleNotFoundError` na célula 4 | Sessão não foi reiniciada | Reinicie e continue da célula 3 |
 | `CUDA out of memory` | Sequência longa demais | Antes da célula 9: `colab_utils.CONFIG_PADRAO["max_seq_length"] = 768` |

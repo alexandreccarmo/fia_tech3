@@ -178,7 +178,31 @@ medindo recuperação em vez de raciocínio.
 Os 50 MB do adapter cabem no Git — o resultado do treino fica versionado junto
 com o código que o produziu.
 
-### 4.2 Configuração
+### 4.2 Escolha do modelo base
+
+O enunciado pede o fine-tuning de *"um modelo LLM (como LLaMA, Falcon ou um
+outro)"* — a escolha é explicitamente livre. Adotamos **Llama-3.2-3B-Instruct**
+por casar com o exemplo do enunciado e por ter o português entre os idiomas
+oficialmente suportados.
+
+O Llama é, porém, um modelo *gated*: exige aceite de licença, e o pedido pode
+ficar pendente. Os notebooks trazem **Qwen2.5-3B-Instruct** como alternativa
+pronta, comentada no ponto de escolha.
+
+A troca é segura por três razões, e nenhuma delas é acidental:
+
+| | |
+| --- | --- |
+| Mesmo tamanho | 3 bilhões de parâmetros — a configuração de QLoRA não muda |
+| Mesmos módulos-alvo | `q,k,v,o,gate,up,down_proj` existem nas duas arquiteturas |
+| Template não fixado | O `Modelfile` do Ollama usa o *chat template* embutido no GGUF, e não um formato codificado à mão |
+
+Se o `Modelfile` tivesse o formato de cabeçalhos do Llama escrito literalmente —
+como chegou a ter numa versão inicial —, trocar de modelo degradaria a resposta
+de forma silenciosa: o modelo continuaria respondendo, apenas pior, porque veria
+uma sequência de tokens especiais diferente da que aprendeu.
+
+### 4.3 Configuração
 
 O modelo base é carregado em 4 bits com **NF4** e dupla quantização. NF4 é o tipo
 de dado proposto no artigo do QLoRA: otimizado para pesos que seguem distribuição
@@ -192,11 +216,11 @@ tutoriais, rende menos quando a tarefa muda o **estilo** da resposta — e é o 
 caso: queremos que o modelo passe a responder num formato rígido, com decisão na
 primeira linha e citação no fim.
 
-### 4.3 Resultado do treino
+### 4.4 Resultado do treino
 
 {{TREINO}}
 
-### 4.4 O dataset e a classe ausente
+### 4.5 O dataset e a classe ausente
 
 O subconjunto artificial do PubMedQA **não tem nenhum exemplo `maybe`** — os
 rótulos automáticos só produzem `yes`/`no`. Todo o `maybe` do treino vem dos 449
@@ -456,7 +480,7 @@ mensurável**, em vez de uma promessa vaga de "melhorar o desempenho":
 | Teto de macro-F1 | ~0,67 por construção | acima disso |
 
 Foi para atacar exatamente essa lacuna que o dataset de treino recebeu repetição
-inversamente proporcional à frequência da classe (Seção 4.4). Se, após o
+inversamente proporcional à frequência da classe (Seção 4.5). Se, após o
 fine-tuning, o modelo continuar sem prever `maybe`, a hipótese estará refutada e
 isso também será um resultado — reportável, e mais útil do que um ganho difuso de
 alguns pontos de accuracy.
