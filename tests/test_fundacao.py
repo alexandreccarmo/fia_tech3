@@ -131,6 +131,53 @@ class TestSettings:
         )
 
 
+    def test_makefile_referencia_apenas_arquivos_existentes(self):
+        """
+        REGRESSÃO — `make tudo` chamava um script que nunca foi criado.
+
+        O alvo `finetune-prep` apontava para `scripts/02_preparar_finetune.py`,
+        que não existia. Tanto ele quanto `make tudo` falhariam com "arquivo não
+        encontrado" — e o `make tudo` é justamente o comando que o README oferece
+        para rodar o pipeline inteiro.
+
+        O defeito sobreviveu porque cada etapa foi testada individualmente, pelo
+        módulo, e nunca pelo alvo do Makefile que a documentação promete.
+        """
+        import re
+
+        from config.settings import RAIZ_PROJETO
+
+        makefile = (RAIZ_PROJETO / "Makefile").read_text(encoding="utf-8")
+
+        ausentes = [
+            referencia
+            for referencia in sorted(set(re.findall(r"scripts/[\w.]+\.(?:py|sh)", makefile)))
+            if not (RAIZ_PROJETO / referencia).exists()
+        ]
+        assert not ausentes, f"o Makefile chama arquivos inexistentes: {ausentes}"
+
+    def test_scripts_do_pipeline_tem_numeracao_continua(self):
+        """
+        Os scripts numerados formam a sequência que o README documenta.
+
+        Um buraco na numeração é o sintoma de uma etapa que foi implementada
+        como módulo e esquecida como ponto de entrada — exatamente o que
+        aconteceu com a Etapa 2.
+        """
+        import re
+
+        from config.settings import RAIZ_PROJETO
+
+        numeros = sorted(
+            int(m.group(1))
+            for arquivo in (RAIZ_PROJETO / "scripts").iterdir()
+            if (m := re.match(r"^(\d+)_", arquivo.name))
+        )
+        # 06 não existe: a Etapa 6 (prontuário e regras) não tem execução
+        # própria — é exercitada pelo grafo, na Etapa 7.
+        assert numeros == [0, 1, 2, 3, 4, 5, 7], f"numeração inesperada: {numeros}"
+
+
 # =============================================================================
 # CATALOGO DE REQUISITOS
 # =============================================================================

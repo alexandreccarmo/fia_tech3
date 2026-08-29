@@ -226,11 +226,31 @@ INTERACOES: Final[tuple[Interacao, ...]] = (
 #     heurística errar, o pior que acontece é um alerta discreto onde deveria
 #     haver um grave — e ele continua visível. Suprimir criaria a possibilidade
 #     de um conflito real desaparecer da tela, que é a falha inaceitável.
+# Duas famílias de termo, com origens diferentes.
+#
+#   EVITAÇÃO EXPLÍCITA — o texto diz para não usar o fármaco.
+#   REFERÊNCIA À ALERGIA — o texto está descrevendo a alergia do paciente, e o
+#   fármaco aparece como o alérgeno, não como conduta.
+#
+# A segunda família foi acrescentada depois de observar o que o modelo
+# realmente escreve. Numa resposta sobre exames pendentes ele produziu:
+#
+#     "há uma anafilaxia grave à penicilina, o que requer cuidado especial"
+#
+# É uma advertência correta, e a primeira versão do vocabulário — que só
+# conhecia "evitar" e "contraindicado" — a classificava como sugestão de
+# fármaco contraindicado, com alerta crítico. O vocabulário precisa cobrir
+# como a linguagem clínica de fato descreve alergia, não apenas a forma
+# imperativa de proibir.
 TERMOS_EVITACAO = (
+    # evitação explícita
     "evitar", "evite", "evitada", "evitado", "nao usar", "nao utilizar",
     "nao administrar", "nao prescrever", "contraindicad", "proscrit",
-    "suspender", "substituir", "alergia a", "alergia à", "alergico a",
-    "alergica a", "em vez de", "ao inves de", "exceto", "abstencao",
+    "suspender", "substituir", "em vez de", "ao inves de", "exceto",
+    # referência à alergia do paciente
+    "alergia", "alergico", "alergica", "anafilaxia", "anafilatic",
+    "hipersensibilidade", "reacao adversa", "intolerancia",
+    "historico de reacao", "risco de reacao",
 )
 
 # A busca por sinais de evitação é feita dentro da FRASE que contém a menção,

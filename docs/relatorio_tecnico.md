@@ -183,7 +183,7 @@ clinicamente inútil, e a falha passa despercebida.
 
 Repetição por classe aplicada ao conjunto de especialista: `{'yes': 2, 'no': 3, 'maybe': 8}`. Sem ela, `maybe` representaria menos de 1% do dataset e o modelo nunca a preveria.
 
-Tamanho médio por exemplo: 4,015 caracteres (~1003 tokens). Total estimado: ~4.1 milhões de tokens por época.
+Tamanho médio por exemplo: 4,182 caracteres (~1045 tokens). Total estimado: ~4.3 milhões de tokens por época.
 
 ### 3.4 Base de prontuários
 
@@ -655,10 +655,39 @@ uma sugestão real de fármaco contraindicado era rebaixada. O erro apontava na
 direção errada — a única inaceitável numa regra de segurança. Evitação é
 propriedade da oração, não da proximidade em caracteres.
 
+Houve ainda um terceiro erro, no vocabulário. A primeira lista de termos de
+evitação conhecia *"evitar"* e *"contraindicado"* — as formas imperativas de
+proibir. Mas, ao advertir sobre uma alergia, o modelo escreve:
+
+> *"há uma anafilaxia grave à penicilina, o que requer cuidado especial"*
+
+Descrição, não proibição. Essa advertência correta continuava sendo classificada
+como sugestão de fármaco contraindicado. O vocabulário foi construído a partir do
+que imaginávamos que o modelo escreveria; foi corrigido a partir do que ele
+**escreveu de fato**, extraído dos traces — e essas frases reais viraram casos de
+teste.
+
 **A lição:** uma regra de segurança precisa ser avaliada nos dois sentidos. Só
 testávamos se ela pegava o conflito; nunca se ela deixava passar o acerto.
 
-### 8.8 O caractere invisível que corrompia o dataset
+### 8.8 O comando do README que não existia
+
+`make tudo` — o comando que o README oferece para rodar o pipeline inteiro —
+chamava `scripts/02_preparar_finetune.py`, que nunca foi criado. A Etapa 2 tinha
+sido implementada como módulo e esquecida como ponto de entrada.
+
+Tanto `make tudo` quanto `make finetune-prep` falhariam com "arquivo não
+encontrado", e o defeito sobreviveu porque cada etapa foi testada
+individualmente, pelo módulo, e nunca pelo alvo do Makefile que a documentação
+promete.
+
+Há agora um teste que confere que todo arquivo referenciado no Makefile existe, e
+outro que verifica a continuidade da numeração dos scripts do pipeline.
+
+**A lição:** testar as peças não testa a montagem. O caminho que a documentação
+descreve precisa ser exercitado como caminho.
+
+### 8.9 O caractere invisível que corrompia o dataset
 
 `str.splitlines()` quebra em qualquer separador de linha Unicode — `\x0b`, `\x0c`,
 ` `. Todos são caracteres **válidos** dentro de uma string JSON, e o
@@ -706,7 +735,7 @@ varrendo as tags `[REQ-xx]` das docstrings.
 ### Suíte de testes
 
 ```
-======================== 152 passed, 1 warning in 4.39s ========================
+======================== 156 passed, 1 warning in 2.24s ========================
 ```
 
 ---

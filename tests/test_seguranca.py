@@ -139,6 +139,45 @@ class TestRegrasClinicas:
         pior = max((a.severidade.value for a in achados), key=ordem.index)
         assert pior == severidade_esperada, f"{texto!r} -> {pior}"
 
+    @pytest.mark.parametrize(
+        "texto,severidade_esperada",
+        [
+            # Estas duas frases foram PRODUZIDAS PELO MODELO em execuções reais,
+            # e estão nos traces do projeto. São os melhores casos de teste que
+            # existem: não foram imaginadas, foram observadas.
+            (
+                "Além disso, há uma anafilaxia grave à penicilina, o que requer "
+                "cuidado especial.",
+                "informativa",
+            ),
+            (
+                "Para pneumonia adquirida na comunidade, a penicilina é uma opção "
+                "de primeira linha.",
+                "critica",
+            ),
+        ],
+    )
+    def test_frases_reais_do_modelo(self, texto, severidade_esperada):
+        """
+        REGRESSÃO — o vocabulário de evitação vinha da imaginação, não do uso.
+
+        A primeira versão conhecia "evitar" e "contraindicado", as formas
+        imperativas de proibir. Mas o modelo, ao advertir sobre uma alergia,
+        escreve "há uma anafilaxia grave à penicilina" — descrição, não
+        proibição. Essa advertência correta era classificada como sugestão de
+        fármaco contraindicado, com alerta crítico.
+
+        O vocabulário precisa cobrir como a linguagem clínica descreve alergia,
+        e não apenas como ela proíbe.
+        """
+        from medgraph.guardrails import regras_clinicas as rc
+
+        achados = rc.verificar_alergias(_paciente(), texto)
+        assert achados
+        ordem = ["informativa", "media", "alta", "critica"]
+        pior = max((a.severidade.value for a in achados), key=ordem.index)
+        assert pior == severidade_esperada
+
     def test_janela_de_evitacao_nao_atravessa_frase(self):
         """
         REGRESSÃO — o buraco mais perigoso encontrado no projeto.

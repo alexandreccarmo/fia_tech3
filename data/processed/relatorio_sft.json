@@ -28,9 +28,9 @@
     "maybe": 392
   },
   "caracteres_por_exemplo": {
-    "media": 4015,
-    "minimo": 2656,
-    "maximo": 7491
+    "media": 4182,
+    "minimo": 2823,
+    "maximo": 7658
   },
-  "tokens_estimados_total": 4089345
+  "tokens_estimados_total": 4259434
 }
