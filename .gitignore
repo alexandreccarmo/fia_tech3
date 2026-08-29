@@ -76,6 +76,11 @@ logs/**/*.log
 logs/**/*.jsonl
 logs/**/*.json
 
+# Checkpointer do LangGraph. O SQLite em modo WAL cria dois arquivos auxiliares
+# (-wal e -shm) que aparecem enquanto ha conexao aberta; o padrao com asterisco
+# cobre os tres de uma vez.
+logs/checkpoints_grafo.sqlite*
+
 # Cache de LLM ---------------------------------------------------------------
 .langchain.db
 cache_llm.sqlite
