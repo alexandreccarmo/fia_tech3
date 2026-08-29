@@ -161,11 +161,49 @@ não do começo. Reexecutar a célula 2 depois do restart só perde tempo.
 ### Durante o treino
 
 O Colab gratuito **desconecta sessões ociosas**. Deixe a aba aberta e visível.
-Se cair, não recomece do zero: há checkpoints a cada 100 passos, e basta rodar
+
+**Se a sessão cair**, o kernel morre e a variável `treinador` deixa de existir —
+não dá para rodar o comando de retomada direto. O procedimento é:
+
+**1.** Reconecte e verifique o que sobreviveu:
 
 ```python
-treinador.train(resume_from_checkpoint=True)
+!ls -la /content/saida_treino/
 ```
+
+**2.** Interprete o resultado:
+
+| O que aparece | Situação | O que fazer |
+| --- | --- | --- |
+| Pastas `checkpoint-100`, `checkpoint-200`… | A VM sobreviveu, só o kernel caiu | Siga para o passo 3 |
+| `No such file or directory` | A VM foi reciclada e o disco apagado | Recomece da célula 2 |
+
+**3.** Reconstrua o treinador rodando as **células 3 a 9** — e a 2 apenas se der
+`ModuleNotFoundError`, o que só acontece se a VM foi trocada.
+
+**4.** Na **célula 10**, troque para:
+
+```python
+resultado = treinador.train(resume_from_checkpoint=True)
+```
+
+Ele retoma do checkpoint mais recente. Parado no passo 300 de 483, faltam ~20
+minutos em vez de 50.
+
+### Proteger o treino contra a reciclagem da VM
+
+`/content` é o disco **efêmero** do Colab. Sobrevive a uma desconexão, mas não à
+reciclagem da máquina — que acontece em desconexões longas ou ao esgotar a cota.
+
+A célula 9 traz a opção de gravar no Google Drive:
+
+```python
+USAR_DRIVE = True
+```
+
+Custa cerca de um minuto de configuração e ~1,5 GB do seu Drive (dois
+checkpoints). Vale a pena se você estiver treinando em horário de pico ou já
+tiver perdido uma sessão hoje.
 
 ---
 
