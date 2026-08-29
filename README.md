@@ -72,6 +72,10 @@ O fine-tuning é a **única** etapa que não roda no MacBook: exige GPU com CUDA
 notebooks estão prontos e documentados em `notebooks/colab/`, e o dataset de treino
 está versionado no repositório — treinar é um `git clone` no Colab.
 
+📘 **[Guia passo a passo do Colab](docs/guia_colab.md)** — pré-requisitos, link
+direto para abrir os notebooks, o que esperar em cada célula e o que fazer quando
+algo falha.
+
 Enquanto o adapter não é produzido, o projeto roda de ponta a ponta com o **modelo
 base servido sob a mesma persona e os mesmos parâmetros**, registrado no Ollama como
 `medgraph-base`. Não é um atalho: é a coluna de referência que o comparativo da
@@ -451,6 +455,7 @@ orçamento e a consistência do arquivo de políticas — incluindo uma verifica
 | --- | --- |
 | [`docs/relatorio_tecnico.md`](docs/relatorio_tecnico.md) | Relatório técnico completo — arquitetura, fine-tuning, avaliação, defeitos encontrados e limitações declaradas |
 | [`docs/rastreabilidade.md`](docs/rastreabilidade.md) | Matriz requisito → arquivo → linha, gerada do código |
+| [`docs/guia_colab.md`](docs/guia_colab.md) | Passo a passo para executar o fine-tuning no Google Colab |
 | [`docs/roteiro_video.md`](docs/roteiro_video.md) | Roteiro cronometrado do vídeo de entrega, com divisão entre os integrantes |
 | [`docs/diagramas/`](docs/diagramas/) | Diagrama do grafo em PNG, Mermaid e ASCII |
 | [`docs/graficos/`](docs/graficos/) | Gráficos da avaliação |

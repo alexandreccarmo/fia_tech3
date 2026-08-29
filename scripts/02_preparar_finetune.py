@@ -157,7 +157,9 @@ def main() -> int:
             "[bold]5.[/bold] De volta aqui:\n"
             "   ajuste [cyan]REPO_GGUF_HF[/cyan] no .env e rode "
             "[cyan]make modelo -- --ajustado[/cyan]\n"
-            "   depois [cyan]make avaliar[/cyan] — a tabela ganha a coluna do modelo ajustado.",
+            "   depois [cyan]make avaliar[/cyan] — a tabela ganha a coluna do modelo ajustado.\n\n"
+            "[dim]Passo a passo detalhado, com o que esperar em cada célula:[/dim]\n"
+            "   [cyan]docs/guia_colab.md[/cyan]",
             title="[bold]Roteiro do treino[/bold]",
             border_style="cyan",
             padding=(1, 2),
