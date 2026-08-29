@@ -203,6 +203,35 @@ class TestIntegridadeDosDocumentos:
         ausentes = [a for a in sorted(alvos) if a and not (RAIZ_PROJETO / a).exists()]
         assert not ausentes, f"o README aponta para arquivos inexistentes: {ausentes}"
 
+    def test_nenhum_documento_cita_script_inexistente(self):
+        """
+        REGRESSÃO — referência morta a `scripts/baixar_modelo.py`.
+
+        O nome vinha do plano inicial; o script acabou sendo criado com outro
+        nome (`03_instalar_modelo.py`). A menção antiga sobreviveu em três
+        lugares: no .env.example e em duas células do notebook de exportação.
+
+        Quem seguisse a documentação procuraria um arquivo que nunca existiu —
+        e concluiria que o repositório está incompleto.
+
+        A varredura cobre documentos e notebooks; o Makefile tem teste próprio
+        em test_fundacao.py.
+        """
+        alvos = list((RAIZ_PROJETO / "docs").rglob("*.md"))
+        alvos += list((RAIZ_PROJETO / "notebooks").rglob("*.ipynb"))
+        alvos += [RAIZ_PROJETO / "README.md", RAIZ_PROJETO / ".env.example"]
+
+        problemas: list[str] = []
+        for arquivo in alvos:
+            if not arquivo.exists():
+                continue
+            texto = arquivo.read_text(encoding="utf-8")
+            for referencia in sorted(set(re.findall(r"scripts/[\w.]+\.(?:py|sh)", texto))):
+                if not (RAIZ_PROJETO / referencia).exists():
+                    problemas.append(f"{arquivo.name} cita {referencia}")
+
+        assert not problemas, "referências a scripts inexistentes:\n  " + "\n  ".join(problemas)
+
     def test_notebooks_do_colab_sao_json_valido(self):
         """Um .ipynb corrompido só falha quando alguém tenta abri-lo no Colab."""
         import json

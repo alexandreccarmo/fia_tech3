@@ -131,7 +131,11 @@ class Settings(BaseSettings):
     # 6) FINE-TUNING E MODELO
     # -------------------------------------------------------------------------
     modelo_base_hf: str = "meta-llama/Llama-3.2-3B-Instruct"
-    repo_gguf_hf: str = "alexandreccarmo/medgraph-llama32-3b-gguf"
+    # Valor de EXEMPLO. O repositorio real e criado pelo usuario ao final do
+    # notebook de exportacao, que imprime o nome a colocar no .env. Deixar um
+    # nome plausivel aqui, em vez de vazio, mantem a mensagem de erro do
+    # instalador legivel quando o modelo ajustado ainda nao existe.
+    repo_gguf_hf: str = "seu-usuario/medgraph-llama32-3b-gguf"
     arquivo_gguf: str = "medgraph-llama32-3b-q4_k_m.gguf"
     hf_token: str = ""
 

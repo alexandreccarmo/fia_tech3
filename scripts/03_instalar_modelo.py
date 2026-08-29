@@ -166,8 +166,34 @@ def baixar_gguf(cfg) -> Path | None:
             token=cfg.hf_token or None,
         )
         return Path(caminho)
+
     except Exception as exc:
-        console.print(f"  [red]falhou[/red]: {type(exc).__name__}: {exc}")
+        # A mensagem crua do huggingface_hub é ativamente enganosa aqui. Quando o
+        # repositório simplesmente ainda não foi publicado — o caso NORMAL antes
+        # do fine-tuning —, a biblioteca devolve um 401 acompanhado de "Invalid
+        # username or password", doze linhas de URL e um link para a documentação
+        # de autenticação. Quem roda o comando documentado pela primeira vez
+        # conclui que errou o token, e vai depurar credencial em vez de rodar o
+        # Colab.
+        #
+        # Distinguimos as três causas e dizemos qual é.
+        nome = type(exc).__name__
+
+        if nome in ("RepositoryNotFoundError", "EntryNotFoundError", "HfHubHTTPError"):
+            console.print(
+                f"  [yellow]não encontrado[/yellow]: o repositório "
+                f"[cyan]{cfg.repo_gguf_hf}[/cyan] ainda não existe no Hugging Face Hub."
+            )
+            if not cfg.hf_token:
+                console.print(
+                    "  [dim](HF_TOKEN não está definido no .env — se o repositório for "
+                    "privado, defina-o.)[/dim]"
+                )
+        elif "Connection" in nome or "Timeout" in nome:
+            console.print(f"  [red]falha de rede[/red]: {nome}. Verifique a conexão.")
+        else:
+            console.print(f"  [red]falhou[/red]: {nome}: {str(exc).splitlines()[0]}")
+
         return None
 
 
