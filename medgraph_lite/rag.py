@@ -22,19 +22,24 @@ class Trecho:
     texto: str
 
 
-def montar_indice(protocolos: list[dict], embeddings):
+def montar_indice(fontes: list[dict], embeddings):
     """
-    Indexa os protocolos do hospital para busca por significado.
+    Indexa o material do hospital para busca por significado.
 
-    FAISS roda em memoria e nao precisa de servico externo - a mesma escolha
-    dos exemplos da aula.
+    Recebe protocolos e modelos de documento na mesma lista: para o assistente
+    os dois sao evidencia citavel, e separa-los obrigaria a decidir de antemao
+    em qual deles a resposta esta - que e justamente o que a busca semantica
+    resolve.
+
+    FAISS roda em memoria e nao precisa de servico externo, como nos exemplos
+    da aula.
     """
     documentos = [
         Document(
-            page_content=f"{p['titulo']}. {p['texto']}",
-            metadata={"marcador": p["id"], "titulo": p["titulo"]},
+            page_content=f"{f['titulo']}. {f['texto']}",
+            metadata={"marcador": f["id"], "titulo": f["titulo"]},
         )
-        for p in protocolos
+        for f in fontes
     ]
     return FAISS.from_documents(documentos, embeddings)
 

@@ -60,12 +60,16 @@ fia_tech3/
 │   ├── prontuario.py   base SQLite e o modelo de paciente
 │   ├── treino.py       configuração do QLoRA e formato do prompt
 │   ├── rag.py          índice FAISS e recuperação com marcador de fonte
+│   ├── chain.py        pipeline LangChain: prompt → LLM → parser
 │   ├── guardrails.py   limites de atuação e regras clínicas
-│   ├── grafo.py        fluxo LangGraph de seis nós
-│   └── graficos.py     as quatro figuras
+│   ├── grafo.py        fluxo LangGraph de sete nós
+│   ├── auditoria.py    trilha por consulta e logger de sistema
+│   └── graficos.py     as cinco figuras
 ├── notebooks/
 │   └── medgraph_lite.ipynb    ← o notebook do Colab
-├── tests/                     35 testes, rodam sem GPU
+├── docs/
+│   └── relatorio_tecnico.md   relatório técnico da entrega
+├── tests/                     47 testes, rodam sem GPU
 ├── demo.py                    demonstração no terminal
 ├── Makefile
 └── requirements.txt
@@ -123,6 +127,58 @@ consultar_prontuario -> recuperar_evidencia -> responder -> verificar_resposta
 Cada nó registra o que fez, quanto tempo levou e o que decidiu. Essa trilha é o
 logging que o item 3 do enunciado pede — e é o que o gráfico de caminhos desenha.
 
+## Logs e auditoria
+
+O item 3 do enunciado pede *logging detalhado para rastreamento e auditoria*.
+São três registros, com públicos diferentes:
+
+| Destino | Conteúdo | Para quem |
+| --- | --- | --- |
+| **Console** | Uma linha colorida por etapa, com ícone e latência | Quem assiste à execução |
+| **`auditoria.jsonl`** | Um evento por linha, em JSON | Quem audita depois |
+| **`medgraph.log`** | Eventos de sistema — carga de modelo, índice | Diagnóstico |
+
+Cada consulta recebe um `trace_id`. Sem ele, os eventos de consultas diferentes
+se misturariam no arquivo e a trilha deixaria de reconstruir o que aconteceu em
+cada uma — que é justamente o propósito dela.
+
+Um evento da trilha:
+
+```json
+{
+  "ts": "2026-08-30T20:14:07.512830+00:00",
+  "trace_id": "a3f9c1e08b42",
+  "sequencia": 5,
+  "nivel": "CRITICO",
+  "etapa": "verificar_resposta",
+  "detalhe": "2 achado(s), 1 critico(s)",
+  "ms": 0.82
+}
+```
+
+O formato é consultável por máquina, sem parser próprio:
+
+```bash
+# Quantas consultas foram retidas?
+jq -r 'select(.etapa=="validacao_humana") | .trace_id' auditoria.jsonl | sort -u | wc -l
+```
+
+```bash
+# Onde está o tempo?
+jq -s 'group_by(.etapa) | map({etapa: .[0].etapa, ms: (map(.ms) | add)})' auditoria.jsonl
+```
+
+A seção 9.3 do notebook lê essa trilha e mostra quais consultas foram retidas e
+por quê.
+
+## Documentação
+
+| Documento | Conteúdo |
+| --- | --- |
+| Este README | Como executar, arquitetura, decisões |
+| [`docs/relatorio_tecnico.md`](docs/relatorio_tecnico.md) | Relatório técnico: fine-tuning, assistente, avaliação, limitações, rastreabilidade |
+| Notebook | O projeto executando, seção a seção |
+
 ## O princípio
 
 > O assistente **nunca prescreve**. Ele apresenta evidência, aponta a fonte de cada
@@ -140,6 +196,8 @@ validação humana. Isso está em código verificável, não no prompt.
 | **QLoRA em 4 bits** | Treina ~1% dos parâmetros; cabe folgado na T4 gratuita |
 | **Modelo em memória**, sem GGUF nem Ollama | Elimina 25 minutos de exportação e três dependências externas que quebram com atualização de versão |
 | **FAISS local** | Mesmo vector store das aulas, sem serviço externo |
+| **LLM via LangChain**, e não `generate()` direto | O enunciado pede o pipeline; e trocar a LLM deixa de mexer no resto do fluxo |
+| **Trilha por `contextvars`**, não pelo estado | O `TypedDict` do LangGraph descarta em silêncio chaves não declaradas — o objeto não chegava aos nós |
 | **Fármacos por classe**, não por nome | "Penicilina" não casa com "Ceftriaxona" por texto — mas as duas são betalactâmicos |
 | **Evitação por frase**, não por proximidade | "Evitar penicilina. Iniciar ceftriaxona." — uma janela de caracteres classificaria a ceftriaxona como evitada |
 

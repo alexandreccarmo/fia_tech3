@@ -21,6 +21,38 @@ import pytest
 from medgraph_lite import dados, guardrails, prontuario
 
 
+class IndiceFalso:
+    """
+    Duble do indice vetorial.
+
+    Os testes do grafo verificam ROTEAMENTO: qual caminho a consulta percorre,
+    quando ela para, o que fica registrado. Nada disso depende de a busca ser
+    semantica de verdade.
+
+    Usar o FAISS real aqui traria uma biblioteca nativa para dentro da suite -
+    e, no macOS ARM, o faiss aborta o processo ao ser descarregado quando
+    convive com outras extensoes nativas. O teste passava e o `make testes`
+    terminava com "Abort trap: 6" depois do ultimo ponto verde.
+
+    A busca semantica de verdade e exercitada no notebook, na secao 7, que e
+    onde ela precisa funcionar.
+    """
+
+    def __init__(self, fontes):
+        self._fontes = fontes
+
+    def similarity_search(self, consulta, k=2):
+        from langchain_core.documents import Document
+
+        return [
+            Document(
+                page_content=f"{f['titulo']}. {f['texto']}",
+                metadata={"marcador": f["id"], "titulo": f["titulo"]},
+            )
+            for f in self._fontes[:k]
+        ]
+
+
 # =============================================================================
 # ANONIMIZACAO  [REQ-1a]
 # =============================================================================
@@ -217,12 +249,10 @@ class TestGrafo:
 
     @pytest.fixture
     def aplicacao(self, tmp_path):
-        from langchain_community.embeddings import FakeEmbeddings
-
-        from medgraph_lite import grafo, rag
+        from medgraph_lite import grafo
 
         banco = prontuario.criar_banco(str(tmp_path / "p.db"))
-        indice = rag.montar_indice(dados.PROTOCOLOS, FakeEmbeddings(size=64))
+        indice = IndiceFalso(dados.PROTOCOLOS)
         return grafo, grafo.construir(
             indice,
             lambda p, c: "Decisao: yes\nIniciar Ceftriaxona 2 g EV. [P1]",
@@ -268,6 +298,147 @@ class TestGrafo:
         grafo, app = aplicacao
         estado = grafo.consultar(app, "Conduta na sepse?", "PAC-003")
         assert "Nao substitui avaliacao medica" in estado["resposta"]
+
+
+# =============================================================================
+# LOGGING E AUDITORIA  [REQ-3b]
+# =============================================================================
+class TestAuditoria:
+    """
+    O item 3 do enunciado pede logging para "rastreamento e auditoria".
+
+    Rastrear exige que os eventos de uma consulta sejam distinguiveis dos de
+    outra; auditar exige que sobrevivam ao fim do processo. Sao os dois pontos
+    verificados aqui.
+    """
+
+    def test_grava_em_arquivo_e_sobrevive_ao_processo(self, tmp_path):
+        from medgraph_lite import auditoria
+
+        arquivo = tmp_path / "auditoria.jsonl"
+        trilha = auditoria.TrilhaAuditoria(arquivo=arquivo, console=False)
+        trilha.registrar("guardrail_entrada", "aprovado", 0.4)
+        trilha.registrar("responder", "120 caracteres", 2100.0)
+
+        eventos = auditoria.ler_trilha(arquivo)
+        assert len(eventos) == 2
+        assert all(e["trace_id"] == trilha.trace_id for e in eventos)
+        assert [e["sequencia"] for e in eventos] == [1, 2]
+        assert all("ts" in e for e in eventos), "evento sem carimbo de tempo"
+
+    def test_consultas_diferentes_nao_se_misturam(self, tmp_path):
+        """
+        Sem identificador por consulta, o arquivo vira uma lista de eventos
+        soltos - e reconstruir o que aconteceu em UMA consulta deixa de ser
+        possivel, que e o proposito da trilha.
+        """
+        from medgraph_lite import auditoria
+
+        arquivo = tmp_path / "auditoria.jsonl"
+        primeira = auditoria.TrilhaAuditoria(arquivo=arquivo, console=False)
+        segunda = auditoria.TrilhaAuditoria(arquivo=arquivo, console=False)
+        assert primeira.trace_id != segunda.trace_id
+
+        primeira.registrar("guardrail_entrada", "aprovado", 0.3)
+        segunda.registrar("guardrail_entrada", "recusado", 0.5, "ALERTA")
+        primeira.registrar("responder", "ok", 1500.0)
+
+        agrupadas = auditoria.consultas_registradas(arquivo)
+        assert len(agrupadas) == 2
+        assert len(agrupadas[primeira.trace_id]) == 2
+        assert len(agrupadas[segunda.trace_id]) == 1
+
+    def test_linha_corrompida_nao_derruba_a_leitura(self, tmp_path):
+        """
+        O arquivo e escrito durante a execucao e pode terminar cortado.
+
+        Uma trilha parcial ainda serve; uma excecao de parse no meio da
+        auditoria, nao.
+        """
+        from medgraph_lite import auditoria
+
+        arquivo = tmp_path / "auditoria.jsonl"
+        trilha = auditoria.TrilhaAuditoria(arquivo=arquivo, console=False)
+        trilha.registrar("guardrail_entrada", "aprovado", 0.3)
+        with arquivo.open("a", encoding="utf-8") as saida:
+            saida.write('{"ts": "cortado no me\n')
+
+        assert len(auditoria.ler_trilha(arquivo)) == 1
+
+    def test_consulta_pelo_grafo_deixa_trilha_em_disco(self, tmp_path):
+        from medgraph_lite import auditoria, grafo
+
+        banco = prontuario.criar_banco(str(tmp_path / "p.db"))
+        indice = IndiceFalso(dados.PROTOCOLOS)
+        app = grafo.construir(indice, lambda p, c: "Decisao: yes\nTexto. [P1]", banco)
+
+        arquivo = tmp_path / "auditoria.jsonl"
+        estado = grafo.consultar(app, "Conduta na sepse?", "PAC-003",
+                                 arquivo_auditoria=str(arquivo))
+
+        eventos = auditoria.ler_trilha(arquivo)
+        assert eventos, "a consulta nao deixou registro em disco"
+        assert all(e["trace_id"] == estado["trace_id"] for e in eventos)
+        assert [e["etapa"] for e in eventos] == [p["etapa"] for p in estado["trilha"]]
+
+    def test_conflito_critico_e_registrado_como_critico(self, tmp_path):
+        """O nivel precisa refletir a gravidade, senao a trilha nao ajuda a filtrar."""
+        from medgraph_lite import auditoria, grafo
+
+        banco = prontuario.criar_banco(str(tmp_path / "p.db"))
+        indice = IndiceFalso(dados.PROTOCOLOS)
+        app = grafo.construir(
+            indice, lambda p, c: "Decisao: yes\nIniciar Ceftriaxona. [P1]", banco
+        )
+
+        arquivo = tmp_path / "auditoria.jsonl"
+        grafo.consultar(app, "Qual antibiotico?", "PAC-001",
+                        arquivo_auditoria=str(arquivo))
+
+        niveis = {e["etapa"]: e["nivel"] for e in auditoria.ler_trilha(arquivo)}
+        assert niveis["verificar_resposta"] == "CRITICO"
+        assert niveis["validacao_humana"] == "CRITICO"
+
+
+# =============================================================================
+# PIPELINE LANGCHAIN  [REQ-2]
+# =============================================================================
+class TestCadeiaLangChain:
+    """
+    O enunciado pede o LangChain integrando a LLM, e nao apenas no RAG.
+
+    Estes testes usam uma LLM falsa: o que se verifica e a composicao da
+    cadeia e o preenchimento do prompt, nao a qualidade do texto gerado.
+    """
+
+    def test_prompt_recebe_contexto_e_pergunta(self):
+        from medgraph_lite.chain import PROMPT
+
+        mensagens = PROMPT.format_messages(
+            contexto="[P1] Colher lactato antes do antibiotico.",
+            pergunta="O que colher primeiro?",
+        )
+        assert len(mensagens) == 2
+        assert "Hospital Vida Plena" in mensagens[0].content
+        assert "[P1] Colher lactato" in mensagens[1].content
+        assert "O que colher primeiro?" in mensagens[1].content
+
+    def test_prompt_exige_formato_e_proibe_prescricao(self):
+        """O contrato do formato vive no prompt, e os guardrails o verificam."""
+        from medgraph_lite.chain import SISTEMA
+
+        assert "Decisao: yes|no|maybe" in SISTEMA
+        assert "Cite a fonte" in SISTEMA
+        assert "Nunca prescreva" in SISTEMA
+
+    def test_cadeia_se_compoe_e_devolve_texto(self):
+        from langchain_core.language_models.fake import FakeListLLM
+
+        from medgraph_lite import chain
+
+        cadeia = chain.montar_cadeia(FakeListLLM(responses=["Decisao: yes\nTexto. [P1]"]))
+        resposta = chain.responder(cadeia, "Pergunta?", "[P1] Contexto.")
+        assert resposta.startswith("Decisao: yes")
 
 
 # =============================================================================

@@ -29,7 +29,7 @@ from typing import Any, TypedDict
 
 from langgraph.graph import END, StateGraph
 
-from . import guardrails, prontuario, rag
+from . import auditoria, guardrails, prontuario, rag
 
 
 class Estado(TypedDict, total=False):
@@ -44,20 +44,28 @@ class Estado(TypedDict, total=False):
     aguardando_validacao: bool
     recusado: bool
     trilha: list[dict]
+    trace_id: str
 
 
-def _registrar(estado: Estado, etapa: str, detalhe: str, inicio: float) -> None:
+def _registrar(estado: Estado, etapa: str, detalhe: str, inicio: float,
+               nivel: str = "INFO") -> None:
     """
-    A trilha e uma lista no proprio estado.
+    Registra o evento nos dois lugares: no estado e na trilha persistida.
 
-    Assim o log acompanha a consulta em vez de virar saida solta no terminal:
-    ao final, a trilha inteira pode ser impressa, desenhada ou auditada.
+    No estado porque os graficos leem dali; em arquivo porque o item 3 do
+    enunciado pede rastreamento e auditoria, e um log que existe so na memoria
+    do processo nao audita nada depois que ele termina.
     """
+    ms = (time.perf_counter() - inicio) * 1000
     estado.setdefault("trilha", []).append({
         "etapa": etapa,
         "detalhe": detalhe,
-        "ms": round((time.perf_counter() - inicio) * 1000, 1),
+        "ms": round(ms, 1),
+        "nivel": nivel,
     })
+    trilha = auditoria.trilha_atual()
+    if trilha is not None:
+        trilha.registrar(etapa, detalhe, ms, nivel)
 
 
 def construir(indice, responder_fn, caminho_banco: str):
@@ -80,7 +88,8 @@ def construir(indice, responder_fn, caminho_banco: str):
             )
             estado["achados"] = verificacao.achados
         _registrar(estado, "guardrail_entrada",
-                   "recusado" if estado["recusado"] else "aprovado", inicio)
+                   "recusado" if estado["recusado"] else "aprovado", inicio,
+                   "ALERTA" if estado["recusado"] else "INFO")
         return estado
 
     def no_consultar_prontuario(estado: Estado) -> Estado:
@@ -116,9 +125,12 @@ def construir(indice, responder_fn, caminho_banco: str):
         )
         estado["achados"] = verificacao.achados
         estado["aguardando_validacao"] = bool(verificacao.criticos)
+        nivel = "CRITICO" if verificacao.criticos else (
+            "ALERTA" if verificacao.achados else "INFO"
+        )
         _registrar(estado, "verificar_resposta",
                    f"{len(verificacao.achados)} achado(s), "
-                   f"{len(verificacao.criticos)} critico(s)", inicio)
+                   f"{len(verificacao.criticos)} critico(s)", inicio, nivel)
         return estado
 
     def no_validacao_humana(estado: Estado) -> Estado:
@@ -130,7 +142,8 @@ def construir(indice, responder_fn, caminho_banco: str):
         medico decide.
         """
         inicio = time.perf_counter()
-        _registrar(estado, "validacao_humana", "resposta retida para revisao", inicio)
+        _registrar(estado, "validacao_humana", "resposta retida para revisao",
+                   inicio, "CRITICO")
         return estado
 
     def no_montar_resposta(estado: Estado) -> Estado:
@@ -175,5 +188,22 @@ def construir(indice, responder_fn, caminho_banco: str):
     return grafo.compile()
 
 
-def consultar(app, pergunta: str, paciente_id: str | None = None) -> Estado:
-    return app.invoke({"pergunta": pergunta, "paciente_id": paciente_id or ""})
+def consultar(app, pergunta: str, paciente_id: str | None = None,
+              arquivo_auditoria: str | None = None, console: bool = False) -> Estado:
+    """
+    Executa uma consulta, com trilha de auditoria propria.
+
+    Cada consulta ganha um trace_id: sem ele os eventos de consultas diferentes
+    se misturariam no arquivo, e a trilha deixaria de reconstruir o que
+    aconteceu em cada uma.
+    """
+    trilha = auditoria.TrilhaAuditoria(
+        arquivo=arquivo_auditoria or auditoria.ARQUIVO_PADRAO, console=console
+    )
+    auditoria.definir_trilha(trilha)
+    try:
+        estado = app.invoke({"pergunta": pergunta, "paciente_id": paciente_id or ""})
+    finally:
+        auditoria.definir_trilha(None)
+    estado["trace_id"] = trilha.trace_id
+    return estado

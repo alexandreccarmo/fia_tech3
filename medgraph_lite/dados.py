@@ -2,7 +2,8 @@
 Dados do assistente: PubMedQA para o fine-tuning, protocolos para o RAG.
 
 O enunciado pede tres tipos de material - protocolos do hospital, perguntas
-frequentes de medicos e modelos de laudo. Os tres estao aqui: o PubMedQA entra
+frequentes de medicos e modelos de laudo, receita e procedimento. Os tres
+estao aqui: o PubMedQA entra
 como base de evidencia cientifica real, e o material do hospital e sintetico,
 porque base hospitalar real nao e distribuivel (o proprio enunciado aceita
 "dataset anonimizado ou exemplo de dados sinteticos").
@@ -94,6 +95,78 @@ FAQ = [
 ]
 
 
+# =============================================================================
+# MODELOS DE DOCUMENTO INTERNO  (sinteticos)
+# =============================================================================
+# O item 1 do enunciado pede tres materiais para o fine-tuning: protocolos,
+# perguntas frequentes E "modelos de laudos, receitas e procedimentos internos".
+# Estes sao os terceiros.
+#
+# Eles ensinam ao modelo a ESTRUTURA dos documentos do hospital. Repare que a
+# receita traz o campo de assinatura em branco: o modelo aprende que a
+# prescricao termina com um medico assinando, e nao com ele proprio.
+DOCUMENTOS = [
+    {
+        "id": "D1",
+        "tipo": "laudo",
+        "titulo": "Modelo de laudo de exame laboratorial",
+        "texto": (
+            "LAUDO LABORATORIAL - Hospital Vida Plena\n"
+            "Identificacao: [PACIENTE] | Registro: [PRONTUARIO]\n"
+            "Exame solicitado: <exame>. Metodo: <metodo>.\n"
+            "Resultado: <valor> <unidade>. Referencia: <faixa>.\n"
+            "Interpretacao: <achado, sem conduta>.\n"
+            "Responsavel tecnico: <medico>, CRM <numero>."
+        ),
+    },
+    {
+        "id": "D2",
+        "tipo": "receita",
+        "titulo": "Modelo de prescricao medica",
+        "texto": (
+            "PRESCRICAO - Hospital Vida Plena\n"
+            "Identificacao: [PACIENTE] | Registro: [PRONTUARIO]\n"
+            "Alergias declaradas: <lista> (conferir antes de prescrever).\n"
+            "1. <farmaco> <dose> <via> <intervalo> por <duracao>.\n"
+            "Ajuste renal: verificar clearance antes da primeira dose.\n"
+            "Assinatura do medico responsavel: ____________  CRM: ______"
+        ),
+    },
+    {
+        "id": "D3",
+        "tipo": "procedimento",
+        "titulo": "Modelo de descricao de procedimento",
+        "texto": (
+            "DESCRICAO DE PROCEDIMENTO - Hospital Vida Plena\n"
+            "Procedimento: <nome>. Indicacao: <motivo>.\n"
+            "Preparo: <jejum, consentimento, checagem de alergia>.\n"
+            "Tecnica: <passos>. Intercorrencias: <descrever ou 'nenhuma'>.\n"
+            "Orientacoes pos-procedimento: <cuidados>.\n"
+            "Equipe responsavel: <nomes e CRMs>."
+        ),
+    },
+]
+
+# Perguntas sobre a estrutura desses documentos, no mesmo formato de resposta.
+FAQ_DOCUMENTOS = [
+    (
+        "O que nao pode faltar numa prescricao do hospital?",
+        "Decisao: yes\nAlergias declaradas conferidas antes de prescrever, dose, via, "
+        "intervalo e duracao, e a assinatura do medico responsavel com CRM. [D2]",
+    ),
+    (
+        "O laudo laboratorial deve trazer a conduta terapeutica?",
+        "Decisao: no\nO laudo traz resultado, referencia e interpretacao do achado; "
+        "a conduta e definida pelo medico assistente. [D1]",
+    ),
+    (
+        "A descricao de procedimento precisa registrar intercorrencias?",
+        "Decisao: yes\nO campo e obrigatorio e deve ser preenchido mesmo quando nao "
+        "houve nenhuma. [D3]",
+    ),
+]
+
+
 def anonimizar(texto: str) -> tuple[str, int]:
     """
     Remove identificadores diretos, preservando o dado clinico.
@@ -148,12 +221,13 @@ def montar_exemplos_de_treino(n_pubmedqa: int = 350, semente: int = 42) -> list[
         })
 
     # O material do hospital entra repetido, para ter peso apesar de pequeno.
+    fontes = {p["id"]: p for p in PROTOCOLOS} | {d["id"]: d for d in DOCUMENTOS}
     for _ in range(6):
-        for pergunta, resposta in FAQ:
-            protocolo = next(p for p in PROTOCOLOS if p["id"] in resposta)
+        for pergunta, resposta in FAQ + FAQ_DOCUMENTOS:
+            marcador = next(mid for mid in fontes if f"[{mid}]" in resposta)
             exemplos.append({
                 "pergunta": pergunta,
-                "contexto": f"[{protocolo['id']}] {protocolo['texto']}",
+                "contexto": f"[{marcador}] {fontes[marcador]['texto']}",
                 "resposta": resposta,
             })
 
