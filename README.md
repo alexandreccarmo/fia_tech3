@@ -200,6 +200,7 @@ make ajuda
 | `make diagrama` | **Etapa 7** — gera os diagramas do grafo |
 | `make app` | **Etapa 8** — abre o painel Streamlit |
 | `make relatorio` | Regenera `docs/relatorio_tecnico.md` com os números atuais |
+| `make guia` | Regenera o guia do projeto em PDF |
 | `make rastreabilidade` | Regenera `docs/rastreabilidade.md` |
 | `make tudo` | Pipeline completo, do download aos documentos |
 | `make limpar-logs` | Apaga logs e *traces* |
@@ -456,6 +457,8 @@ orçamento e a consistência do arquivo de políticas — incluindo uma verifica
 | [`docs/relatorio_tecnico.md`](docs/relatorio_tecnico.md) | Relatório técnico completo — arquitetura, fine-tuning, avaliação, defeitos encontrados e limitações declaradas |
 | [`docs/rastreabilidade.md`](docs/rastreabilidade.md) | Matriz requisito → arquivo → linha, gerada do código |
 | [`docs/guia_colab.md`](docs/guia_colab.md) | Passo a passo para executar o fine-tuning no Google Colab |
+| [`docs/execucao_passo_a_passo.md`](docs/execucao_passo_a_passo.md) | Execução completa, célula a célula, do primeiro clone ao vídeo de entrega |
+| [`docs/MedGraph-Guia-do-Projeto.pdf`](docs/MedGraph-Guia-do-Projeto.pdf) | Guia de entendimento em PDF — arquitetura, glossário, QLoRA e execução (`make guia`) |
 | [`docs/roteiro_video.md`](docs/roteiro_video.md) | Roteiro cronometrado do vídeo de entrega, com divisão entre os integrantes |
 | [`docs/diagramas/`](docs/diagramas/) | Diagrama do grafo em PNG, Mermaid e ASCII |
 | [`docs/graficos/`](docs/graficos/) | Gráficos da avaliação |

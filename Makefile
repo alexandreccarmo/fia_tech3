@@ -26,7 +26,7 @@ ARGS = $(filter -%,$(MAKECMDGOALS))
 .DEFAULT_GOAL := ajuda
 .PHONY: ajuda setup ambiente testes lint formatar limpar limpar-logs \
         dados finetune-prep modelo avaliar indexar grafo diagrama app \
-        rastreabilidade relatorio tudo
+        rastreabilidade relatorio guia tudo
 
 # -----------------------------------------------------------------------------
 ajuda:  ## Lista os comandos disponiveis
@@ -108,3 +108,6 @@ tudo: dados finetune-prep indexar avaliar diagrama rastreabilidade relatorio  ##
 # em vez de virar um no-op silencioso.
 --%:
 	@:
+
+guia:  ## Gera docs/MedGraph-Guia-do-Projeto.pdf a partir do Markdown
+	$(PYTHON) scripts/gerar_guia_pdf.py $(ARGS)
