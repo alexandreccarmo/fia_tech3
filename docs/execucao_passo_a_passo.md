@@ -482,12 +482,36 @@ resultado = treinador.train(resume_from_checkpoint=True)
 ### Recuperar o adapter sem rodar a célula 13
 
 Cada checkpoint contém os pesos treinados. Se a sessão morreu depois do treino
-mas antes de salvar, baixe do checkpoint mais avançado:
+mas antes de salvar, o resultado **não se perdeu** — as células 11 a 14 apenas
+formatam e empacotam o que o checkpoint já tem.
 
-- `adapter_model.safetensors` e `adapter_config.json` — são o adapter
-- `trainer_state.json` — contém o histórico de perdas, para reconstruir a curva
+No Drive, clique com o botão direito na pasta do checkpoint mais avançado e
+escolha **Fazer download**. Depois, na sua máquina:
 
-As células 11 a 14 apenas formatam e empacotam o que o checkpoint já tem.
+```bash
+make recuperar-adapter -- --checkpoint ~/Downloads/checkpoint-125
+```
+
+O comando copia o adapter e o tokenizador para
+`models/adapters/medgraph-llama32-3b-lora`, redesenha a curva de perda a partir
+do `trainer_state.json` e grava o cartão de treino. Aceita tanto a pasta de um
+checkpoint quanto a que contém vários — nesse caso escolhe o de maior número de
+passos.
+
+Passe também `--modelo-base`, que o notebook de exportação lê:
+
+```bash
+make recuperar-adapter -- --checkpoint ~/Downloads/checkpoint-125 \
+    --modelo-base meta-llama/Llama-3.2-3B-Instruct
+```
+
+O cartão gerado por essa via registra explicitamente que GPU, versões de
+biblioteca e duração **não foram capturadas** — esses dados só existiam na
+sessão do Colab. Um cartão de procedência que adivinha é pior do que um cartão
+incompleto.
+
+O que se perde nesse caminho é o teste de formato da célula 12. Ele pode ser
+refeito na máquina depois de registrar o modelo no Ollama.
 
 ### A cota de GPU acabou
 

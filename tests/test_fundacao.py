@@ -23,6 +23,8 @@ import json
 
 import pytest
 
+from config.settings import RAIZ_PROJETO
+
 # =============================================================================
 # CONFIGURACAO
 # =============================================================================
@@ -389,6 +391,78 @@ class TestFiltroDeArgumentos:
 
         with pytest.raises(TypeError, match="unsupported operand"):
             _construir_tolerante(ConfigComDefeito, {"seed": 42})
+
+
+# =============================================================================
+# RECUPERACAO DE CHECKPOINT  [REQ-1]
+# =============================================================================
+class TestRecuperacaoDeCheckpoint:
+    """
+    O caminho que salva o resultado quando a sessão do Colab morre.
+
+    As células finais do notebook rodam depois do treino e dependem de a sessão
+    continuar de pé. Numa rodada de horas isso não é garantido — e perder o
+    resultado nesse ponto seria absurdo, porque ele já existe dentro do
+    checkpoint.
+    """
+
+    def _montar_checkpoint(self, pasta, passo):
+        import json
+
+        destino = pasta / f"checkpoint-{passo}"
+        destino.mkdir(parents=True)
+        (destino / "adapter_model.safetensors").write_bytes(b"pesos")
+        (destino / "adapter_config.json").write_text('{"peft_type": "LORA"}')
+        (destino / "trainer_state.json").write_text(
+            json.dumps({"global_step": passo, "log_history": []})
+        )
+        return destino
+
+    def test_escolhe_o_checkpoint_mais_avancado(self, tmp_path):
+        """
+        Entre vários checkpoints, o certo é o de maior número de passos.
+
+        Ordenar por nome escolheria `checkpoint-75` em vez de `checkpoint-100`,
+        porque "75" vem depois de "100" em ordem alfabética. Seria a pior forma
+        de errar: o script terminaria com sucesso e entregaria um modelo menos
+        treinado do que o disponível, sem nada indicando isso.
+        """
+        import sys
+
+        sys.path.insert(0, str(RAIZ_PROJETO / "scripts"))
+        from recuperar_adapter import localizar_checkpoint
+
+        for passo in (50, 75, 100, 125):
+            self._montar_checkpoint(tmp_path, passo)
+
+        assert localizar_checkpoint(tmp_path).name == "checkpoint-125"
+
+    def test_aceita_o_proprio_checkpoint(self, tmp_path):
+        """Apontar direto para a pasta do checkpoint também tem de funcionar."""
+        import sys
+
+        sys.path.insert(0, str(RAIZ_PROJETO / "scripts"))
+        from recuperar_adapter import localizar_checkpoint
+
+        checkpoint = self._montar_checkpoint(tmp_path, 125)
+        assert localizar_checkpoint(checkpoint) == checkpoint
+
+    def test_recusa_pasta_sem_adapter(self, tmp_path):
+        """
+        Sem adapter não há o que recuperar, e isso precisa falhar alto.
+
+        Seguir adiante criaria um diretório com cartão de treino e curva de
+        perda mas sem pesos — que parece um adapter válido até o notebook de
+        exportação falhar, muito depois.
+        """
+        import sys
+
+        sys.path.insert(0, str(RAIZ_PROJETO / "scripts"))
+        from recuperar_adapter import localizar_checkpoint
+
+        (tmp_path / "vazio").mkdir()
+        with pytest.raises(SystemExit, match="nenhum adapter"):
+            localizar_checkpoint(tmp_path / "vazio")
 
     def test_classe_opaca_recebe_tudo_em_vez_de_perder_configuracao(self):
         """
