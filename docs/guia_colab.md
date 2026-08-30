@@ -122,12 +122,17 @@ baixando o modelo.
 Ela mostra barras de progresso dos arquivos `.safetensors`. Se estiverem
 avançando, está tudo bem — a rede do Colab varia.
 
-Ao terminar, imprime:
+Ao terminar, imprime (valores medidos com o Llama-3.2-3B-Instruct):
 
 ```
-Parâmetros: 3.09 B
-VRAM ocupada: 2.2X GB
+Parâmetros: 3.21 B
+VRAM ocupada: 2.09 GB
 ```
+
+A contagem de parâmetros identifica qual modelo carregou de fato: **3,21 B é o
+Llama-3.2-3B**, e **3,09 B é o Qwen2.5-3B**. Se o número não for o do modelo que
+você escolheu na célula 7, pare aqui — o resto da execução seria sobre a
+arquitetura errada.
 
 O `VRAM ocupada` bem abaixo dos ~6 GB baixados é a confirmação de que a
 quantização em 4 bits funcionou. Se ocupasse os 6 GB inteiros, o modelo teria
