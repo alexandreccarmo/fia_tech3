@@ -617,6 +617,7 @@ class TestIntegridade:
         import ast
         import json
         import re
+        import sys
         from pathlib import Path
 
         raiz = Path(__file__).parent.parent
@@ -666,12 +667,15 @@ class TestIntegridade:
                     importados.add(no.module.split(".")[0])
 
         # ---- o que nao precisa ser declarado -------------------------------
-        # Biblioteca padrao, o proprio pacote, e o que o Colab ja traz.
-        DISPENSADOS = {
-            "os", "sys", "re", "json", "time", "shutil", "subprocess", "uuid",
-            "logging", "sqlite3", "random", "unicodedata", "dataclasses",
-            "pathlib", "datetime", "contextvars", "typing", "__future__",
-            "medgraph_lite", "google", "IPython",
+        # A biblioteca padrao vem do proprio Python, e nao de uma lista escrita
+        # a mao: manter a lista manualmente significa que cada modulo novo -
+        # collections, itertools, functools - quebra o teste por um motivo que
+        # nao e o defeito que ele procura.
+        DISPENSADOS = set(sys.stdlib_module_names) | {
+            "medgraph_lite",   # vem no clone do repositorio
+            "google",          # utilitarios do proprio Colab
+            "IPython",         # ambiente de notebook
+            # Ja instalados no Colab, e por isso ausentes do %pip.
             "torch", "matplotlib", "numpy",
         }
         # Modulo cujo nome difere do pacote, ou que vem por dependencia.

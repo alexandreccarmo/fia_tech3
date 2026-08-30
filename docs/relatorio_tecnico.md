@@ -407,21 +407,80 @@ prompt de treino. Uma métrica única confundiria as duas.
 
 ### 7.2 Resultados
 
-_Os números desta seção são produzidos pelo notebook, seções 5.1 e 6, e devem
-ser transcritos aqui após a execução. A tabela abaixo mostra o formato._
+Execução medida, perfil `rapido` (24 passos, 378 exemplos, 1,8 min):
 
 | Sistema | Adesão ao formato | Acurácia |
 | --- | ---: | ---: |
-| Modelo base | _a preencher_ | _a preencher_ |
-| Modelo ajustado | _a preencher_ | _a preencher_ |
+| Modelo base | 0% | 55% |
+| Modelo ajustado | **90%** | **10%** |
 
-**O que esperar.** A adesão ao formato deve subir de forma marcante — é o que o
-ajuste ensina. A acurácia deve subir pouco ou ficar estável: um modelo de 0,5
-bilhão treinado por 8 minutos não aprende medicina, e não é isso que se pretende
-aqui. Anunciar ganho de acurácia como resultado principal seria vender o que o
-método não entrega.
+A leitura direta dessa tabela — "o ajuste melhorou o formato e destruiu a
+acurácia" — está parcialmente errada, e a parte errada é instrutiva.
 
-### 7.3 Figuras
+### 7.3 Análise: por que a acurácia caiu
+
+Há duas causas, e apenas uma delas é do modelo.
+
+**Primeira: a acurácia do modelo base estava inflada pela medição.**
+
+A decisão era extraída procurando `yes`, `no` ou `maybe` em qualquer ponto da
+resposta. O modelo base não segue formato algum — a adesão foi 0% — mas produz
+parágrafos em inglês, e um parágrafo em inglês contém a palavra "no" com
+facilidade. Quando o rótulo esperado era `no`, isso contava como acerto.
+
+Os 55% também são suspeitos por outro motivo: aproximam-se da frequência da
+classe `yes` no PubMedQA. É a marca característica de quem responde sempre a
+classe majoritária — o que produz acurácia sem produzir decisão.
+
+Ou seja, as duas colunas não mediam a mesma coisa. Uma media a decisão que o
+modelo declarou; a outra, a chance de uma palavra aparecer num texto livre.
+
+**Segunda: o modelo ajustado colapsou em uma classe.**
+
+Esta é real. Com 24 passos, o modelo aprendeu a estrutura da resposta e passou a
+respondê-la sempre com a mesma decisão — `maybe`, no caso observado. A acurácia
+de 10% é próxima da frequência de `maybe` no conjunto de teste, o que confirma o
+diagnóstico.
+
+O comportamento é esperado para um treino tão curto. O modelo teve exemplos
+suficientes para memorizar a **forma** — três linhas, decisão, justificativa,
+citação — e insuficientes para associar o conteúdo do contexto à decisão certa.
+
+### 7.4 O que foi corrigido na avaliação
+
+A extração da decisão passa a registrar sua **origem**:
+
+| Origem | Significado |
+| --- | --- |
+| `declarada` | O modelo escreveu `Decisao: X` na primeira linha, como o formato exige |
+| `inferida` | Não há formato; a palavra foi encontrada em algum ponto do texto |
+| `ausente` | Nenhuma das três palavras apareceu |
+
+E a avaliação passa a reportar a **distribuição das respostas**, ao lado da
+distribuição esperada. É o que revela colapso de classe: um modelo que responde
+sempre a mesma coisa tem acurácia igual à frequência daquela classe, sem ter
+decidido nada — e sem a distribuição, esse número passa por desempenho.
+
+O notebook emite um aviso automático quando uma única decisão responde por 80% ou
+mais dos casos.
+
+### 7.5 Conclusão da avaliação
+
+**O fine-tuning cumpriu o que se propôs.** O objetivo declarado era ensinar o
+formato, e a adesão foi de 0% para 90% — o modelo passou a produzir respostas
+que o sistema consegue verificar. Sem isso, os guardrails da seção 6 não teriam
+onde se apoiar.
+
+**O treino curto não ensina a decisão, e não deveria ser vendido como se
+ensinasse.** Vinte e quatro passos sobre 378 exemplos são suficientes para a
+forma e insuficientes para o conteúdo. Reportar a queda de acurácia como se fosse
+apenas ruído de medição seria omitir metade do resultado.
+
+Para melhorar a decisão, o caminho é mais dados e mais passos — o notebook
+oferece perfis de 103 e 191 passos. É uma questão de minutos de GPU, não de
+mudança de método.
+
+### 7.6 Figuras
 
 | Figura | Responde a |
 | --- | --- |
