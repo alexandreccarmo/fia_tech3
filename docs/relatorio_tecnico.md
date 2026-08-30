@@ -205,7 +205,7 @@ e MLP (`gate`, `up`, `down`). Aplicar apenas em `q` e `v`, como é comum em
 tutoriais, rende menos quando a tarefa muda o **estilo** da resposta — que é
 exatamente o caso aqui.
 
-### 4.4 Configuração
+### 4.4 Configuração e resultado medido
 
 | Parâmetro | Valor |
 | --- | --- |
@@ -214,6 +214,56 @@ exatamente o caso aqui.
 | Lote efetivo | 16 (4 × 4 de acúmulo) |
 | Épocas | 1 |
 | Taxa de aprendizado | 2e-4, com escalonamento cosseno |
+
+Execução medida numa T4 do Colab, com o perfil padrão:
+
+| Medida | Valor |
+| --- | ---: |
+| Exemplos de treino | 378 |
+| Passos | 24 |
+| **Parâmetros treináveis** | **8.798.208** |
+| Parâmetros congelados | 315.119.488 |
+| **Proporção treinada** | **2,72%** |
+| Ritmo | **4,4 s por passo** |
+| Duração | **1,8 min** |
+| Perda: primeiro → último passo | 2,96 → 1,60 |
+
+A proporção de 2,72% fica abaixo do que se estimaria pela conta de uma projeção
+quadrada isolada (3,6%). A razão é a **atenção com agrupamento de chaves** que o
+Qwen2.5 emprega: `k_proj` e `v_proj` projetam para uma dimensão bem menor que
+`q_proj`, porque várias cabeças de consulta compartilham o mesmo par de chave e
+valor. O adaptador dessas projeções acompanha a dimensão menor e contribui com
+menos parâmetros.
+
+**Perfis disponíveis.** O notebook permite trocar o tamanho do treino. Os tempos
+abaixo usam o ritmo medido de 4,4 s por passo:
+
+| Perfil | Exemplos | Épocas | Passos | Treino |
+| --- | ---: | ---: | ---: | ---: |
+| `rapido` (padrão) | 378 | 1 | 24 | 1,8 min |
+| `completo` | 828 | 2 | 103 | ~7,6 min |
+| `intensivo` | 1.528 | 2 | 191 | ~14 min |
+
+### 4.5 Um argumento recusado pela biblioteca
+
+A camada de compatibilidade informou, na execução medida:
+
+```
+argumentos recusados por esta versao do trl: ['max_seq_length', 'warmup_ratio']
+```
+
+O primeiro é troca de nome, e está coberto: passamos o comprimento de sequência
+pelos dois nomes possíveis, e a versão instalada aceitou `max_length`.
+
+O segundo é uma perda efetiva — o treino roda sem aquecimento da taxa de
+aprendizado. Com 24 passos e `warmup_ratio` de 0,03, o aquecimento duraria menos
+de um passo, então não há consequência prática nesta configuração. Num treino
+mais longo, convém verificar se a versão instalada aceita `warmup_steps`.
+
+Registramos isso porque a alternativa seria não registrar: o argumento foi
+descartado e o treino seguiu. É exatamente o tipo de divergência silenciosa entre
+a configuração pedida e a aplicada que a camada de compatibilidade existe para
+tornar visível.
 
 ### 4.5 Compatibilidade de biblioteca
 

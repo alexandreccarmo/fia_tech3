@@ -447,8 +447,14 @@ hospital, o FAQ do corpo médico e os modelos de laudo, receita e procedimento.
 O enunciado deixa a escolha do modelo livre. Escolhemos um modelo pequeno por
 uma razão prática: numa versão anterior deste projeto medimos 42 segundos por
 passo com um modelo de 3 bilhões de parâmetros na T4 gratuita — quase seis horas
-de treino, acima da cota diária do Colab. Com 0,5 bilhão, o treino leva cerca de
-oito minutos e demonstra a mesma técnica.
+de treino, acima da cota diária do Colab.
+
+Com 0,5 bilhão, medimos **4,4 segundos por passo**: o treino padrão leva **1,8
+minuto** e demonstra exatamente a mesma técnica. O QLoRA treina **8.798.208
+parâmetros de 323.917.696 — 2,72% do modelo**.
+
+O notebook oferece três perfis de treino, de 24 a 191 passos, para quem quiser
+resultados mais representativos ao custo de alguns minutos a mais.
 
 **O que o ajuste ensina não é medicina.** É o formato da resposta:
 
