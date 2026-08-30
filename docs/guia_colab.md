@@ -296,11 +296,23 @@ O procedimento seguro:
 **2. Ambiente de execução → Reiniciar sessão.** Isso libera a GPU de forma
 determinística, sem depender de `del` e coleta de lixo.
 
-**3.** Numa célula, limpe o que sobrou em disco:
+**3.** Numa célula, limpe o que sobrou em disco. **Use caminhos absolutos:**
 
 ```python
-!rm -rf /content/saida_treino models/adapters/medgraph-llama32-3b-lora
+!rm -rf /content/saida_treino /content/fia_tech3
+!ls -la /content/
 ```
+
+O `rm -rf` não reclama de caminho inexistente — sem o `ls` depois, ele é mudo e
+você não tem como saber se apagou algo. E o caminho precisa ser absoluto porque
+a célula 3 faz `os.chdir("/content/fia_tech3")`: reiniciada a sessão, o diretório
+de trabalho volta a ser `/content`, e um `models/adapters/...` relativo apontaria
+para uma pasta que não existe. O comando sairia silencioso sem apagar nada, e o
+adapter antigo continuaria lá.
+
+Apagar o clone inteiro, e não só o adapter, tem um segundo motivo: a célula 3 só
+clona **se a pasta não existir**. Sem isso você seguiria com o código da sessão
+anterior, sem as correções publicadas desde então.
 
 **4.** Troque a linha ativa da célula 7 e rode **da célula 3 em diante** — não da
 2, os pacotes continuam instalados no disco da VM. O login da célula 5 precisa
