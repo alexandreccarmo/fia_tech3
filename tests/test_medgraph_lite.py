@@ -284,6 +284,62 @@ class TestIntegridade:
         assert conteudo["nbformat"] == 4
         assert conteudo["cells"]
 
+    def test_celulas_do_notebook_tem_sintaxe_valida(self):
+        """
+        REGRESSAO — o notebook foi publicado com as linhas sem quebra.
+
+        O formato .ipynb guarda `source` como lista de linhas, e cada uma
+        precisa TERMINAR com \n. O Jupyter monta a celula com "".join() - sem
+        as quebras, o codigo inteiro vira uma linha so e nem compila.
+
+        O que torna esse defeito traicoeiro e que ele nao aparece em nenhuma
+        verificacao superficial: o JSON continua valido, a lista de linhas
+        continua legivel, e um teste que juntasse com "\n".join() passaria.
+        Foi exatamente o que aconteceu - o teste original mascarava o defeito
+        ao montar a celula de um jeito que o Jupyter nao usa.
+        """
+        import json
+        import re
+        from pathlib import Path
+
+        caminho = Path(__file__).parent.parent / "notebooks" / "medgraph_lite.ipynb"
+        conteudo = json.loads(caminho.read_text(encoding="utf-8"))
+
+        for numero, celula in enumerate(conteudo["cells"], 1):
+            if celula["cell_type"] != "code":
+                continue
+            # "".join e como o Jupyter monta a celula. Usar outra juncao aqui
+            # seria testar um arquivo que ninguem executa.
+            fonte = "".join(celula["source"])
+            # magics (%pip) e comandos de shell (!git) nao sao Python valido;
+            # viram `pass`, preservando a indentacao para nao quebrar blocos.
+            sem_magic = [
+                re.sub(r"^(\s*)[!%].*", r"\1pass", linha)
+                for linha in fonte.split("\n")
+            ]
+            try:
+                compile("\n".join(sem_magic), f"celula_{numero}", "exec")
+            except SyntaxError as erro:
+                raise AssertionError(
+                    f"celula {numero} do notebook nao compila: "
+                    f"linha {erro.lineno}, {erro.msg}"
+                ) from erro
+
+    def test_linhas_do_notebook_terminam_com_quebra(self):
+        """A causa raiz do defeito acima, verificada diretamente."""
+        import json
+        from pathlib import Path
+
+        caminho = Path(__file__).parent.parent / "notebooks" / "medgraph_lite.ipynb"
+        conteudo = json.loads(caminho.read_text(encoding="utf-8"))
+
+        for numero, celula in enumerate(conteudo["cells"], 1):
+            origem = celula["source"]
+            for linha in origem[:-1]:
+                assert linha.endswith("\n"), (
+                    f"celula {numero}: linha sem quebra ao final -> {linha[:60]!r}"
+                )
+
     def test_notebook_aponta_para_o_caminho_certo(self):
         """
         REGRESSAO — o pacote deixou de ficar em projeto2/.
