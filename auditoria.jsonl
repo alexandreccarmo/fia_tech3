@@ -388,3 +388,33 @@
 {"ts": "2026-08-30T22:49:22.904078+00:00", "trace_id": "a5e5e6410930", "sequencia": 4, "nivel": "INFO", "etapa": "responder", "detalhe": "45 caracteres", "ms": 0.0}
 {"ts": "2026-08-30T22:49:22.904244+00:00", "trace_id": "a5e5e6410930", "sequencia": 5, "nivel": "INFO", "etapa": "verificar_resposta", "detalhe": "0 achado(s), 0 critico(s)", "ms": 0.01}
 {"ts": "2026-08-30T22:49:22.904433+00:00", "trace_id": "a5e5e6410930", "sequencia": 6, "nivel": "INFO", "etapa": "montar_resposta", "detalhe": "resposta final montada", "ms": 0.0}
+{"ts": "2026-08-30T22:51:33.756704+00:00", "trace_id": "a8f85fb4678d", "sequencia": 1, "nivel": "INFO", "etapa": "guardrail_entrada", "detalhe": "aprovado", "ms": 0.01}
+{"ts": "2026-08-30T22:51:33.757699+00:00", "trace_id": "a8f85fb4678d", "sequencia": 2, "nivel": "INFO", "etapa": "consultar_prontuario", "detalhe": "PAC-001", "ms": 0.19}
+{"ts": "2026-08-30T22:51:33.757976+00:00", "trace_id": "a8f85fb4678d", "sequencia": 3, "nivel": "INFO", "etapa": "recuperar_evidencia", "detalhe": "fontes: P1, P2", "ms": 0.06}
+{"ts": "2026-08-30T22:51:33.758171+00:00", "trace_id": "a8f85fb4678d", "sequencia": 4, "nivel": "INFO", "etapa": "responder", "detalhe": "45 caracteres", "ms": 0.01}
+{"ts": "2026-08-30T22:51:33.758363+00:00", "trace_id": "a8f85fb4678d", "sequencia": 5, "nivel": "CRITICO", "etapa": "verificar_resposta", "detalhe": "2 achado(s), 1 critico(s)", "ms": 0.03}
+{"ts": "2026-08-30T22:51:33.758592+00:00", "trace_id": "a8f85fb4678d", "sequencia": 6, "nivel": "CRITICO", "etapa": "validacao_humana", "detalhe": "resposta retida para revisao", "ms": 0.0}
+{"ts": "2026-08-30T22:51:33.758776+00:00", "trace_id": "a8f85fb4678d", "sequencia": 7, "nivel": "INFO", "etapa": "montar_resposta", "detalhe": "resposta final montada", "ms": 0.0}
+{"ts": "2026-08-30T22:51:33.764422+00:00", "trace_id": "7c9f4f56f92d", "sequencia": 1, "nivel": "INFO", "etapa": "guardrail_entrada", "detalhe": "aprovado", "ms": 0.01}
+{"ts": "2026-08-30T22:51:33.765065+00:00", "trace_id": "7c9f4f56f92d", "sequencia": 2, "nivel": "INFO", "etapa": "consultar_prontuario", "detalhe": "PAC-003", "ms": 0.22}
+{"ts": "2026-08-30T22:51:33.765367+00:00", "trace_id": "7c9f4f56f92d", "sequencia": 3, "nivel": "INFO", "etapa": "recuperar_evidencia", "detalhe": "fontes: P1, P2", "ms": 0.03}
+{"ts": "2026-08-30T22:51:33.765586+00:00", "trace_id": "7c9f4f56f92d", "sequencia": 4, "nivel": "INFO", "etapa": "responder", "detalhe": "45 caracteres", "ms": 0.01}
+{"ts": "2026-08-30T22:51:33.765777+00:00", "trace_id": "7c9f4f56f92d", "sequencia": 5, "nivel": "INFO", "etapa": "verificar_resposta", "detalhe": "0 achado(s), 0 critico(s)", "ms": 0.02}
+{"ts": "2026-08-30T22:51:33.765995+00:00", "trace_id": "7c9f4f56f92d", "sequencia": 6, "nivel": "INFO", "etapa": "montar_resposta", "detalhe": "resposta final montada", "ms": 0.0}
+{"ts": "2026-08-30T22:51:33.771328+00:00", "trace_id": "8b005441c058", "sequencia": 1, "nivel": "ALERTA", "etapa": "guardrail_entrada", "detalhe": "recusado", "ms": 0.01}
+{"ts": "2026-08-30T22:51:33.771597+00:00", "trace_id": "8b005441c058", "sequencia": 2, "nivel": "INFO", "etapa": "montar_resposta", "detalhe": "resposta final montada", "ms": 0.0}
+{"ts": "2026-08-30T22:51:33.776804+00:00", "trace_id": "c998a9607783", "sequencia": 1, "nivel": "INFO", "etapa": "guardrail_entrada", "detalhe": "aprovado", "ms": 0.03}
+{"ts": "2026-08-30T22:51:33.777327+00:00", "trace_id": "c998a9607783", "sequencia": 2, "nivel": "INFO", "etapa": "consultar_prontuario", "detalhe": "PAC-001", "ms": 0.19}
+{"ts": "2026-08-30T22:51:33.777572+00:00", "trace_id": "c998a9607783", "sequencia": 3, "nivel": "INFO", "etapa": "recuperar_evidencia", "detalhe": "fontes: P1, P2", "ms": 0.03}
+{"ts": "2026-08-30T22:51:33.777820+00:00", "trace_id": "c998a9607783", "sequencia": 4, "nivel": "INFO", "etapa": "responder", "detalhe": "45 caracteres", "ms": 0.01}
+{"ts": "2026-08-30T22:51:33.778024+00:00", "trace_id": "c998a9607783", "sequencia": 5, "nivel": "CRITICO", "etapa": "verificar_resposta", "detalhe": "2 achado(s), 1 critico(s)", "ms": 0.03}
+{"ts": "2026-08-30T22:51:33.778250+00:00", "trace_id": "c998a9607783", "sequencia": 6, "nivel": "CRITICO", "etapa": "validacao_humana", "detalhe": "resposta retida para revisao", "ms": 0.0}
+{"ts": "2026-08-30T22:51:33.778406+00:00", "trace_id": "c998a9607783", "sequencia": 7, "nivel": "INFO", "etapa": "montar_resposta", "detalhe": "resposta final montada", "ms": 0.0}
+{"ts": "2026-08-30T22:51:33.778805+00:00", "trace_id": "93d5e7a83254", "sequencia": 1, "nivel": "ALERTA", "etapa": "guardrail_entrada", "detalhe": "recusado", "ms": 0.01}
+{"ts": "2026-08-30T22:51:33.779095+00:00", "trace_id": "93d5e7a83254", "sequencia": 2, "nivel": "INFO", "etapa": "montar_resposta", "detalhe": "resposta final montada", "ms": 0.0}
+{"ts": "2026-08-30T22:51:33.784319+00:00", "trace_id": "4e066952504a", "sequencia": 1, "nivel": "INFO", "etapa": "guardrail_entrada", "detalhe": "aprovado", "ms": 0.01}
+{"ts": "2026-08-30T22:51:33.784720+00:00", "trace_id": "4e066952504a", "sequencia": 2, "nivel": "INFO", "etapa": "consultar_prontuario", "detalhe": "PAC-003", "ms": 0.14}
+{"ts": "2026-08-30T22:51:33.784930+00:00", "trace_id": "4e066952504a", "sequencia": 3, "nivel": "INFO", "etapa": "recuperar_evidencia", "detalhe": "fontes: P1, P2", "ms": 0.02}
+{"ts": "2026-08-30T22:51:33.785110+00:00", "trace_id": "4e066952504a", "sequencia": 4, "nivel": "INFO", "etapa": "responder", "detalhe": "45 caracteres", "ms": 0.0}
+{"ts": "2026-08-30T22:51:33.785271+00:00", "trace_id": "4e066952504a", "sequencia": 5, "nivel": "INFO", "etapa": "verificar_resposta", "detalhe": "0 achado(s), 0 critico(s)", "ms": 0.01}
+{"ts": "2026-08-30T22:51:33.785476+00:00", "trace_id": "4e066952504a", "sequencia": 6, "nivel": "INFO", "etapa": "montar_resposta", "detalhe": "resposta final montada", "ms": 0.0}

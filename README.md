@@ -1,148 +1,307 @@
 # MedGraph Lite
 
-**Tech Challenge · Fase 3 · Pós-Tech 8IADT** — Hospital Vida Plena (cenário fictício)
+**Tech Challenge — Fase 3 · Pós-Tech 8IADT**
+Hospital Vida Plena (cenário fictício)
 
-Assistente clínico com LLM ajustada por fine-tuning, orquestrado com LangChain e
-LangGraph, com limites de atuação, trilha de auditoria e citação de fonte em toda
-resposta.
-
-**Roda inteiro em um notebook do Colab, em cerca de 25 minutos.**
+| Integrante | RM |
+| --- | --- |
+| Alexandre Carneiro do Carmo | 370980 |
+| Brunno Costa Castigrini | 371429 |
+| Pedro Henrique Azevedo Aragão | 373481 |
+| Valter Willian de Oliveira Filho | 370979 |
 
 ---
 
-## Abrir e executar
+## O que construímos
+
+Um assistente que responde dúvidas clínicas usando uma LLM que nós mesmos
+ajustamos, consultando o prontuário do paciente e os protocolos do hospital, e
+que **para de funcionar de propósito** quando a resposta esbarra num risco.
+
+O projeto inteiro roda em um notebook do Google Colab, em cerca de 25 minutos,
+incluindo o fine-tuning. Não é preciso criar conta em serviço nenhum.
+
+### A regra que orientou tudo
+
+O assistente não prescreve. Ele mostra a evidência, diz de onde ela veio, e a
+decisão continua sendo do médico.
+
+Essa frase parece protocolar, mas foi ela que definiu a arquitetura. Se o
+sistema pode recusar-se a responder, alguém precisa decidir quando — e essa
+decisão não pode estar no prompt, porque prompt se contorna. Ela está na
+topologia do grafo: existe um nó do qual a execução não sai sem intervenção
+humana.
+
+---
+
+## Por que LangChain
+
+O LangChain resolve dois problemas que apareceriam de qualquer jeito, e nós
+usamos ele exatamente nesses dois pontos.
+
+### O que usamos dele
+
+**`FAISS` como vector store** (`langchain_community.vectorstores`). Os
+protocolos do hospital precisam ser encontrados por significado, não por palavra
+exata: quem pergunta "que antibiótico usar em quem tem alergia a penicilina"
+precisa chegar ao protocolo de betalactâmicos, que não contém nenhuma dessas
+palavras na pergunta. O FAISS roda em memória, é salvo em disco e não exige
+serviço externo — foi o mesmo que vimos nas aulas.
+
+**`HuggingFaceEmbeddings`** para transformar texto em vetor. Usamos o
+`all-MiniLM-L6-v2`, que é pequeno e roda rápido.
+
+**`ChatPromptTemplate`** para o prompt do assistente. Poderíamos ter montado a
+mensagem com f-string, e no começo foi assim. Trocamos porque o prompt é a peça
+que mais muda durante o desenvolvimento, e quando ele está espalhado em
+concatenações pelo código ninguém consegue revisar o que o modelo está de fato
+recebendo. Como template, ele fica num lugar só, com as variáveis explícitas.
+
+**`HuggingFacePipeline`** para embrulhar o modelo que treinamos. É o que
+transforma um modelo carregado em memória num componente que o LangChain
+entende.
+
+**Composição com `|`** — o operador que encadeia as peças:
+
+```python
+cadeia = ChatPromptTemplate | HuggingFacePipeline | StrOutputParser
+```
+
+### Por que isso importa na prática
+
+O ganho concreto apareceu na hora de avaliar. Precisávamos rodar o **mesmo**
+fluxo duas vezes: uma com o modelo original e outra com o modelo ajustado, para
+comparar. Como a LLM é só mais um elo da cadeia, trocá-la não exigiu mexer em
+mais nada — nem no prompt, nem na recuperação, nem no grafo.
+
+Se a chamada ao modelo estivesse escrita à mão no meio do fluxo, essa
+comparação teria custado uma refatoração.
+
+---
+
+## Por que LangGraph
+
+O LangChain encadeia passos que acontecem sempre na mesma ordem. Nosso problema
+não é esse.
+
+Uma pergunta fora do escopo não deve chegar ao modelo. Uma resposta que conflita
+com alergia registrada não deve ser entregue. Uma consulta sem paciente
+vinculado pula a etapa de prontuário. São **caminhos diferentes**, decididos
+durante a execução, e é isso que o LangGraph resolve.
+
+### O que usamos dele
+
+**`StateGraph`** com um estado tipado (`TypedDict`) que atravessa todos os nós.
+Cada nó recebe o estado, devolve o estado modificado, e o que um nó produz fica
+visível para os seguintes. Isso é o que permite, por exemplo, que a verificação
+de alergia enxergue tanto o prontuário (lido no nó 2) quanto a resposta gerada
+(produzida no nó 4).
+
+**`add_conditional_edges`** nos dois pontos onde o fluxo se ramifica:
+
+- depois do guardrail de entrada — pedido recusado vai direto para a resposta,
+  sem passar pelo modelo;
+- depois da verificação — conflito crítico desvia para validação humana.
+
+**`add_node` / `add_edge` / `set_entry_point`** para montar o resto, e `compile()`
+para gerar o executável.
+
+**`get_graph().draw_mermaid_png()`** para desenhar o diagrama. Não é acessório:
+uma das exigências do trabalho é apresentar o fluxo, e ter o desenho gerado a
+partir do grafo real evita que a documentação descreva um fluxo que o código não
+segue mais.
+
+### O que ganhamos com isso
+
+O ponto que nos convenceu foi a validação humana. Com o LangGraph, "a execução
+para e espera um médico" deixou de ser uma frase no relatório e virou um nó com
+uma aresta condicional chegando nele. Dá para apontar no diagrama.
+
+E há um efeito colateral que só percebemos depois: como o caminho é dado, ele
+pode ser registrado. A trilha de auditoria de cada consulta é, literalmente, a
+lista de nós por onde ela passou.
+
+---
+
+## O fluxo
+
+```
+guardrail_entrada ──(recusado)────────────────────┐
+        │                                          │
+consultar_prontuario                               │
+        │                                          │
+recuperar_evidencia                                │
+        │                                          │
+responder (LLM)                                    │
+        │                                          │
+verificar_resposta ──(crítico)── validacao_humana ─┤
+        │                                          │
+        └──────────────────────────────────────────┴──> montar_resposta
+```
+
+| Nó | O que faz |
+| --- | --- |
+| `guardrail_entrada` | Recusa pedidos fora do escopo |
+| `consultar_prontuario` | Busca alergias, medicações, exames e comorbidades no SQLite |
+| `recuperar_evidencia` | Busca semântica nos protocolos e modelos de documento |
+| `responder` | Chama a LLM ajustada, pela cadeia LangChain |
+| `verificar_resposta` | Regras clínicas e exigência de citação |
+| `validacao_humana` | Retém a resposta — a execução termina aqui |
+| `montar_resposta` | Monta o texto final com fontes e aviso |
+
+---
+
+## Como executar
+
+### No Colab — o projeto completo, ~25 minutos
 
 ```
 https://colab.research.google.com/github/alexandreccarmo/fia_tech3/blob/main/notebooks/medgraph_lite.ipynb
 ```
 
 1. **Ambiente de execução → Alterar o tipo → T4 GPU**
-2. Rode a seção 1 (verifica a GPU) e a 2 (instala, ~3 min)
+2. Rode a seção 1 (verifica a GPU) e a 2 (instala as bibliotecas, ~3 min)
 3. **Reinicie a sessão** e continue da seção 3
 4. Rode até o fim
 
-Não precisa de conta no Hugging Face, de aceite de licença, nem de chave de API.
-O modelo base é aberto.
+Os avisos em vermelho do `pip`, na seção 2, são esperados: ele reclama de
+pacotes que o Colab traz de fábrica e que não usamos.
 
-## O que acontece, seção a seção
-
-| Seção | O que faz | Tempo |
+| Seção | O que acontece | Tempo |
 | --- | --- | ---: |
-| 1-2 | GPU e dependências | 3 min |
-| 3 | PubMedQA, protocolos do hospital, anonimização | 1 min |
-| 4 | Base de prontuários em SQLite | instantâneo |
-| 5 | **Fine-tuning QLoRA** e avaliação antes do ajuste | 10 min |
-| 6 | Avaliação depois, e o gráfico antes × depois | 2 min |
-| 7 | Índice FAISS de evidência | 1 min |
-| 8 | Assistente LangChain com prontuário e fontes | 1 min |
-| 9 | **Fluxo LangGraph**: 4 consultas, 4 caminhos | 2 min |
-| 10 | Conclusão e limitações | — |
+| 1–2 | GPU e dependências | 3 min |
+| 3 | PubMedQA, protocolos, documentos internos, anonimização | 1 min |
+| 4 | Base de prontuários | instantâneo |
+| 5 | Avaliação do modelo original e **fine-tuning** | 10 min |
+| 6 | Avaliação do modelo ajustado, comparação | 2 min |
+| 7 | Índice de evidência | 1 min |
+| 8 | Assistente com a cadeia LangChain | 1 min |
+| 9 | Fluxo LangGraph: quatro consultas, quatro caminhos | 2 min |
+| 10 | Conclusão | — |
 
-## Os gráficos
+### Na sua máquina — sem GPU, em segundos
 
-Gerados em matplotlib, dentro do próprio notebook:
+Serve para conferir a lógica de segurança, o prontuário e o roteamento sem
+depender do Colab.
 
-1. **Curva de perda** — o treino funcionou?
-2. **Antes × depois** — o que o ajuste melhorou, em adesão ao formato e acurácia
-3. **Caminho percorrido no grafo** — o fluxo desenhado uma vez por consulta, com os
-   nós visitados destacados e os demais apagados. É a figura que mostra, sem
-   precisar de explicação, que o roteamento decide alguma coisa: o pedido recusado
-   salta do guardrail direto para a resposta, sem passar pela LLM
-4. **Linha do tempo** — as mesmas trilhas com a latência de cada nó
-5. **Achados por severidade** — quantos alertas cada nível de gravidade produziu
+```bash
+git clone https://github.com/alexandreccarmo/fia_tech3.git
+cd fia_tech3
+make setup
+```
+
+```bash
+make testes
+```
+
+```bash
+make demo
+```
+
+O `make demo` percorre os quatro casos da apresentação e imprime, para cada um,
+o caminho no grafo, os alertas levantados e a resposta final. Só a geração de
+texto é simulada — guardrails, prontuário, recuperação e roteamento executam de
+verdade. Usamos isso para ensaiar sem gastar a cota de GPU do Colab.
+
+---
 
 ## Estrutura
 
 ```
 fia_tech3/
 ├── medgraph_lite/
-│   ├── dados.py        PubMedQA, protocolos sintéticos, anonimização
-│   ├── prontuario.py   base SQLite e o modelo de paciente
-│   ├── treino.py       configuração do QLoRA e formato do prompt
+│   ├── dados.py        PubMedQA, protocolos, modelos de documento, anonimização
+│   ├── prontuario.py   base SQLite e a entidade Paciente
+│   ├── treino.py       configuração do QLoRA e formato do prompt de treino
 │   ├── rag.py          índice FAISS e recuperação com marcador de fonte
 │   ├── chain.py        pipeline LangChain: prompt → LLM → parser
 │   ├── guardrails.py   limites de atuação e regras clínicas
-│   ├── grafo.py        fluxo LangGraph de sete nós
+│   ├── grafo.py        fluxo LangGraph
 │   ├── auditoria.py    trilha por consulta e logger de sistema
 │   └── graficos.py     as cinco figuras
 ├── notebooks/
-│   └── medgraph_lite.ipynb    ← o notebook do Colab
+│   └── medgraph_lite.ipynb
 ├── docs/
-│   └── relatorio_tecnico.md   relatório técnico da entrega
-├── tests/                     47 testes, rodam sem GPU
-├── demo.py                    demonstração no terminal
+│   └── relatorio_tecnico.md
+├── tests/              47 testes, rodam sem GPU
+├── demo.py             o fluxo no terminal
 ├── Makefile
 └── requirements.txt
 ```
 
-Cerca de 950 linhas de Python, comentadas.
+---
 
-> A pasta `modelo_cancelado/` guarda uma versão anterior e mais extensa do
-> projeto, mantida apenas como histórico. Ela **não** faz parte da entrega.
+## O fine-tuning
 
-## Conferir na sua máquina (sem GPU)
+Treinamos o **Qwen2.5-0.5B-Instruct** com QLoRA sobre PubMedQA, os protocolos do
+hospital, o FAQ do corpo médico e os modelos de laudo, receita e procedimento.
 
-O notebook roda no Colab, mas a lógica de segurança, o prontuário e o fluxo do
-grafo podem ser verificados localmente em segundos:
+O enunciado deixa a escolha do modelo livre. Escolhemos um modelo pequeno por
+uma razão prática: numa versão anterior deste projeto medimos 42 segundos por
+passo com um modelo de 3 bilhões de parâmetros na T4 gratuita — quase seis horas
+de treino, acima da cota diária do Colab. Com 0,5 bilhão, o treino leva cerca de
+oito minutos e demonstra a mesma técnica.
 
-```bash
-make setup     # cria o venv e instala
-make testes    # 35 testes
-make lint
-make demo      # o fluxo no terminal, com modelo simulado
-```
-
-O `make demo` percorre os quatro casos da apresentação e imprime o caminho que
-cada um faz no grafo, os achados dos guardrails e a resposta final. Serve para
-ensaiar sem gastar cota do Colab. Só a geração de texto é simulada — guardrails,
-prontuário, recuperação e roteamento rodam de verdade.
-
-### O que os testes cobrem
-
-| Área | Verifica |
-| --- | --- |
-| Anonimização | remove os 7 padrões identificadores **e preserva** os 6 exemplos de dado clínico |
-| Guardrail de entrada | recusa pedidos impróprios, mesmo com acentuação |
-| Regras clínicas | alergia por classe, evitação que não atravessa a frase, interação, citação obrigatória |
-| Prontuário | consulta, paciente inexistente, exame crítico |
-| Grafo | os quatro caminhos, a parada para validação, a trilha de log |
-| Integridade | o notebook é JSON válido e aponta para o caminho certo |
-
-O que **não** é testado aqui é o treino e a qualidade das respostas: isso exige
-GPU, e a verificação acontece no próprio notebook, comparando o modelo antes e
-depois do ajuste.
-
-## O fluxo
+**O que o ajuste ensina não é medicina.** É o formato da resposta:
 
 ```
-guardrail_entrada --(recusado)--> montar_resposta
-        |
-consultar_prontuario -> recuperar_evidencia -> responder -> verificar_resposta
-        |                                                          |
-        |                              (crítico) --> validacao_humana
-        |                                                          |
-        +------------------------------------------> montar_resposta
+Decisao: yes|no|maybe
+<justificativa em até 3 frases, apoiada apenas no contexto>
+[P1]
 ```
 
-Cada nó registra o que fez, quanto tempo levou e o que decidiu. Essa trilha é o
-logging que o item 3 do enunciado pede — e é o que o gráfico de caminhos desenha.
+Isso não é preciosismo. Os guardrails precisam localizar a decisão e a citação
+para conseguir verificá-las. Um modelo que responde bem, mas cada vez de um
+jeito, inviabiliza toda a checagem que vem depois.
+
+Por isso avaliamos duas métricas separadas: **adesão ao formato** e **acurácia**.
+"Errou a resposta" e "não seguiu o formato" são problemas diferentes, com
+correções diferentes — uma métrica única esconderia isso.
+
+---
+
+## Segurança
+
+### Alergia por classe, não por nome
+
+Um paciente alérgico a penicilina e uma resposta sugerindo ceftriaxona não têm
+nenhuma semelhança de texto. Comparar strings não acusa nada. As duas são
+betalactâmicas, e reatividade cruzada é conhecimento farmacológico — por isso
+mantemos uma tabela de classes.
+
+### Evitação medida por frase
+
+Quando o assistente escreve "evitar penicilina devido à alergia registrada", ele
+está acertando. Tratar isso como se fosse prescrição gera alarme falso — e um
+médico que vê alerta crítico toda vez que o sistema acerta passa a ignorar
+alertas críticos.
+
+Detectamos o contexto da menção, mas a janela é a **frase**, não uma quantidade
+de caracteres ao redor. Em "Evitar penicilina. Iniciar ceftriaxona.", uma janela
+por proximidade alcançaria o "evitar" da frase anterior e liberaria uma sugestão
+real de fármaco contraindicado — errando na direção que uma regra de segurança
+não pode errar.
+
+### Citação obrigatória
+
+Resposta sem fonte não passa. É o que torna a explicabilidade verificável: a
+fonte não é uma promessa do modelo, é um campo que o sistema confere.
+
+---
 
 ## Logs e auditoria
 
-O item 3 do enunciado pede *logging detalhado para rastreamento e auditoria*.
-São três registros, com públicos diferentes:
+Três registros, com públicos diferentes:
 
-| Destino | Conteúdo | Para quem |
-| --- | --- | --- |
-| **Console** | Uma linha colorida por etapa, com ícone e latência | Quem assiste à execução |
-| **`auditoria.jsonl`** | Um evento por linha, em JSON | Quem audita depois |
-| **`medgraph.log`** | Eventos de sistema — carga de modelo, índice | Diagnóstico |
+| Destino | Conteúdo |
+| --- | --- |
+| Console | Uma linha por etapa, com ícone e latência — para quem acompanha a execução |
+| `auditoria.jsonl` | Um evento por linha, em JSON — para auditar depois |
+| `medgraph.log` | Eventos de sistema: carga de modelo, construção do índice |
 
 Cada consulta recebe um `trace_id`. Sem ele, os eventos de consultas diferentes
-se misturariam no arquivo e a trilha deixaria de reconstruir o que aconteceu em
-cada uma — que é justamente o propósito dela.
-
-Um evento da trilha:
+se misturam no arquivo e deixa de ser possível reconstruir o que aconteceu em
+cada uma.
 
 ```json
 {
@@ -156,72 +315,97 @@ Um evento da trilha:
 }
 ```
 
-O formato é consultável por máquina, sem parser próprio:
+Escolhemos JSONL porque o arquivo pode ser consultado sem escrever nenhum
+parser:
 
 ```bash
-# Quantas consultas foram retidas?
 jq -r 'select(.etapa=="validacao_humana") | .trace_id' auditoria.jsonl | sort -u | wc -l
 ```
 
 ```bash
-# Onde está o tempo?
 jq -s 'group_by(.etapa) | map({etapa: .[0].etapa, ms: (map(.ms) | add)})' auditoria.jsonl
 ```
 
 A seção 9.3 do notebook lê essa trilha e mostra quais consultas foram retidas e
 por quê.
 
+---
+
+## Os gráficos
+
+Todos em matplotlib, dentro do notebook:
+
+1. **Curva de perda** — o treino convergiu
+2. **Antes e depois** — o que o ajuste mudou, em adesão ao formato e acurácia
+3. **Caminho percorrido no grafo** — o fluxo desenhado uma vez por consulta, com
+   os nós visitados em destaque e os demais apagados
+4. **Linha do tempo** — as mesmas trilhas com a latência de cada nó
+5. **Alertas por severidade** — quantos achados cada nível produziu
+
+A terceira é a que mais ajuda numa apresentação: ver o pedido recusado saltar do
+guardrail direto para a resposta final, sem tocar na LLM, dispensa explicar o que
+é roteamento condicional.
+
+---
+
+## Testes
+
+47 testes, rodando em menos de três segundos, sem GPU.
+
+| Área | O que verificamos |
+| --- | --- |
+| Anonimização | Remove os identificadores **e preserva** valores de exame |
+| Guardrail de entrada | Recusa pedidos impróprios, inclusive com acentuação |
+| Regras clínicas | Alergia por classe, evitação por frase, interação, citação |
+| Prontuário | Consulta, paciente inexistente, exame crítico |
+| Grafo | Os quatro caminhos, a parada para validação, a trilha |
+| Auditoria | Gravação em disco, separação por consulta, arquivo truncado |
+| LangChain | Composição da cadeia e preenchimento do prompt |
+| Notebook | JSON válido e células com sintaxe correta |
+
+O que não é coberto automaticamente é o treino e a qualidade das respostas —
+ambos exigem GPU. Isso é verificado no próprio notebook, comparando o modelo
+antes e depois do ajuste.
+
+---
+
 ## Documentação
 
 | Documento | Conteúdo |
 | --- | --- |
-| Este README | Como executar, arquitetura, decisões |
-| [`docs/relatorio_tecnico.md`](docs/relatorio_tecnico.md) | Relatório técnico: fine-tuning, assistente, avaliação, limitações, rastreabilidade |
+| Este README | Execução, arquitetura e as decisões que tomamos |
+| [`docs/relatorio_tecnico.md`](docs/relatorio_tecnico.md) | Relatório técnico: fine-tuning, assistente, avaliação, limitações |
 | Notebook | O projeto executando, seção a seção |
 
-## O princípio
-
-> O assistente **nunca prescreve**. Ele apresenta evidência, aponta a fonte de cada
-> afirmação e devolve a decisão ao médico responsável.
-
-Quando a resposta conflita com uma alergia registrada, quando há interação
-medicamentosa, ou quando falta citação de fonte, a execução **para** e aguarda
-validação humana. Isso está em código verificável, não no prompt.
-
-## Decisões técnicas
-
-| Decisão | Por quê |
-| --- | --- |
-| **Qwen2.5-0.5B** como base | Aberto (sem licença a esperar) e treina em ~8 min. O enunciado deixa a escolha livre |
-| **QLoRA em 4 bits** | Treina ~1% dos parâmetros; cabe folgado na T4 gratuita |
-| **Modelo em memória**, sem GGUF nem Ollama | Elimina 25 minutos de exportação e três dependências externas que quebram com atualização de versão |
-| **FAISS local** | Mesmo vector store das aulas, sem serviço externo |
-| **LLM via LangChain**, e não `generate()` direto | O enunciado pede o pipeline; e trocar a LLM deixa de mexer no resto do fluxo |
-| **Trilha por `contextvars`**, não pelo estado | O `TypedDict` do LangGraph descarta em silêncio chaves não declaradas — o objeto não chegava aos nós |
-| **Fármacos por classe**, não por nome | "Penicilina" não casa com "Ceftriaxona" por texto — mas as duas são betalactâmicos |
-| **Evitação por frase**, não por proximidade | "Evitar penicilina. Iniciar ceftriaxona." — uma janela de caracteres classificaria a ceftriaxona como evitada |
+---
 
 ## Requisitos do enunciado
 
 | Requisito | Onde |
 | --- | --- |
-| Fine-tuning com protocolos, FAQ e modelos de documento | `dados.py`, `treino.py`, seção 5 |
-| Preprocessing, anonimização e curadoria | `dados.anonimizar`, seção 3.1 |
-| Pipeline LangChain com a LLM customizada | seção 8 |
-| Consulta a base estruturada | `prontuario.py`, seção 4 |
-| Contextualização com dados do paciente | `grafo.no_responder`, seção 9 |
-| Limites de atuação | `guardrails.py`, seção 9 |
-| Logging para auditoria | `grafo._registrar`, seção 9 |
-| Explainability por fonte | `rag.py` + `guardrails.verificar_resposta` |
-| Código modularizado | pacote `medgraph_lite/` |
-| Fluxos LangGraph | `grafo.py` |
-| Dataset sintético/anonimizado | `dados.PROTOCOLOS`, `dados.FAQ` |
+| Fine-tuning com protocolos do hospital | `dados.PROTOCOLOS`, notebook §5 |
+| Perguntas frequentes de médicos | `dados.FAQ` |
+| Modelos de laudos, receitas e procedimentos | `dados.DOCUMENTOS` |
+| Preprocessing, anonimização e curadoria | `dados.anonimizar`, notebook §3.1 |
+| LangChain integrando a LLM customizada | `chain.py`, notebook §8 |
+| Consultas a base estruturada | `prontuario.py`, notebook §4 |
+| Contextualização com dados do paciente | `grafo.no_responder` |
+| Limites de atuação | `guardrails.py` |
+| Logging para rastreamento e auditoria | `auditoria.py`, notebook §9.3 |
+| Explicabilidade por fonte | `rag.py` + `guardrails.verificar_resposta` |
+| Projeto modularizado | pacote `medgraph_lite/` |
+| Fluxos do LangGraph | `grafo.py` |
+| Dataset sintético e anonimizado | `dados.py` |
+| Relatório técnico | `docs/relatorio_tecnico.md` |
 
-## Transparência
+---
 
-Nenhum dado real de paciente é utilizado. Protocolos, FAQ e prontuários do Hospital
-Vida Plena são sintéticos. O pipeline de anonimização é aplicado mesmo assim,
-demonstrando a técnica e garantindo que o mesmo código funcionaria sobre dados reais.
+## Sobre os dados
 
-Projeto acadêmico. Sem validação clínica, não deve ser usado em assistência a
-pacientes.
+Nenhum dado real de paciente é usado. Prontuários, protocolos, documentos e FAQ
+do Hospital Vida Plena foram escritos por nós. Ainda assim aplicamos o pipeline
+de anonimização sobre eles, para demonstrar a técnica e garantir que o mesmo
+código funcionaria com dados reais.
+
+Este é um trabalho acadêmico. Não passou por comitê de ética nem por validação
+clínica, e não deve ser usado em assistência a pacientes.
