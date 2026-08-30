@@ -281,7 +281,41 @@ dele**, e não este — senão estaria executando o código de outra pessoa.
 1. **Ambiente de execução → Alterar o tipo → T4 GPU**
 2. Rode a seção 1 (verifica a GPU) e a 2 (instala as bibliotecas, ~3 min)
 3. **Reinicie a sessão** e continue da seção 3
-4. Rode até o fim
+4. Na **seção 3.2**, escolha quanto quer treinar (veja abaixo)
+5. Rode até o fim
+
+#### Escolhendo o tamanho do treino
+
+A seção 3.2 do notebook tem uma linha que decide quanto tempo tudo vai levar:
+
+```python
+PERFIL = "rapido"
+```
+
+O padrão é `"rapido"` — é o que permite percorrer o notebook inteiro numa aula.
+Para trocar, mude a palavra e **reexecute a partir da seção 3.2**; as seções 1 e
+2 não precisam ser repetidas enquanto a sessão estiver viva.
+
+| `PERFIL` | Exemplos | Épocas | Passos | Treino | **Notebook inteiro** |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `"rapido"` *(padrão)* | 378 | 1 | 24 | 1,8 min | **~12 min** |
+| `"completo"` | 828 | 2 | 103 | ~7,6 min | **~18 min** |
+| `"intensivo"` | 1.528 | 2 | 191 | ~14 min | **~24 min** |
+
+Os tempos usam o ritmo que medimos numa T4: **4,4 segundos por passo**. Só o
+treino muda de duração — as demais seções somam cerca de 10 minutos em qualquer
+perfil.
+
+**Qual escolher.** O `"rapido"` demonstra a técnica inteira e é suficiente para
+apresentar o projeto. Ele treina de verdade, mas com 24 passos o modelo aprende a
+forma da resposta sem consolidar a decisão — o que se vê nos [resultados](#resultados).
+
+Use `"completo"` se quiser números melhores na comparação antes/depois. São seis
+minutos a mais no total, e é o perfil que dá chance de o colapso de classe se
+desfazer.
+
+O `"intensivo"` só compensa se essa comparação for o foco da apresentação; para um
+modelo de 0,5 bilhão, o ganho sobre o `"completo"` é pequeno.
 
 Os avisos em vermelho do `pip`, na seção 2, são esperados: ele reclama de
 pacotes que o Colab traz de fábrica e que não usamos.
@@ -291,7 +325,7 @@ pacotes que o Colab traz de fábrica e que não usamos.
 | 1–2 | GPU e dependências | 3 min |
 | 3 | PubMedQA, protocolos, documentos internos, anonimização | 1 min |
 | 4 | Base de prontuários | instantâneo |
-| 5 | Avaliação do modelo original e **fine-tuning** | 10 min |
+| 5 | Avaliação do modelo original e **fine-tuning** | 4 min (perfil `rapido`) |
 | 6 | Avaliação do modelo ajustado, comparação | 2 min |
 | 7 | Índice de evidência | 1 min |
 | 8 | Assistente com a cadeia LangChain | 1 min |
@@ -345,10 +379,10 @@ Ao terminar, imprime `Pronto. Rode: make testes`.
 make testes
 ```
 
-São 50 testes, em menos de quatro segundos. A saída termina com:
+São 51 testes, em menos de quatro segundos. A saída termina com:
 
 ```
-50 passed, 1 warning in 2.83s
+51 passed, 1 warning in 2.83s
 ```
 
 O aviso é do `langgraph` anunciando uma mudança futura numa API interna que não
@@ -431,7 +465,7 @@ fia_tech3/
 │   └── medgraph_lite.ipynb
 ├── docs/
 │   └── relatorio_tecnico.md
-├── tests/              50 testes, rodam sem GPU
+├── tests/              51 testes, rodam sem GPU
 ├── demo.py             o fluxo no terminal
 ├── Makefile
 └── requirements.txt
@@ -524,8 +558,10 @@ onde se apoiar — eles precisam localizar a decisão e a citação para verific
 
 **E o treino curto não ensina a decisão.** Reportar apenas a melhora do formato
 seria omitir metade do resultado. Melhorar a decisão é questão de mais dados e
-mais passos — o notebook traz perfis de 103 e 191 passos, alguns minutos a mais
-de GPU —, e não de mudança de método.
+mais passos, e não de mudança de método: trocar `PERFIL = "rapido"` por
+`"completo"` na seção 3.2 do notebook leva o treino de 24 para 103 passos, ao
+custo de seis minutos a mais. Veja
+[Escolhendo o tamanho do treino](#escolhendo-o-tamanho-do-treino).
 
 A análise completa está em [`docs/relatorio_tecnico.md`](docs/relatorio_tecnico.md),
 seção 7.
@@ -622,7 +658,7 @@ guardrail direto para a resposta final, sem tocar na LLM, dispensa explicar o qu
 
 ## Testes
 
-50 testes, rodando em menos de três segundos, sem GPU.
+51 testes, rodando em menos de três segundos, sem GPU.
 
 | Área | O que verificamos |
 | --- | --- |

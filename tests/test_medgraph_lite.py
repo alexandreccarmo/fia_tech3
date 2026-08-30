@@ -508,6 +508,35 @@ class TestGraficos:
 # INTEGRIDADE DO PROJETO  [REQ-4]
 # =============================================================================
 class TestIntegridade:
+    def test_perfis_do_readme_existem_no_notebook(self):
+        """
+        O README manda trocar `PERFIL` por um dos valores que ele lista.
+
+        Se um deles nao existir no dicionario do notebook, quem seguir a
+        instrucao recebe um KeyError na secao 3.2 - e o erro nao diz que a
+        documentacao e que esta errada.
+        """
+        import json
+        import re
+        from pathlib import Path
+
+        raiz = Path(__file__).parent.parent
+        notebook = json.loads(
+            (raiz / "notebooks" / "medgraph_lite.ipynb").read_text(encoding="utf-8")
+        )
+        codigo = "\n".join("".join(c["source"]) for c in notebook["cells"]
+                           if c["cell_type"] == "code")
+        no_notebook = set(re.findall(r'"(\w+)":\s*\{"pubmedqa"', codigo))
+        assert no_notebook, "o notebook nao define perfis"
+
+        readme = (raiz / "README.md").read_text(encoding="utf-8")
+        no_readme = set(re.findall(r'`"(\w+)"`', readme))
+
+        inexistentes = no_readme - no_notebook
+        assert not inexistentes, (
+            f"o README cita perfis que o notebook nao tem: {sorted(inexistentes)}"
+        )
+
     def test_readme_declara_a_contagem_certa_de_testes(self):
         """
         REGRESSAO — o README dizia 47 e 48 testes quando ja eram 49.
