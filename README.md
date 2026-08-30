@@ -213,9 +213,70 @@ verificar_resposta ──(crítico)── validacao_humana ─┤
 
 ### No Colab — o projeto completo, ~25 minutos
 
+**[▶ Abrir o notebook no Google Colab](https://colab.research.google.com/github/alexandreccarmo/fia_tech3/blob/main/notebooks/medgraph_lite.ipynb)**
+
 ```
 https://colab.research.google.com/github/alexandreccarmo/fia_tech3/blob/main/notebooks/medgraph_lite.ipynb
 ```
+
+#### Como esse link é formado
+
+Não há integração configurada entre o repositório e o Colab, nem token, nem
+aplicativo instalado. O link é apenas uma convenção de endereço: o Colab tem um
+carregador de GitHub que responde a URLs no formato
+
+```
+https://colab.research.google.com/github/USUARIO/REPOSITORIO/blob/BRANCH/CAMINHO.ipynb
+```
+
+Compare com o endereço do mesmo arquivo no GitHub:
+
+```
+https://github.com/alexandreccarmo/fia_tech3/blob/main/notebooks/medgraph_lite.ipynb
+https://colab.research.google.com/github/alexandreccarmo/fia_tech3/blob/main/notebooks/medgraph_lite.ipynb
+```
+
+É a mesma URL, trocando `github.com/` por `colab.research.google.com/github/`. O
+Colab baixa o arquivo `.ipynb` — que é JSON versionado como qualquer outro — e o
+abre no editor. Funciona sem login porque o repositório é público; se fosse
+privado, o Colab pediria autorização de acesso ao GitHub.
+
+**Alternativa sem montar a URL:** dentro do Colab, *Arquivo → Abrir notebook →
+aba GitHub*, digite `alexandreccarmo/fia_tech3` e escolha o notebook na lista.
+
+#### Como o código chega até lá
+
+O notebook sozinho não traz o projeto. Quem traz é a célula da seção 3:
+
+```python
+if not os.path.isdir("/content/fia_tech3"):
+    !git clone --depth 1 https://github.com/alexandreccarmo/fia_tech3.git /content/fia_tech3
+
+sys.path.insert(0, "/content/fia_tech3")
+```
+
+Ela clona o repositório dentro da máquina virtual do Google e acrescenta o
+diretório ao caminho de importação do Python. É por isso que a linha seguinte
+consegue fazer `from medgraph_lite import ...` — o pacote veio no clone.
+
+O caminho é de mão única: o Colab lê do GitHub e nunca escreve de volta sozinho.
+
+#### Para trabalhar sobre uma cópia própria
+
+Quem quiser modificar o projeto precisa que a célula 3 clone **o repositório
+dele**, e não este — senão estaria executando o código de outra pessoa.
+
+1. Publique a cópia no GitHub, como repositório **público**
+2. Na célula da seção 3, aponte `REPO` para ela:
+   ```python
+   REPO = "https://github.com/SEU_USUARIO/SEU_REPO.git"
+   ```
+3. Monte o link trocando as duas partes do endereço:
+   ```
+   https://colab.research.google.com/github/SEU_USUARIO/SEU_REPO/blob/main/notebooks/medgraph_lite.ipynb
+   ```
+
+#### Executando
 
 1. **Ambiente de execução → Alterar o tipo → T4 GPU**
 2. Rode a seção 1 (verifica a GPU) e a 2 (instala as bibliotecas, ~3 min)
