@@ -42,4 +42,4 @@ demo:  ## Demonstra o grafo no terminal, com modelo simulado
 
 limpar:  ## Remove caches e artefatos gerados
 	find . -type d -name __pycache__ -not -path "./.venv/*" -exec rm -rf {} + 2>/dev/null || true
-	rm -rf .pytest_cache .ruff_cache *.png *.db
+	rm -rf .pytest_cache .ruff_cache *.png *.db *.jsonl *.log

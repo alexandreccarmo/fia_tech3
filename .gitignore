@@ -14,5 +14,10 @@ __pycache__/
 /saida_treino/
 /adapter/
 
+# Trilha de auditoria e log de sistema. Sao produzidos por `make demo` e pelo
+# notebook, com o conteudo de quem executou - nao ha o que versionar aqui.
+/*.jsonl
+/*.log
+
 # Sistema
 .DS_Store
