@@ -91,6 +91,91 @@ notebook 02**.
 
 ---
 
+## Como se chega ao notebook no Colab
+
+Os links abaixo abrem os notebooks direto do GitHub. Vale entender como eles são
+formados, porque quem trabalhar sobre uma cópia própria vai precisar montar os
+seus.
+
+**Não há geração nem integração.** O Colab tem um carregador de GitHub que
+funciona por padrão de endereço: é a URL do arquivo no GitHub com `github.com/`
+trocado por `colab.research.google.com/github/`.
+
+```
+https://github.com/USUARIO/REPO/blob/BRANCH/CAMINHO.ipynb
+
+https://colab.research.google.com/github/USUARIO/REPO/blob/BRANCH/CAMINHO.ipynb
+```
+
+O Colab baixa aquele `.ipynb` — que é apenas JSON versionado como qualquer outro
+arquivo — e o abre no editor. Funciona sem login porque o repositório é público.
+
+O notebook, sozinho, não traz o código do projeto. Quem traz é a célula 3, que
+executa `git clone` do repositório dentro da máquina virtual e acrescenta `src/`
+ao caminho de importação do Python. É por isso que a célula seguinte consegue
+fazer `from medgraph.finetune import colab_utils`. O dataset de treino vem no
+mesmo clone, porque também está versionado.
+
+O caminho é de mão única: o Colab lê do GitHub e nunca escreve de volta sozinho.
+O resultado do treino retorna como download manual do `.zip`.
+
+```
+  sua maquina              GitHub                VM do Google (Colab)
+  -----------              ------                --------------------
+  edita codigo
+  git commit
+  git push     ------->    repositorio
+                           publico
+                              |
+                              |  (1) Colab le o .ipynb pela URL
+                              +--------------------------->  notebook aberto
+                              |                                   |
+                              |  (2) celula 3: git clone          |
+                              +--------------------------->  codigo + dataset
+                                                                  |
+                                                             (3) treina na GPU
+                                                                  |
+  medgraph-adapter.zip  <-----------------------------------  (4) download
+```
+
+### Para uma cópia própria do projeto
+
+Quem for modificar o projeto precisa que a célula 3 clone **o repositório dele** —
+senão o Colab treinaria com o código de outra pessoa.
+
+**1.** Publique a cópia no GitHub como repositório **público**.
+
+**2.** Na célula 3, aponte a variável `REPO` para ela:
+
+```python
+REPO = "https://github.com/NOVO_USUARIO/NOVO_REPO.git"
+```
+
+E ajuste o caminho do clone, se o nome do diretório mudar.
+
+**3.** Monte o link trocando as partes do endereço:
+
+```
+https://colab.research.google.com/github/NOVO_USUARIO/NOVO_REPO/blob/main/notebooks/colab/01_finetune_qlora_pubmedqa.ipynb
+```
+
+**4.** Repita para o `02_exportar_gguf.ipynb`.
+
+### Sem montar a URL à mão
+
+Dentro do Colab: **Arquivo → Abrir notebook → aba GitHub**, digite
+`usuario/repositorio` e escolha o notebook na lista.
+
+### Se o repositório for privado
+
+A mesma aba GitHub tem a opção **Incluir repositórios privados**, que pede
+autorização da conta. Mas o link direto deixa de funcionar para quem não tiver
+acesso, e a célula do `git clone` também falharia — ela roda sem credenciais
+dentro da VM. É por isso que este projeto é público: é o que torna "treinar"
+equivalente a "abrir um link".
+
+---
+
 ## Etapa 1 — Notebook 01: o treino
 
 Abra:
@@ -284,12 +369,14 @@ nova, a célula 3 pede o upload do `.zip`.
 
 ### Célula 1 — Ambiente
 
-Informa se há GPU. **Este notebook não precisa de uma:** a fusão do adapter roda
-com `device_map="cpu"` e a conversão do `llama.cpp` também é CPU.
+Informa se há GPU. **Nada aqui exige CUDA**, mas use a **T4** mesmo assim.
 
-Use *Ambiente de execução → Alterar o tipo → CPU* para poupar a cota de GPU, que
-o treino já consumiu. O recurso que importa aqui é RAM — a fusão carrega o modelo
-base em float16, cerca de 6,4 GB, contra os ~12,7 GB do Colab gratuito.
+A fusão da célula 5 carrega o modelo base em float16 — ~6,4 GB — e cria cópias
+durante o merge, contra os ~12,7 GB de RAM do Colab gratuito. A folga é estreita,
+e estourar a memória **derruba a sessão inteira**, levando junto o upload do
+adapter e o login. Com a GPU, o modelo vai para a VRAM e a RAM fica livre.
+
+A conversão do `llama.cpp`, mais adiante, é CPU de qualquer forma.
 
 ### Célula 2 — Dependências e repositório
 
@@ -545,6 +632,7 @@ Colab Pro.
 | Formato baixo na célula 12 | Treino insuficiente | Mais épocas ou mais exemplos |
 | `FileNotFoundError: nvidia-smi` na célula 1 do notebook 02 | Runtime sem GPU, que aqui é o esperado | Corrigido; em notebook antigo, pule a célula |
 | `ImportError: incompatible version of torchao` na célula 5 do notebook 02 | `torchao` 0.10 do Colab contra o mínimo do `peft` | `%pip uninstall -y -q torchao` e reexecute |
+| Sessão morre na célula 5 do notebook 02 | RAM esgotada durante a fusão | Troque para T4 GPU e use `device_map="auto"` |
 
 ---
 
