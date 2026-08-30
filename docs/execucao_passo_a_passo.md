@@ -382,6 +382,11 @@ A conversão do `llama.cpp`, mais adiante, é CPU de qualquer forma.
 
 ~3 minutos. Instala, remove o `torchao` e clona.
 
+Os avisos em vermelho do `pip` nesta célula são esperados: ele reclama que
+`google-ai-generativelanguage`, `ydf` e `grpcio-status` — pacotes de fábrica do
+Colab — querem uma versão mais antiga do `protobuf`. Nenhum é usado aqui. O sinal
+de que a célula terminou é a linha `Resolving deltas: 100%`, do `git clone`.
+
 A remoção do `torchao` não é capricho: o Colab traz a versão 0.10 pré-instalada e
 o `peft` recente exige 0.16 ou superior. A incompatibilidade não aparece aqui —
 ela estoura na célula 5, dentro de `PeftModel.from_pretrained`, com um
