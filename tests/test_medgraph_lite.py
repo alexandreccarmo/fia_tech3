@@ -508,6 +508,47 @@ class TestGraficos:
 # INTEGRIDADE DO PROJETO  [REQ-4]
 # =============================================================================
 class TestIntegridade:
+    def test_readme_declara_a_contagem_certa_de_testes(self):
+        """
+        REGRESSAO — o README dizia 47 e 48 testes quando ja eram 49.
+
+        Numero em documentacao envelhece sozinho: cada teste novo desatualiza
+        tres lugares no README, e ninguem lembra de atualizar os tres. O leitor
+        que roda `make testes` e ve um numero diferente do prometido fica sem
+        saber se instalou errado ou se a documentacao e que esta velha.
+
+        A contagem vem do proprio pytest, em modo de coleta, para nao depender
+        de contar `def test_` a mao - o que ignoraria as parametrizacoes.
+        """
+        import re
+        import subprocess
+        import sys
+        from pathlib import Path
+
+        raiz = Path(__file__).parent.parent
+        coleta = subprocess.run(
+            [sys.executable, "-m", "pytest", "tests/", "--collect-only", "-q"],
+            cwd=raiz, capture_output=True, text=True,
+        )
+        # O pytest 9 resume a coleta como "arquivo.py: N"; versoes anteriores
+        # escreviam "N tests collected". Aceitamos as duas, senao o teste vira
+        # skip silencioso na proxima atualizacao da ferramenta.
+        achado = (re.search(r"(\d+) tests? collected", coleta.stdout)
+                  or re.search(r"^\S+\.py:\s*(\d+)\s*$", coleta.stdout, re.MULTILINE))
+        assert achado is not None, (
+            f"nao foi possivel contar os testes coletados:\n{coleta.stdout[-400:]}"
+        )
+        total = int(achado.group(1))
+
+        readme = (raiz / "README.md").read_text(encoding="utf-8")
+        citados = {int(n) for n in re.findall(r"(\d+)\s+testes", readme)}
+        citados |= {int(n) for n in re.findall(r"(\d+) passed", readme)}
+
+        divergentes = citados - {total}
+        assert not divergentes, (
+            f"o README cita {sorted(divergentes)} testes, mas a suite tem {total}"
+        )
+
     def test_readme_so_cita_comandos_que_existem(self):
         """
         REGRESSAO — o README e o roteiro de quem chega ao projeto pela primeira vez.

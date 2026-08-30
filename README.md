@@ -345,10 +345,10 @@ Ao terminar, imprime `Pronto. Rode: make testes`.
 make testes
 ```
 
-São 48 testes, em menos de quatro segundos. A saída termina com:
+São 50 testes, em menos de quatro segundos. A saída termina com:
 
 ```
-48 passed, 1 warning in 2.83s
+50 passed, 1 warning in 2.83s
 ```
 
 O aviso é do `langgraph` anunciando uma mudança futura numa API interna que não
@@ -431,7 +431,7 @@ fia_tech3/
 │   └── medgraph_lite.ipynb
 ├── docs/
 │   └── relatorio_tecnico.md
-├── tests/              47 testes, rodam sem GPU
+├── tests/              50 testes, rodam sem GPU
 ├── demo.py             o fluxo no terminal
 ├── Makefile
 └── requirements.txt
@@ -471,6 +471,64 @@ jeito, inviabiliza toda a checagem que vem depois.
 Por isso avaliamos duas métricas separadas: **adesão ao formato** e **acurácia**.
 "Errou a resposta" e "não seguiu o formato" são problemas diferentes, com
 correções diferentes — uma métrica única esconderia isso.
+
+---
+
+## Resultados
+
+Execução medida numa T4 do Colab, com o perfil padrão — 24 passos, 378 exemplos,
+1,8 minuto de treino:
+
+| Sistema | Adesão ao formato | Acurácia |
+| --- | ---: | ---: |
+| Modelo base | 0% | 55% |
+| Modelo ajustado | **90%** | **10%** |
+
+A leitura direta dessa tabela seria "o ajuste ensinou o formato e destruiu a
+acurácia". Está parcialmente errada, e vale explicar as duas partes.
+
+### A acurácia do modelo base estava inflada
+
+A decisão era extraída procurando `yes`, `no` ou `maybe` em qualquer ponto da
+resposta. O modelo base não segue formato nenhum — a adesão foi 0% — mas escreve
+parágrafos em inglês, e um parágrafo em inglês contém a palavra "no" com
+facilidade. Quando o rótulo esperado era `no`, isso contava como acerto.
+
+Os 55% também se aproximam da frequência da classe `yes` no PubMedQA, que é a
+marca de quem responde sempre a classe majoritária. As duas colunas mediam coisas
+diferentes: uma, a decisão que o modelo declarou; a outra, a chance de uma palavra
+aparecer num texto livre.
+
+Corrigimos a medição: a extração passou a registrar se a decisão foi **declarada**
+(o modelo escreveu `Decisao: X` na primeira linha) ou apenas **inferida** do
+texto.
+
+### O colapso de classe é real
+
+Com 24 passos, o modelo aprendeu a estrutura e passou a responder sempre a mesma
+decisão. Os 10% são próximos da frequência dessa classe no conjunto de teste, o
+que confirma o diagnóstico.
+
+É o comportamento esperado para um treino tão curto: exemplos suficientes para
+memorizar três linhas, insuficientes para associar o conteúdo do contexto à
+decisão certa. A avaliação passou a reportar a distribuição das respostas ao lado
+da esperada, e o notebook avisa sozinho quando uma decisão responde por 80% ou
+mais dos casos — sem esse diagnóstico, um modelo que não decide nada aparenta ter
+desempenho.
+
+### O que concluímos
+
+**O fine-tuning cumpriu o que se propunha.** O objetivo era ensinar o formato, e a
+adesão foi de 0% para 90%. Sem isso, os guardrails descritos abaixo não teriam
+onde se apoiar — eles precisam localizar a decisão e a citação para verificá-las.
+
+**E o treino curto não ensina a decisão.** Reportar apenas a melhora do formato
+seria omitir metade do resultado. Melhorar a decisão é questão de mais dados e
+mais passos — o notebook traz perfis de 103 e 191 passos, alguns minutos a mais
+de GPU —, e não de mudança de método.
+
+A análise completa está em [`docs/relatorio_tecnico.md`](docs/relatorio_tecnico.md),
+seção 7.
 
 ---
 
@@ -564,7 +622,7 @@ guardrail direto para a resposta final, sem tocar na LLM, dispensa explicar o qu
 
 ## Testes
 
-47 testes, rodando em menos de três segundos, sem GPU.
+50 testes, rodando em menos de três segundos, sem GPU.
 
 | Área | O que verificamos |
 | --- | --- |
