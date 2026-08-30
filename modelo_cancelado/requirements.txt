@@ -1,0 +1,45 @@
+# =============================================================================
+# MedGraph - dependencias de execucao
+# Python 3.12 (o 3.13/3.14 ainda nao tem wheels para parte do stack de ML)
+# =============================================================================
+
+# --- Configuracao e utilidades ----------------------------------------------
+python-dotenv>=1.0
+pydantic>=2.7,<3
+pydantic-settings>=2.3,<3
+PyYAML>=6.0
+rich>=13.7                 # console colorido: logs legiveis durante a demo
+tqdm>=4.66
+requests>=2.31
+
+# --- LangChain  [REQ-2] ------------------------------------------------------
+langchain>=0.3,<0.4
+langchain-core>=0.3,<0.4
+langchain-community>=0.3,<0.4
+langchain-openai>=0.2,<0.4
+langchain-ollama>=0.2,<0.4
+langchain-text-splitters>=0.3,<0.4
+
+# --- LangGraph  [REQ-E1] -----------------------------------------------------
+langgraph>=0.2,<0.7
+langgraph-checkpoint-sqlite>=2.0   # persistencia do estado p/ human-in-the-loop
+grandalf>=0.8                      # necessario para app.get_graph().draw_ascii()
+
+# --- RAG  [REQ-2][REQ-3c] ----------------------------------------------------
+faiss-cpu>=1.8
+sentence-transformers>=3.0         # embeddings locais (traz torch junto)
+
+# --- Dados  [REQ-1a][REQ-E2] -------------------------------------------------
+datasets>=2.19                     # download do PubMedQA no Hugging Face
+huggingface-hub>=0.23
+pandas>=2.2
+numpy>=1.26
+
+# --- Avaliacao  [REQ-E3] -----------------------------------------------------
+scikit-learn>=1.5                  # accuracy, macro-F1, matriz de confusao
+matplotlib>=3.8                    # graficos do relatorio tecnico
+tiktoken>=0.7                      # contagem de tokens p/ estimativa de custo
+
+# --- Interface visual --------------------------------------------------------
+streamlit>=1.37
+altair>=5.3
