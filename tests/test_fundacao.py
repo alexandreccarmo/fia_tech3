@@ -464,6 +464,94 @@ class TestRecuperacaoDeCheckpoint:
         with pytest.raises(SystemExit, match="nenhum adapter"):
             localizar_checkpoint(tmp_path / "vazio")
 
+
+class TestPrecisaoDoAdapter:
+    """
+    A conversão do adapter para float16 antes de versionar.
+
+    O adapter nasce em float32 porque o treino em fp16 exige gradientes float32
+    no GradScaler. Isso dobra o tamanho de um artefato que fica no Git — e
+    "cabe no Git" é um dos argumentos do projeto a favor do QLoRA.
+    """
+
+    def _gravar(self, pasta, tensores):
+        from safetensors.torch import save_file
+
+        pasta.mkdir(parents=True, exist_ok=True)
+        save_file(tensores, str(pasta / "adapter_model.safetensors"),
+                  metadata={"format": "pt"})
+        return pasta
+
+    def test_converte_e_reduz_pela_metade(self, tmp_path):
+        """float32 para float16 corta o tamanho ao meio, sem perder o conteúdo."""
+        import torch
+        from safetensors.torch import load_file
+
+        from medgraph.finetune.colab_utils import converter_adapter_para_fp16
+
+        pasta = self._gravar(tmp_path / "adapter", {
+            "lora_A": torch.randn(64, 512, dtype=torch.float32) * 0.02,
+            "lora_B": torch.zeros(512, 64, dtype=torch.float32),
+        })
+
+        resumo = converter_adapter_para_fp16(pasta)
+
+        assert resumo["bytes_depois"] < resumo["bytes_antes"] * 0.6
+        recarregado = load_file(str(pasta / "adapter_model.safetensors"))
+        assert all(t.dtype == torch.float16 for t in recarregado.values())
+
+    def test_recusa_quando_a_perda_excede_o_arredondamento(self, tmp_path):
+        """
+        Valor fora da faixa do float16 aborta a conversão, sem tocar no arquivo.
+
+        Regravar um adapter cuja conversão destrói os pesos seria perder o
+        resultado de horas de treino — e o arquivo original é a única cópia.
+        """
+        import torch
+
+        from medgraph.finetune.colab_utils import converter_adapter_para_fp16
+
+        # 1e30 estoura o limite do float16 (65504) e vira inf.
+        pasta = self._gravar(tmp_path / "adapter", {
+            "lora_A": torch.tensor([[1e30, 1.0]], dtype=torch.float32),
+        })
+        antes = (pasta / "adapter_model.safetensors").read_bytes()
+
+        with pytest.raises(ValueError):
+            converter_adapter_para_fp16(pasta)
+
+        assert (pasta / "adapter_model.safetensors").read_bytes() == antes, (
+            "o adapter foi alterado apesar de a validacao ter falhado"
+        )
+
+    def test_registra_a_conversao_no_cartao_de_treino(self, tmp_path):
+        """
+        O cartão é o registro de procedência: transformação posterior entra nele.
+
+        Sem isso, alguém que abrisse o cartão meses depois concluiria que o
+        treino produziu float16 — e procuraria no lugar errado ao investigar
+        qualquer diferença de precisão.
+        """
+        import json
+
+        import torch
+
+        from medgraph.finetune.colab_utils import converter_adapter_para_fp16
+
+        pasta = self._gravar(tmp_path / "adapter", {
+            "lora_A": torch.randn(8, 8, dtype=torch.float32) * 0.01,
+        })
+        (pasta / "cartao_de_treino.json").write_text(
+            json.dumps({"modelo_base": "x"}), encoding="utf-8"
+        )
+
+        converter_adapter_para_fp16(pasta)
+
+        cartao = json.loads((pasta / "cartao_de_treino.json").read_text(encoding="utf-8"))
+        assert cartao["precisao_do_adapter"] == "float16"
+        assert "float32 para float16" in cartao["conversao_posterior"]
+        assert cartao["modelo_base"] == "x", "o cartao perdeu dados existentes"
+
     def test_classe_opaca_recebe_tudo_em_vez_de_perder_configuracao(self):
         """
         Sem conseguir descobrir os nomes aceitos, é melhor passar tudo.

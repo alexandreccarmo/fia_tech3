@@ -63,7 +63,7 @@ data/processed/*
 !data/processed/resumo_etapa1.json
 
 # Modelos --------------------------------------------------------------------
-# O adapter LoRA (~50 MB) E versionado em models/adapters/ porque e o
+# O adapter LoRA (~46 MiB em float16) E versionado em models/adapters/ porque e o
 # artefato central do fine-tuning. O GGUF (~2 GB) fica no Hugging Face Hub
 # e e baixado por scripts/baixar_modelo.py.
 models/gguf/

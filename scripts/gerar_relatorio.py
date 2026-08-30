@@ -260,6 +260,18 @@ def bloco_treino(cfg) -> str:
         )
 
     dados = json.loads(cartoes[0].read_text(encoding="utf-8"))
+
+    def perda(valor) -> str:
+        """
+        Quatro casas bastam para ler uma curva de perda.
+
+        O cartao guarda o float como o treinador o produziu, com dezesseis
+        casas. Isso e correto no registro de procedencia e ilegivel num
+        relatorio: "2.169977569580078" nao informa mais que "2.1700", e ainda
+        sugere uma precisao que a medida nao tem.
+        """
+        return "—" if valor is None else f"{float(valor):.4f}"
+
     linhas = [
         "| Item | Valor |", "| --- | --- |",
         f"| Modelo base | `{dados['modelo_base']}` |",
@@ -267,8 +279,10 @@ def bloco_treino(cfg) -> str:
         f"| GPU | {dados['gpu']['nome']} ({dados['gpu']['memoria_gb']} GB) |",
         f"| Exemplos de treino | {dados['dados']['treino']:,} |",
         f"| Duração | {dados['duracao_legivel']} |",
-        f"| Perda de treino | {dados['perda_treino_inicial']} → {dados['perda_treino_final']} |",
-        f"| Perda de validação | {dados['perda_validacao_inicial']} → {dados['perda_validacao_final']} |",
+        f"| Perda de treino | {perda(dados['perda_treino_inicial'])} → "
+        f"{perda(dados['perda_treino_final'])} |",
+        f"| Perda de validação | {perda(dados['perda_validacao_inicial'])} → "
+        f"{perda(dados['perda_validacao_final'])} |",
         "",
         "| Hiperparâmetro | Valor |", "| --- | --- |",
     ]

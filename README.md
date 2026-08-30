@@ -277,7 +277,7 @@ fia_tech3/
 │   └── indices/                 Índices FAISS persistidos
 │
 ├── models/
-│   ├── adapters/                Adapter LoRA (versionado — ~50 MB)
+│   ├── adapters/                Adapter LoRA em float16 (versionado — ~46 MiB)
 │   └── gguf/                    Modelo quantizado (fora do Git — baixado do HF Hub)
 │
 ├── notebooks/colab/             Notebooks de fine-tuning e exportação

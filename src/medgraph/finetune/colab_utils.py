@@ -446,6 +446,92 @@ def montar_treinador(modelo, tokenizador, dados_treino, dados_validacao, configu
 # =============================================================================
 # RESULTADOS
 # =============================================================================
+def converter_adapter_para_fp16(diretorio: str | Path) -> dict[str, Any]:
+    """
+    [REQ-1] Regrava os pesos do adapter em float16, validando a conversao.
+
+    POR QUE O ADAPTER NASCE EM FLOAT32:
+        Treinar em fp16 exige gradientes float32 no GradScaler, e por isso
+        `alinhar_precisao_dos_adaptadores` converte os parametros treinaveis
+        antes do treino. O `save_pretrained` grava na precisao em que os pesos
+        estao - float32.
+
+    POR QUE ELE NAO PRECISA CONTINUAR ASSIM:
+        A float32 e exigencia do TREINO, nao do artefato. Na fusao, o modelo
+        base e carregado em float16 e o merge converteria o adapter de qualquer
+        forma: o modelo final sai identico. O que muda e o tamanho - 92,8 MiB
+        contra 46,4 MiB para 24,3 milhoes de parametros.
+
+        Isso importa porque o adapter e versionado no Git, e "cabe no Git" e um
+        dos argumentos do projeto a favor do QLoRA.
+
+    A VALIDACAO:
+        Comparamos o erro maximo absoluto com a MAGNITUDE de cada tensor, e nao
+        elemento a elemento. Erro relativo por elemento acusa 100% sempre que um
+        valor da ordem de 1e-10 vira zero - o que e irrelevante para o resultado
+        e faria a verificacao rejeitar uma conversao correta.
+    """
+    import torch
+    from safetensors.torch import load_file, save_file
+
+    diretorio = Path(diretorio)
+    caminho = diretorio / "adapter_model.safetensors"
+    if not caminho.exists():
+        raise FileNotFoundError(f"adapter nao encontrado em {caminho}")
+
+    tamanho_antes = caminho.stat().st_size
+    original = load_file(str(caminho))
+
+    convertido: dict[str, Any] = {}
+    pior = 0.0
+    for nome, tensor in original.items():
+        if tensor.dtype != torch.float32:
+            convertido[nome] = tensor
+            continue
+        meio = tensor.to(torch.float16)
+        escala = tensor.abs().max().item()
+        if escala > 0:
+            erro = (meio.to(torch.float32) - tensor).abs().max().item() / escala
+            pior = max(pior, erro)
+        convertido[nome] = meio
+
+    # 1e-3 e a ordem do epsilon do float16 (9.77e-04). Acima disso, algo alem do
+    # arredondamento aconteceu, e regravar seria destruir o resultado do treino.
+    if pior >= 1e-3:
+        raise ValueError(
+            f"perda de precisao de {pior:.2e} excede o arredondamento do float16; "
+            "o adapter NAO foi alterado"
+        )
+    if any(torch.isinf(t).any() or torch.isnan(t).any() for t in convertido.values()):
+        raise ValueError("a conversao produziu inf ou NaN; o adapter NAO foi alterado")
+
+    save_file(convertido, str(caminho), metadata={"format": "pt"})
+    tamanho_depois = caminho.stat().st_size
+
+    resumo = {
+        "tensores": len(convertido),
+        "erro_relativo_maximo": pior,
+        "bytes_antes": tamanho_antes,
+        "bytes_depois": tamanho_depois,
+    }
+
+    # O cartao de treino e o registro de procedencia: se o artefato foi
+    # transformado depois do treino, isso precisa estar escrito nele.
+    cartao = diretorio / "cartao_de_treino.json"
+    if cartao.exists():
+        dados = json.loads(cartao.read_text(encoding="utf-8"))
+        dados["precisao_do_adapter"] = "float16"
+        dados["conversao_posterior"] = (
+            "adaptadores regravados de float32 para float16 apos o treino; "
+            f"erro maximo relativo a escala do tensor: {pior:.2e}"
+        )
+        cartao.write_text(
+            json.dumps(dados, ensure_ascii=False, indent=2), encoding="utf-8"
+        )
+
+    return resumo
+
+
 def grafico_de_perda(historico: list[dict[str, Any]], destino: str | Path) -> str:
     """
     Desenha a curva de perda de treino e de validacao.

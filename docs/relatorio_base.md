@@ -94,7 +94,7 @@ O diagrama do fluxo, gerado pelo próprio LangGraph, está em
 
 | Decisão | Alternativa descartada | Por quê |
 | --- | --- | --- |
-| Fine-tuning com **QLoRA no Colab** | Fine-tuning completo; treino local | 9 GB de VRAM contra 48; adapter de 50 MB contra 6 GB; cabe na T4 gratuita, onde o Apple Silicon não roda |
+| Fine-tuning com **QLoRA no Colab** | Fine-tuning completo; treino local | 9 GB de VRAM contra 48; adapter de 46 MiB contra 6 GB; cabe na T4 gratuita, onde o Apple Silicon não roda |
 | Modelo servido pelo **Ollama** | `transformers` + MPS local | ~35 tok/s contra ~8; roda offline; é o mesmo padrão da Aula 05, então o código LangChain não muda |
 | **Embeddings locais** (`multilingual-e5-small`) | `text-embedding-3-small` | Cobre inglês e português no mesmo espaço vetorial, custa zero e permite reconstruir o índice dezenas de vezes durante o desenvolvimento |
 | **FAISS** | Chroma, Qdrant | Mesmo *vector store* das aulas, persistente, sem serviço externo |
@@ -172,10 +172,10 @@ medindo recuperação em vez de raciocínio.
 | --- | --- | --- |
 | VRAM necessária (3B) | ~48 GB | **~9 GB** |
 | Parâmetros treinados | 3,2 bilhões | **~24 milhões** (0,7%) |
-| Artefato gerado | ~6 GB | **~50 MB** |
+| Artefato gerado | ~6 GB | **~46 MiB** |
 | Cabe na T4 gratuita | não | **sim** |
 
-Os 50 MB do adapter cabem no Git — o resultado do treino fica versionado junto
+Os 46 MiB do adapter cabem no Git — o resultado do treino fica versionado junto
 com o código que o produziu.
 
 ### 4.2 Escolha do modelo base
@@ -805,6 +805,7 @@ também no código.
 | Dados de paciente são sintéticos | O desempenho em prontuário real é desconhecido | Validação em ambiente controlado com dados reais |
 | O corpus de evidência é o PubMedQA | Não cobre a literatura biomédica inteira | Indexação de base bibliográfica completa |
 | A avaliação usa uma amostra do conjunto de teste | Intervalo de confiança maior que o do conjunto completo | `make avaliar --completo` (~1 h por sistema) |
+| O fine-tuning usou 2.000 dos 3.871 exemplos, em 1 época | Menos convergência do que a configuração projetada | Rodada completa (~6 h de T4), acima da cota diária do Colab gratuito |
 | Não houve validação clínica por médico | O sistema não está apto a uso assistencial | Estudo prospectivo com supervisão médica |
 
 **Este é um projeto acadêmico.** Não foi submetido a comitê de ética, não passou
