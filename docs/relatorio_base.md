@@ -94,7 +94,7 @@ O diagrama do fluxo, gerado pelo próprio LangGraph, está em
 
 | Decisão | Alternativa descartada | Por quê |
 | --- | --- | --- |
-| Fine-tuning com **QLoRA no Colab** | Fine-tuning completo; treino local | 9 GB de VRAM contra 48; adapter de 50 MB contra 6 GB; a T4 gratuita treina em ~1 h o que o Apple Silicon levaria várias |
+| Fine-tuning com **QLoRA no Colab** | Fine-tuning completo; treino local | 9 GB de VRAM contra 48; adapter de 50 MB contra 6 GB; cabe na T4 gratuita, onde o Apple Silicon não roda |
 | Modelo servido pelo **Ollama** | `transformers` + MPS local | ~35 tok/s contra ~8; roda offline; é o mesmo padrão da Aula 05, então o código LangChain não muda |
 | **Embeddings locais** (`multilingual-e5-small`) | `text-embedding-3-small` | Cobre inglês e português no mesmo espaço vetorial, custa zero e permite reconstruir o índice dezenas de vezes durante o desenvolvimento |
 | **FAISS** | Chroma, Qdrant | Mesmo *vector store* das aulas, persistente, sem serviço externo |
@@ -707,6 +707,45 @@ Makefile.
 **A lição:** a mesma de 8.8, e ela não tinha sido inteiramente aprendida —
 verificar que as peças de um comando existem não é o mesmo que exercitar o
 comando.
+
+### 8.11 A estimativa de tempo que ninguém tinha medido
+
+O guia do Colab afirmava que a célula de treino levava **~50 minutos**, o README e
+a Seção 2 diziam que a T4 gratuita treina um modelo de 3B em **~1 hora**, e a
+tabela de células chamava o treino de "a mais demorada, ~10× a célula 7".
+
+A primeira execução real mediu **42 segundos por passo**. São 484 passos: **5 horas
+e 40 minutos**. A estimativa errava por quase sete vezes.
+
+Não havia defeito no código. QLoRA em 4 bits é lento numa T4 porque cada
+multiplicação de matriz desquantiza os pesos antes de calcular — o número
+publicado simplesmente nunca tinha sido confrontado com uma execução. Ele veio de
+ordem de grandeza plausível, foi escrito com a confiança de um dado, e se
+propagou para três documentos.
+
+O dano foi real e imediato. Quem planejou a tarde contando com uma hora encontrou
+a cota diária de GPU esgotada no meio do caminho, com o treino incompleto e sem
+adapter — e a cota do Colab gratuito é justamente o recurso que não se recupera
+esperando.
+
+O que torna este defeito desconfortável é o lugar onde ele aparece. Este relatório
+tem uma seção inteira sobre números decorativos, e `tests/test_documentacao.py`
+existe porque cinco arquivos afirmaram "doze nós" sobre um grafo de quatorze. A
+diferença é que aquele número era verificável por código, e este só por
+cronômetro: nenhum teste roda um fine-tuning de cinco horas para conferir uma
+frase. **A disciplina que a suíte impunha automaticamente não se estendia ao que
+ela não alcança.**
+
+A correção troca a estimativa pela medição, em todos os lugares, e diz de onde o
+número veio — 42 s/passo, T4, Qwen2.5-3B, configuração padrão do projeto. O guia
+ganhou também uma receita de treino curto e a tabela de opções para a rodada de
+entrega, porque a consequência da medição é que **a rodada completa não cabe na
+cota diária do plano gratuito** — e isso é informação de planejamento, não
+curiosidade.
+
+**A lição:** um número que nunca foi medido não é uma estimativa, é um palpite com
+tipografia de dado. Quando não der para medir, o honesto é escrever que não foi
+medido.
 
 ---
 

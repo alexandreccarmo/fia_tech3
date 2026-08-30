@@ -114,7 +114,7 @@ tabela de avaliação passa a trazer as duas colunas.
 
 | Decisão | Por quê |
 | --- | --- |
-| **Fine-tuning no Google Colab** | QLoRA em GPU T4 gratuita treina um modelo de 3B em ~1 h; no Apple Silicon levaria horas |
+| **Fine-tuning no Google Colab** | QLoRA cabe na T4 gratuita, que tem CUDA; o Apple Silicon não roda bitsandbytes em 4 bits |
 | **Modelo servido pelo Ollama** | Mesmo padrão visto na Aula 05, roda offline, ~35 tok/s num M1, custo zero por consulta |
 | **Embeddings locais** | `multilingual-e5-small` cobre inglês (artigos) e português (protocolos) sem custo recorrente |
 | **FAISS** | Mesmo *vector store* usado nas aulas de LangGraph, persistido em disco |

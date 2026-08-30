@@ -3,8 +3,12 @@
 **MedGraph · Tech Challenge Fase 3 · 8IADT**
 
 Esta é a única etapa do projeto que não roda no MacBook: ajustar um modelo de 3
-bilhões de parâmetros exige GPU com CUDA. Tempo total: **60 a 90 minutos**, quase
-todo de espera.
+bilhões de parâmetros exige GPU com CUDA.
+
+**Reserve de 6 a 7 horas** para a rodada completa na T4 gratuita — quase tudo de
+espera. Se isso não couber no seu dia, leia *Treinar em menos tempo* mais abaixo
+antes de começar: há uma receita de teste rápido e as opções para a rodada de
+entrega.
 
 ---
 
@@ -38,7 +42,7 @@ O modelo é *gated*: exige aceite, gratuito e com aprovação imediata.
 > **Mas entenda o que isso custa.** Um adapter LoRA são matrizes com as dimensões
 > da arquitetura em que foi treinado: o do Qwen **não serve** para o Llama. Se o
 > aceite sair e você quiser entregar com Llama, o treino é refeito do zero
-> (~50 min) e a exportação também (~25 min). O que você ganha rodando o Qwen é
+> (~5 h 40) e a exportação também (~25 min). O que você ganha rodando o Qwen é
 > validar o pipeline inteiro antes; o modelo em si é descartável.
 
 > **Se o aceite não sair, ou você não quiser esperar:** a célula 7 traz a
@@ -107,7 +111,7 @@ baixando o modelo.
 | 7 | Baixa os pesos e quantiza | 3–8 min | Baixa ~6 GB em fp16; a quantização para 4 bits é em memória |
 | 8 | Configura o LoRA | instantâneo | Mostra quantos parâmetros treinam |
 | 9 | Monta o treinador | instantâneo | Informa quantos passos serão dados |
-| **10** | **Treina** | **~50 min** | A mais demorada, ~10× a célula 7. **Mantenha a aba aberta** |
+| **10** | **Treina** | **~5 h 40** | Medido: 42 s/passo × 484 passos numa T4. Veja *Treinar em menos tempo* |
 | 11 | Desenha a curva de perda | instantâneo | Validação deve cair junto com o treino |
 | 12 | Testa o formato em 5 exemplos | ~1 min | Espera-se 4 ou 5 acertos de formato |
 | 13 | Grava o adapter | ~10 s | ~50 MB |
@@ -193,8 +197,74 @@ não dá para rodar o comando de retomada direto. O procedimento é:
 resultado = treinador.train(resume_from_checkpoint=True)
 ```
 
-Ele retoma do checkpoint mais recente. Parado no passo 300 de 483, faltam ~20
-minutos em vez de 50.
+Ele retoma do checkpoint mais recente. Parado no passo 300 de 484, faltam ~2 h em
+vez de 5 h 40.
+
+### Treinar em menos tempo
+
+**O número medido:** numa T4 do Colab gratuito, com Qwen2.5-3B e a configuração
+padrão do projeto, o treino roda a **42 segundos por passo**. São 484 passos (3.871
+exemplos, 2 épocas, lote efetivo 16), ou seja **~5 h 40 min**.
+
+Isso é o comportamento normal do QLoRA em 4 bits numa T4, e não um defeito: cada
+multiplicação de matriz precisa desquantizar os pesos antes de calcular. Não
+adianta procurar o que está errado — não há.
+
+A consequência prática é séria: **a rodada completa não cabe na cota diária do
+Colab gratuito**, que costuma ficar entre 3 e 4 horas de GPU.
+
+#### Teste rápido — validar o pipeline em ~20 minutos
+
+Serve para confirmar que tudo roda de ponta a ponta com um modelo base novo, sem
+gastar a tarde. Cole numa célula **entre a 6 e a 7** — ela precisa de `dados`, que
+a célula 6 cria:
+
+```python
+# Treino curto: valida o pipeline, NAO produz o modelo da entrega.
+ALVO_MIN       = 20
+SEG_POR_PASSO  = 45     # medido: 42 s/passo numa T4; margem para o Llama, um pouco maior
+LOTE_EFETIVO   = (colab_utils.CONFIG_PADRAO["per_device_train_batch_size"]
+                  * colab_utils.CONFIG_PADRAO["gradient_accumulation_steps"])
+
+passos   = int(ALVO_MIN * 60 / SEG_POR_PASSO)
+exemplos = passos * LOTE_EFETIVO
+
+colab_utils.CONFIG_PADRAO["num_train_epochs"] = 1
+# A escala dos intervalos acompanha o treino. Com os valores padrao (eval a cada
+# 100 passos) um treino de 26 passos nao avaliaria nenhuma vez, e a curva de
+# perda da celula 11 sairia sem a linha de validacao.
+colab_utils.CONFIG_PADRAO["logging_steps"]    = 2
+colab_utils.CONFIG_PADRAO["eval_steps"]       = max(1, passos // 4)
+colab_utils.CONFIG_PADRAO["save_steps"]       = passos
+colab_utils.CONFIG_PADRAO["save_total_limit"] = 1
+
+dados["train"]      = dados["train"].shuffle(seed=42).select(range(min(exemplos, len(dados["train"]))))
+dados["validation"] = dados["validation"].select(range(min(64, len(dados["validation"]))))
+
+print(f"Treino curto: {len(dados['train'])} exemplos, ~{passos} passos, ~{ALVO_MIN} min")
+```
+
+Com ~26 passos o modelo mal começa a aprender. **Não espere 4 ou 5 na célula 12** —
+o objetivo aqui é ver o pipeline funcionar, não o modelo ficar bom. Julgar a
+qualidade por este treino levaria à conclusão errada.
+
+#### Para a rodada de entrega
+
+| Caminho | Tempo | O que custa |
+| --- | ---: | --- |
+| Padrão (2 épocas, 3.871 ex.) | ~5 h 40 | Não cabe na cota gratuita |
+| 1 época | ~2 h 50 | Menos convergência; cabe numa sessão longa |
+| 1 época + 2.000 exemplos | ~1 h 30 | Dataset menor — declarar no relatório |
+| Duas sessões com `USAR_DRIVE = True` | 2 × ~3 h | Nada na qualidade; exige retomar do checkpoint |
+| Colab Pro (L4 ou A100) | ~30–60 min | Assinatura mensal |
+
+Há ainda uma alavanca de velocidade sem perda de dados: desligar o
+`use_gradient_checkpointing` na célula 8 acelera de 30 a 40%, ao custo de bem mais
+VRAM — na T4 isso pode estourar, e o estouro vem no meio do treino.
+
+Não reduza o `max_seq_length` para ganhar tempo: os exemplos têm ~900 tokens em
+média, e cortar para 512 truncaria a resposta esperada na metade deles. O modelo
+aprenderia a responder pela metade.
 
 ### Trocar de modelo base depois de já ter treinado
 
