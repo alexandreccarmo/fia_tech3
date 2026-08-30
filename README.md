@@ -298,29 +298,118 @@ pacotes que o Colab traz de fábrica e que não usamos.
 | 9 | Fluxo LangGraph: quatro consultas, quatro caminhos | 2 min |
 | 10 | Conclusão | — |
 
-### Na sua máquina — sem GPU, em segundos
+### Na sua máquina — sem GPU
 
-Serve para conferir a lógica de segurança, o prontuário e o roteamento sem
-depender do Colab.
+O treino precisa de GPU, mas todo o resto do projeto roda na sua máquina em
+segundos: as regras clínicas, a anonimização, a consulta ao prontuário, o
+roteamento do grafo e a trilha de auditoria. Usamos isso durante o
+desenvolvimento inteiro — corrigir uma regra de segurança não deveria custar uma
+sessão de Colab.
+
+#### Pré-requisitos
+
+| Item | Versão | Como conferir |
+| --- | --- | --- |
+| Python | 3.10 ou superior | `python3 --version` |
+| git | qualquer | `git --version` |
+
+Não é necessário GPU, nem conta em serviço nenhum. A instalação ocupa cerca de
+1,5 GB, quase tudo do `torch`, que vem como dependência do `transformers`.
+
+#### Passo 1 — clonar o repositório
 
 ```bash
 git clone https://github.com/alexandreccarmo/fia_tech3.git
 cd fia_tech3
+```
+
+#### Passo 2 — criar o ambiente
+
+```bash
 make setup
 ```
+
+O alvo cria um ambiente virtual em `.venv/`, atualiza o `pip` e instala as
+dependências do `requirements.txt` mais `pytest` e `ruff`. Leva de 2 a 5 minutos,
+conforme a conexão — a maior parte é o download do `torch`.
+
+Ao terminar, imprime `Pronto. Rode: make testes`.
+
+> **Por que um ambiente virtual.** As versões que o projeto usa não devem
+> interferir no Python do sistema. Todos os alvos do `Makefile` chamam
+> `.venv/bin/python` explicitamente, então não é preciso ativar nada.
+
+#### Passo 3 — rodar os testes
 
 ```bash
 make testes
 ```
 
+São 48 testes, em menos de quatro segundos. A saída termina com:
+
+```
+48 passed, 1 warning in 2.83s
+```
+
+O aviso é do `langgraph` anunciando uma mudança futura numa API interna que não
+usamos diretamente. Pode ignorar.
+
+Se algum teste falhar, o nome dele diz o que quebrou — cada teste cobre uma
+afirmação específica, e a docstring explica por que aquilo importa.
+
+#### Passo 4 — ver o fluxo funcionando
+
 ```bash
 make demo
 ```
 
-O `make demo` percorre os quatro casos da apresentação e imprime, para cada um,
-o caminho no grafo, os alertas levantados e a resposta final. Só a geração de
-texto é simulada — guardrails, prontuário, recuperação e roteamento executam de
-verdade. Usamos isso para ensaiar sem gastar a cota de GPU do Colab.
+Este é o comando mais útil para entender o projeto sem abrir o Colab. Ele
+executa as quatro consultas da apresentação e imprime, para cada uma:
+
+- o **caminho percorrido no grafo**, nó a nó, com a latência de cada etapa;
+- os **alertas levantados** pelos guardrails, com a severidade de cada um;
+- a **resposta final**, com fontes e o aviso de que não substitui avaliação
+  médica.
+
+O que observar:
+
+| Caso | O que deve acontecer |
+| --- | --- |
+| Conflito de alergia | Passa por `validacao_humana` e a resposta sai marcada como **`[RETIDA]`** |
+| Interação de fármacos | Mesmo desfecho, por outro motivo — varfarina com amiodarona |
+| Consulta simples | Percorre o caminho completo sem alertas |
+| Pedido fora do escopo | Só dois nós: `guardrail_entrada` e `montar_resposta`. **Não chega à LLM** |
+
+No fim, o comando informa quantos eventos a trilha de auditoria registrou.
+
+> **O que é simulado aqui.** Apenas duas coisas: a geração de texto (as respostas
+> são fixas) e a busca de evidência, que usa sobreposição de palavras em vez de
+> embeddings — o demo roda sem GPU e sem baixar modelo. Guardrails, prontuário,
+> regras clínicas, roteamento e auditoria executam exatamente como no Colab.
+
+#### Comandos disponíveis
+
+```bash
+make ajuda
+```
+
+| Comando | O que faz |
+| --- | --- |
+| `make setup` | Cria o ambiente e instala as dependências |
+| `make testes` | Roda a suíte |
+| `make demo` | Executa o fluxo no terminal |
+| `make lint` | Verifica estilo com o `ruff` |
+| `make formatar` | Corrige estilo e ordena imports |
+| `make limpar` | Remove caches e arquivos gerados |
+
+#### Se algo falhar
+
+| Sintoma | Causa provável | O que fazer |
+| --- | --- | --- |
+| `make: command not found` | `make` não instalado | No macOS, `xcode-select --install` |
+| Erro na instalação do `torch` | Python 3.13 ou superior | O stack de ML ainda não tem *wheels*; use 3.10 a 3.12 |
+| `ModuleNotFoundError: medgraph_lite` | Rodou o `pytest` direto, fora do `make` | Use `make testes` — ele ajusta o `PYTHONPATH` |
+| Testes falham após alterar código | Comportamento mudou | O nome do teste indica o quê; a docstring explica por que aquilo é verificado |
 
 ---
 

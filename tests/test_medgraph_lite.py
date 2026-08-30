@@ -508,6 +508,29 @@ class TestGraficos:
 # INTEGRIDADE DO PROJETO  [REQ-4]
 # =============================================================================
 class TestIntegridade:
+    def test_readme_so_cita_comandos_que_existem(self):
+        """
+        REGRESSAO — o README e o roteiro de quem chega ao projeto pela primeira vez.
+
+        Um `make` citado ali e a primeira coisa que a pessoa digita. Se o alvo
+        nao existir, ela conclui que o projeto esta quebrado antes de ver
+        qualquer parte dele funcionar - e o erro do `make` nao ajuda a
+        distinguir "comando errado na documentacao" de "projeto com defeito".
+        """
+        import re
+        from pathlib import Path
+
+        raiz = Path(__file__).parent.parent
+        alvos = set(re.findall(r"^([a-z][a-z-]*):", (raiz / "Makefile").read_text(
+            encoding="utf-8"), re.MULTILINE))
+        citados = set(re.findall(r"make ([a-z][a-z-]*)",
+                                 (raiz / "README.md").read_text(encoding="utf-8")))
+
+        inexistentes = citados - alvos
+        assert not inexistentes, (
+            f"o README manda rodar alvos que o Makefile nao tem: {sorted(inexistentes)}"
+        )
+
     def test_notebook_e_json_valido(self):
         """Um .ipynb corrompido so falha quando alguem tenta abri-lo no Colab."""
         import json
