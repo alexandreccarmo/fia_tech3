@@ -307,6 +307,89 @@ class TestFiltroDeArgumentos:
         assert "max_length" in aceitos
         assert descartados == ["inexistente"]
 
+    def test_argumento_valido_sobrevive_a_introspeccao_cega(self):
+        """
+        REGRESSÃO — `warmup_ratio` continuou sendo descartado no Colab.
+
+        O teste acima usa dataclasses sintéticas e passava, enquanto o
+        `SFTConfig` da versão instalada no Colab seguia descartando o
+        argumento. Um teste que não consegue exercitar a classe real não
+        protege dela — e `trl` não é dependência da máquina local, então
+        nenhum teste daqui jamais a exercitará.
+
+        A classe abaixo reproduz o caso que derrota a introspecção: aceita
+        `warmup_ratio`, mas não é dataclass, não tem anotações e recebe tudo
+        por `**kwargs`. Nada no lado de fora consegue descobrir que ela o
+        aceita — só tentando.
+        """
+        from medgraph.finetune.colab_utils import _construir_tolerante, _filtrar_argumentos
+
+        class ConfigOpaca:
+            PERMITIDOS = {"warmup_ratio", "seed"}
+
+            def __init__(self, **kwargs):
+                recusados = sorted(set(kwargs) - self.PERMITIDOS)
+                if recusados:
+                    raise TypeError(
+                        "__init__() got an unexpected keyword argument "
+                        f"'{recusados[0]}'"
+                    )
+                self.recebidos = kwargs
+
+        desejados = {"warmup_ratio": 0.03, "seed": 42, "obsoleto": 1}
+
+        # A abordagem antiga descarta o argumento valido.
+        aceitos, _ = _filtrar_argumentos(ConfigOpaca, desejados)
+        assert "warmup_ratio" not in aceitos, (
+            "a premissa do teste mudou: a introspeccao passou a enxergar a classe"
+        )
+
+        # A nova preserva tudo o que a classe realmente aceita.
+        instancia, descartados = _construir_tolerante(ConfigOpaca, desejados)
+        assert instancia.recebidos == {"warmup_ratio": 0.03, "seed": 42}
+        assert descartados == ["obsoleto"]
+
+    def test_erro_de_validacao_nao_e_mascarado(self):
+        """
+        Só argumento recusado é descartado; erro de configuração precisa subir.
+
+        Um `SFTConfig` com `save_steps` que não é múltiplo de `eval_steps`
+        levanta `ValueError` — e essa é uma informação que o operador precisa
+        ver. Se a construção tolerante engolisse exceções em geral, ela
+        transformaria um erro claro numa configuração silenciosamente diferente
+        da pedida, que é exatamente o defeito que ela existe para evitar.
+        """
+        import pytest
+
+        from medgraph.finetune.colab_utils import _construir_tolerante
+
+        class ConfigQueValida:
+            def __init__(self, **kwargs):
+                if kwargs.get("save_steps", 0) % kwargs.get("eval_steps", 1):
+                    raise ValueError("save_steps precisa ser multiplo de eval_steps")
+
+        with pytest.raises(ValueError, match="multiplo"):
+            _construir_tolerante(ConfigQueValida, {"save_steps": 25, "eval_steps": 15})
+
+    def test_type_error_alheio_nao_vira_descarte(self):
+        """
+        Um `TypeError` de dentro da classe não é motivo para remover argumentos.
+
+        Sem esta distinção, um defeito no corpo do `__init__` faria a função
+        remover argumentos um a um até a lista esvaziar, e o erro final não teria
+        relação nenhuma com a causa.
+        """
+        import pytest
+
+        from medgraph.finetune.colab_utils import _construir_tolerante
+
+        class ConfigComDefeito:
+            def __init__(self, **kwargs):
+                raise TypeError("unsupported operand type(s) for +: 'int' and 'str'")
+
+        with pytest.raises(TypeError, match="unsupported operand"):
+            _construir_tolerante(ConfigComDefeito, {"seed": 42})
+
     def test_classe_opaca_recebe_tudo_em_vez_de_perder_configuracao(self):
         """
         Sem conseguir descobrir os nomes aceitos, é melhor passar tudo.

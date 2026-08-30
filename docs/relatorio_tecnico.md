@@ -837,6 +837,48 @@ curiosidade.
 tipografia de dado. Quando não der para medir, o honesto é escrever que não foi
 medido.
 
+### 8.12 O teste de regressão que não podia falhar
+
+O `SFTConfig` do `trl` renomeou argumentos várias vezes, e o projeto se protege
+disso filtrando a configuração: descobre por introspecção quais nomes a classe
+aceita e descarta o resto, imprimindo o que descartou.
+
+Um treino real mostrou que o filtro errava **para menos** — descartava
+`warmup_ratio`, um campo legítimo —, e o treino rodava sem aquecimento da taxa de
+aprendizado sem que ninguém percebesse. A correção passou a consultar três fontes
+(campos da dataclass, anotações da hierarquia, assinatura do `__init__`) e ganhou
+um teste de regressão.
+
+O teste passava. E o Colab continuava imprimindo `IGNORADOS: ['warmup_ratio']`.
+
+O motivo é que o teste construía a situação com duas dataclasses sintéticas,
+`Base` e `Derivada`. Ele verificava que a **lógica de introspecção** funciona
+sobre uma hierarquia de dataclasses — coisa que ninguém duvidava. O que
+importava era outra: se ela funciona sobre o `SFTConfig` da versão instalada. E
+essa pergunta o teste não podia responder, porque `trl` não é dependência da
+máquina local. Nenhum teste da suíte jamais tocou a classe real.
+
+O teste tinha, portanto, a forma de uma regressão e o conteúdo de uma tautologia.
+Ele dava a sensação de cobertura sobre exatamente o ponto que continuava
+descoberto — o que é pior do que não existir, porque encerrou a investigação.
+
+A correção troca a estratégia em vez de melhorar a introspecção. A pergunta
+"quais argumentos esta classe aceita?" não precisa ser respondida por inspeção:
+basta **tentar construir com todos e remover apenas o que o `TypeError` nomear**.
+A fonte de verdade passa a ser a própria biblioteca, que nunca erra sobre si
+mesma. Erros de validação — um `ValueError` de `save_steps` incompatível com
+`eval_steps`, por exemplo — continuam subindo intactos: descartar argumento
+recusado é uma coisa, mascarar configuração inválida é outra.
+
+Os testes novos exercitam uma classe construída para derrotar a introspecção —
+aceita `warmup_ratio` por `**kwargs`, sem ser dataclass e sem anotações — e um
+deles afirma explicitamente que o mecanismo antigo descartaria o argumento. Se
+alguém reintroduzir a filtragem por inspeção, esse teste falha.
+
+**A lição:** antes de escrever o teste de uma correção, vale perguntar o que
+precisaria estar quebrado para ele falhar. Se a resposta não incluir o defeito
+original, o teste está medindo outra coisa.
+
 ---
 
 ## 9. Limitações declaradas
@@ -875,7 +917,7 @@ varrendo as tags `[REQ-xx]` das docstrings.
 ### Suíte de testes
 
 ```
-======================== 179 passed, 1 warning in 2.41s ========================
+======================== 182 passed, 1 warning in 3.94s ========================
 ```
 
 ---

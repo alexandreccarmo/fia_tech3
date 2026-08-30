@@ -34,6 +34,7 @@ import contextlib
 import dataclasses
 import inspect
 import json
+import re
 from pathlib import Path
 from typing import Any
 
@@ -263,6 +264,51 @@ def _filtrar_argumentos(classe, argumentos: dict[str, Any]) -> tuple[dict[str, A
     return aceitos, descartados
 
 
+_KWARG_RECUSADO = re.compile(r"unexpected keyword argument '([^']+)'")
+
+
+def _construir_tolerante(classe, argumentos: dict[str, Any]):
+    """
+    [REQ-1] Instancia a classe descartando so o que ela mesma recusar.
+
+    POR QUE NAO BASTA INSPECIONAR A CLASSE ANTES:
+        A abordagem anterior descobria por introspecao quais nomes a classe
+        aceitava e filtrava o resto. O problema e que a introspecao pode errar
+        para menos - e errar para menos aqui significa descartar configuracao
+        VALIDA, em silencio, com o treino rodando diferente do pretendido.
+
+        Foi o que aconteceu com `warmup_ratio` numa execucao real: o teste de
+        regressao usava dataclasses sinteticas e passava, enquanto o `SFTConfig`
+        da versao instalada no Colab continuava tendo o argumento descartado. Um
+        teste que nao consegue exercitar a classe real nao protege dela.
+
+        Aqui a fonte de verdade passa a ser a propria biblioteca: tentamos
+        construir com tudo, e so removemos o argumento que o `TypeError` nomear.
+        O que ela aceitar, ela recebe.
+
+    O QUE CONTINUA PROPAGANDO:
+        Qualquer `TypeError` que nao seja sobre um argumento nosso, e qualquer
+        outra excecao - `ValueError` de validacao, por exemplo. Mascarar erro de
+        configuracao seria trocar um defeito silencioso por outro.
+    """
+    restantes = dict(argumentos)
+    descartados: list[str] = []
+
+    # No pior caso removemos um argumento por tentativa; o +1 cobre a
+    # tentativa final, ja com o dicionario reduzido.
+    for _ in range(len(argumentos) + 1):
+        try:
+            return classe(**restantes), sorted(descartados)
+        except TypeError as erro:
+            achado = _KWARG_RECUSADO.search(str(erro))
+            if achado is None or achado.group(1) not in restantes:
+                raise
+            del restantes[achado.group(1)]
+            descartados.append(achado.group(1))
+
+    raise RuntimeError(f"nao foi possivel instanciar {classe.__name__}")
+
+
 def montar_configuracao_sft(diretorio_saida: str, cfg: dict[str, Any] | None = None):
     """
     Monta o objeto de configuracao do SFTTrainer da versao instalada.
@@ -305,13 +351,13 @@ def montar_configuracao_sft(diretorio_saida: str, cfg: dict[str, Any] | None = N
         "greater_is_better": False,
     }
 
-    aceitos, descartados = _filtrar_argumentos(SFTConfig, desejados)
+    configuracao, descartados = _construir_tolerante(SFTConfig, desejados)
     if descartados:
         print(
-            "Argumentos nao suportados por esta versao do trl e portanto "
+            "Argumentos recusados por esta versao do trl e portanto "
             f"IGNORADOS: {descartados}"
         )
-    return SFTConfig(**aceitos)
+    return configuracao
 
 
 def alinhar_precisao_dos_adaptadores(treinador) -> int:
