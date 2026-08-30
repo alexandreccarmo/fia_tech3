@@ -123,6 +123,52 @@ lista de nós por onde ela passou.
 
 ---
 
+## Outras dependências usadas
+
+Além do LangChain e do LangGraph, descritos acima, o projeto usa as bibliotecas
+abaixo. Todas são instaladas pela célula 2 do notebook; quem for rodar os testes
+na própria máquina usa o `requirements.txt`, que traz a mesma lista.
+
+### Fine-tuning
+
+| Biblioteca | Para que serve aqui |
+| --- | --- |
+| `transformers` | Carrega o modelo base e o tokenizador, e faz a geração de texto. É a biblioteca sobre a qual todo o resto do treino se apoia |
+| `peft` | Implementa o LoRA — cria as matrizes treináveis ao lado das camadas congeladas e cuida de aplicá-las durante o treino |
+| `bitsandbytes` | Faz a quantização em 4 bits (a parte "Q" do QLoRA), incluindo o formato NF4 e a dupla quantização |
+| `trl` | Fornece o `SFTTrainer`, o laço de treino supervisionado. Poupa escrever à mão o preparo dos lotes, o cálculo da perda e o acúmulo de gradiente |
+| `accelerate` | Distribui o modelo entre GPU e CPU conforme a memória disponível. É o que faz `device_map="auto"` funcionar |
+| `datasets` | Baixa o PubMedQA do Hugging Face e organiza os exemplos no formato que o `SFTTrainer` espera |
+
+### Recuperação de evidência
+
+| Biblioteca | Para que serve aqui |
+| --- | --- |
+| `sentence-transformers` | Fornece o modelo `all-MiniLM-L6-v2`, que converte cada protocolo e cada pergunta em vetor. É o que permite buscar por significado |
+| `faiss-cpu` | Guarda esses vetores e responde "quais textos mais se parecem com este". Roda em memória, sem servidor |
+
+### Apresentação
+
+| Biblioteca | Para que serve aqui |
+| --- | --- |
+| `matplotlib` | Desenha as cinco figuras: curva de perda, comparação antes e depois, caminho percorrido no grafo, linha do tempo e alertas por severidade |
+
+### Da biblioteca padrão
+
+Estas não aparecem no `requirements.txt` porque já vêm com o Python, mas vale
+registrar o papel de cada uma:
+
+| Módulo | Para que serve aqui |
+| --- | --- |
+| `sqlite3` | Guarda a base de prontuários. Escolhido por ser embutido, sem servidor a subir |
+| `contextvars` | Leva a trilha de auditoria até os nós do grafo sem passá-la pelo estado — o `TypedDict` do LangGraph descarta chaves não declaradas |
+| `json` | Escreve e lê a trilha em JSONL |
+| `logging` | Log de sistema, separado da trilha das consultas |
+| `unicodedata` | Normaliza acentuação antes de comparar texto nos guardrails |
+| `re` | Padrões de anonimização e verificação de formato da resposta |
+
+---
+
 ## O fluxo
 
 ```
