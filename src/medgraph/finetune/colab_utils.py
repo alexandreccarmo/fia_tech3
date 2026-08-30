@@ -101,10 +101,25 @@ def verificar_gpu() -> dict[str, Any]:
     import torch
 
     if not torch.cuda.is_available():
+        # Sao duas causas distintas, e a mensagem precisa separar as duas.
+        # Mandar trocar o acelerador quando o problema e cota faz procurar o
+        # defeito num menu que ja esta correto - e a cota e a causa mais
+        # provavel justamente para quem ja treinou algumas horas no dia.
         raise RuntimeError(
-            "Nenhuma GPU disponivel.\n"
-            "No Colab: menu Ambiente de execucao > Alterar o tipo de ambiente "
-            "de execucao > Acelerador de hardware = T4 GPU."
+            "Nenhuma GPU disponivel neste ambiente.\n\n"
+            "1. RUNTIME SEM ACELERADOR\n"
+            "   Ambiente de execucao > Alterar o tipo de ambiente de execucao\n"
+            "   > Acelerador de hardware = T4 GPU. Depois rode de novo a\n"
+            "   partir da celula que clona o repositorio.\n\n"
+            "2. COTA DIARIA DE GPU ESGOTADA\n"
+            "   Provavel se voce ja treinou algumas horas hoje. O Colab\n"
+            "   gratuito nao recusa a conexao: ele conecta em CPU e mantem\n"
+            "   'T4 GPU' selecionada no menu, o que faz o caso 1 parecer\n"
+            "   resolvido quando nao e.\n"
+            "   Para confirmar, rode  !nvidia-smi  -- se o comando nao\n"
+            "   existir, e cota.\n"
+            "   A cota volta sozinha em algumas horas e nao ha como consultar\n"
+            "   quanto falta. Alternativas: outra conta Google, ou Colab Pro."
         )
 
     propriedades = torch.cuda.get_device_properties(0)

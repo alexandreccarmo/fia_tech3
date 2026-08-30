@@ -437,7 +437,7 @@ cd ~/Desktop/FIAP/projeto/tech_challenge_fiap3/fia_tech3
 
 | Sintoma | Causa provável | O que fazer |
 | --- | --- | --- |
-| `Nenhuma GPU disponível` | Runtime sem acelerador | Ambiente de execução → T4 GPU |
+| `Nenhuma GPU disponível` | Runtime sem acelerador **ou cota diária esgotada** | Rode `!nvidia-smi`: se o comando não existir e o menu já mostrar T4 GPU, é cota — ver *Quando a cota de GPU acaba* |
 | `GatedRepoError` ou `403` na célula 7 | Conta sem acesso ao Llama — pedido não enviado, pendente, ou feito por outra conta | Troque para o Qwen na própria célula 7 (a linha já está lá, comentada) e reexecute a partir dela |
 | Célula 5 travada em `Waiting for authorization` | Código expirou ou não foi autorizado | Reexecute a célula 5 e autorize o código novo |
 | `ModuleNotFoundError` na célula 4 | Sessão não foi reiniciada | Reinicie e continue da célula 3 |
@@ -446,6 +446,34 @@ cd ~/Desktop/FIAP/projeto/tech_challenge_fiap3/fia_tech3
 | Sessão desconectou | Ociosidade do Colab gratuito | `treinador.train(resume_from_checkpoint=True)` |
 | `TypeError` no `SFTTrainer` | Mudança de API do `trl` | Leia a lista de argumentos ignorados que a célula 9 imprime |
 | Formato incorreto na célula 12 | Treino insuficiente | Aumente `num_train_epochs` para 3 e retreine |
+
+---
+
+## Quando a cota de GPU acaba
+
+O plano gratuito dá algo entre 3 e 4 horas de GPU por dia, e o treino completo
+consome ~5 h 40 — então esbarrar na cota é o caso comum, não a exceção.
+
+O que torna isso confuso é que **o Colab não recusa a conexão.** Ele conecta em
+CPU, mantém "T4 GPU" selecionada no menu, e o notebook só falha quando alguma
+célula procura a GPU. Você olha o menu, vê a T4 marcada, e conclui que o problema
+é outro.
+
+Para confirmar em dois segundos:
+
+```python
+!nvidia-smi
+```
+
+Se o comando não existir, não há GPU no ambiente. Com o menu já em T4 GPU, isso é
+cota.
+
+**Não há o que consertar no notebook.** A cota volta sozinha, tipicamente em
+algumas horas, e não há como consultar quanto falta nem a posição na fila. As
+saídas são esperar, usar outra conta Google, ou assinar o Colab Pro — que além de
+liberar a cota costuma dar L4 ou A100, onde o mesmo treino cai para 30-60 min.
+
+Para gastar menos cota por rodada, veja *Treinar em menos tempo*.
 
 ---
 
