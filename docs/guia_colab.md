@@ -258,6 +258,42 @@ tiver perdido uma sessão hoje.
 
 ---
 
+## O que sobrevive quando você fecha o Colab
+
+Três coisas diferentes, com destinos diferentes.
+
+**As variáveis não sobrevivem — nunca.** `modelo`, `treinador`, `dados`: ao
+reconectar, o kernel é outro. Isso não é problema para *visualizar* o resultado,
+só para continuar executando.
+
+**Os arquivos em `/content` são efêmeros.** Sobrevivem a uma desconexão curta,
+mas somem quando a VM é reciclada — junto com o repositório clonado e o adapter.
+
+**As saídas das células só sobrevivem se você salvar o notebook.** Aberto pelo
+link do GitHub, o Colab trata a sessão como descartável: fechar a aba sem salvar
+descarta a curva de perda, a saída da célula 12 e todo o resto.
+
+Para poder reabrir e **ver** o resultado sem executar nada, depois que o treino
+terminar:
+
+**Arquivo → Salvar uma cópia no Drive**
+
+A cópia guarda o notebook com todas as saídas. Reabrindo-a, tudo aparece sem
+rodar uma célula. `Arquivo → Fazer download → .ipynb` tem o mesmo efeito, no seu
+computador.
+
+> ⚠️ **Não use "Salvar uma cópia no GitHub"** se você trocou o `MODELO_BASE` para
+> o Qwen. Isso levaria a edição para o repositório, que ficaria dizendo que o
+> projeto usa um modelo diferente do que o relatório afirma. Há um teste que
+> acusa isso, mas é melhor não criar o problema.
+
+**O que realmente precisa ser preservado, porém, não é a visualização** — é o
+`.zip` da célula 14. Ele contém o adapter, o tokenizador, o `cartao_de_treino.json`
+(com o histórico completo de perdas) e a `curva_de_perda.png`. Com esse arquivo
+na sua máquina, o Colab pode ser descartado inteiro.
+
+---
+
 ## Depois do treino — o segundo notebook
 
 **[▶ Abrir 02_exportar_gguf.ipynb no Colab](https://colab.research.google.com/github/alexandreccarmo/fia_tech3/blob/main/notebooks/colab/02_exportar_gguf.ipynb)**
@@ -282,6 +318,14 @@ cd ~/Desktop/FIAP/projeto/tech_challenge_fiap3/fia_tech3
 
    ```bash
    unzip ~/Downloads/medgraph-adapter.zip -d models/adapters/
+   ```
+
+   Vêm junto o `cartao_de_treino.json`, com a procedência do treino, e a
+   `curva_de_perda.png` — os dois artefatos que o roteiro do vídeo manda mostrar
+   no Bloco 3. Para deixar o gráfico junto dos demais:
+
+   ```bash
+   cp models/adapters/medgraph-llama32-3b-lora/curva_de_perda.png docs/graficos/
    ```
 
 2. **Ajuste o `.env`** com o repositório que o notebook 2 imprimiu:
