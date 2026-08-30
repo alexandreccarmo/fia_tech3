@@ -125,9 +125,21 @@ lista de nós por onde ela passou.
 
 ## Outras dependências usadas
 
-Além do LangChain e do LangGraph, descritos acima, o projeto usa as bibliotecas
-abaixo. Todas são instaladas pela célula 2 do notebook; quem for rodar os testes
-na própria máquina usa o `requirements.txt`, que traz a mesma lista.
+O projeto tem treze dependências. Todas são instaladas pela célula 2 do
+notebook; quem for rodar os testes na própria máquina usa o `requirements.txt`,
+que traz a mesma lista.
+
+Quatro delas são as duas seções acima, e ficam aqui pelo nome do pacote para que
+a lista fique completa:
+
+| Pacote | O que trouxemos dele |
+| --- | --- |
+| `langchain` | `ChatPromptTemplate` e `StrOutputParser` — o prompt como objeto e a saída como texto puro |
+| `langchain-community` | `FAISS` como vector store e `HuggingFaceEmbeddings` |
+| `langchain-huggingface` | `HuggingFacePipeline`, que transforma o modelo que treinamos num componente da cadeia |
+| `langgraph` | `StateGraph`, `add_conditional_edges` e o desenho do diagrama |
+
+As demais nove estão descritas abaixo, agrupadas por finalidade.
 
 ### Fine-tuning
 
