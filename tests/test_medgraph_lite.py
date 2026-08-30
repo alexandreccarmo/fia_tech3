@@ -574,6 +574,103 @@ class TestIntegridade:
                     f"celula {numero}: linha sem quebra ao final -> {linha[:60]!r}"
                 )
 
+    def test_notebook_instala_tudo_o_que_o_projeto_importa(self):
+        """
+        REGRESSAO — `langchain_huggingface` faltou na celula de instalacao.
+
+        O requirements.txt serve a quem roda na propria maquina; no Colab quem
+        instala e a linha de `%pip` da celula 2. Acrescentar a dependencia so no
+        arquivo deixa o notebook quebrado, e o erro aparece tarde: depois de dez
+        minutos de treino, com um ModuleNotFoundError.
+
+        A PRIMEIRA VERSAO DESTE TESTE NAO PEGAVA O DEFEITO. Ela comparava os
+        imports das CELULAS com a linha de instalacao - mas o notebook importa
+        `medgraph_lite.chain`, e e chain.py que importa langchain_huggingface,
+        dentro de uma funcao. O teste passava com a dependencia removida.
+
+        Por isso a varredura cobre o pacote inteiro, e usa AST em vez de regex:
+        import dentro de funcao conta igual, e e justamente onde este estava.
+        """
+        import ast
+        import json
+        import re
+        from pathlib import Path
+
+        raiz = Path(__file__).parent.parent
+
+        # ---- o que a celula de instalacao declara -------------------------
+        conteudo = json.loads(
+            (raiz / "notebooks" / "medgraph_lite.ipynb").read_text(encoding="utf-8")
+        )
+        instalados: set[str] = set()
+        for celula in conteudo["cells"]:
+            if celula["cell_type"] != "code":
+                continue
+            for linha in "".join(celula["source"]).splitlines():
+                if not linha.strip().startswith("%pip install"):
+                    continue
+                padrao = r'"([a-zA-Z][\w.-]*)[><=]|(?<=\s)([a-z][\w.-]+)(?=\s|$)'
+                for pacote in re.findall(padrao, linha):
+                    nome = (pacote[0] or pacote[1]).strip()
+                    if nome and nome not in {"install", "U", "q", "pip"}:
+                        instalados.add(nome.lower().replace("-", "_"))
+
+        # ---- o que o projeto importa, notebook e pacote --------------------
+        def sem_magics(fonte: str) -> str:
+            """
+            Troca `%pip` e `!git` por `pass`, mantendo a indentacao.
+
+            Comentar a linha nao serve: `!git clone` aparece dentro de um `if`,
+            e comenta-la deixaria o bloco vazio - o parser falharia com
+            IndentationError e o teste acusaria um defeito que nao existe.
+            """
+            return "\n".join(
+                re.sub(r"^(\s*)[!%].*", r"\1pass", linha)
+                for linha in fonte.split("\n")
+            )
+
+        fontes = [ast.parse(sem_magics("".join(c["source"])))
+                  for c in conteudo["cells"] if c["cell_type"] == "code"]
+        fontes += [ast.parse(arq.read_text(encoding="utf-8"))
+                   for arq in (raiz / "medgraph_lite").glob("*.py")]
+
+        importados: set[str] = set()
+        for arvore in fontes:
+            for no in ast.walk(arvore):
+                if isinstance(no, ast.Import):
+                    importados |= {a.name.split(".")[0] for a in no.names}
+                elif isinstance(no, ast.ImportFrom) and no.level == 0 and no.module:
+                    importados.add(no.module.split(".")[0])
+
+        # ---- o que nao precisa ser declarado -------------------------------
+        # Biblioteca padrao, o proprio pacote, e o que o Colab ja traz.
+        DISPENSADOS = {
+            "os", "sys", "re", "json", "time", "shutil", "subprocess", "uuid",
+            "logging", "sqlite3", "random", "unicodedata", "dataclasses",
+            "pathlib", "datetime", "contextvars", "typing", "__future__",
+            "medgraph_lite", "google", "IPython",
+            "torch", "matplotlib", "numpy",
+        }
+        # Modulo cujo nome difere do pacote, ou que vem por dependencia.
+        EQUIVALENTES = {
+            "langchain_core": "langchain",
+            "faiss": "faiss_cpu",
+            "huggingface_hub": "transformers",
+        }
+
+        faltando = set()
+        for modulo in importados - DISPENSADOS:
+            if modulo in instalados:
+                continue
+            if EQUIVALENTES.get(modulo) in instalados:
+                continue
+            faltando.add(modulo)
+
+        assert not faltando, (
+            f"o projeto importa mas o notebook nao instala: {sorted(faltando)}. "
+            "Acrescente a linha de %pip da celula 2."
+        )
+
     def test_notebook_aponta_para_o_caminho_certo(self):
         """
         REGRESSAO — o pacote deixou de ficar em projeto2/.
