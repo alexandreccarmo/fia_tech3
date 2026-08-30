@@ -127,3 +127,116 @@ def achados_por_severidade(contagem: dict[str, int], destino: str = "achados.png
     figura.tight_layout()
     figura.savefig(destino, dpi=120)
     return figura
+
+
+# =============================================================================
+# O GRAFO COM O CAMINHO PERCORRIDO
+# =============================================================================
+# Posicoes fixas dos nos. O grafo tem sete nos e nao muda, entao um layout
+# escrito a mao comunica melhor do que qualquer algoritmo automatico: a coluna
+# central e o caminho feliz, e os desvios saem para os lados.
+POSICOES = {
+    "guardrail_entrada":    (0.0, 9.0),
+    "consultar_prontuario": (0.0, 7.5),
+    "recuperar_evidencia":  (0.0, 6.0),
+    "responder":            (0.0, 4.5),
+    "verificar_resposta":   (0.0, 3.0),
+    "validacao_humana":     (1.15, 1.5),
+    "montar_resposta":      (0.0, 0.0),
+}
+
+# (origem, destino, curvatura). A curvatura afasta a aresta da linha reta, para
+# que o desvio da recusa nao passe por cima dos nos do meio.
+ARESTAS = [
+    ("guardrail_entrada", "consultar_prontuario", 0.0),
+    ("guardrail_entrada", "montar_resposta", -0.55),
+    ("consultar_prontuario", "recuperar_evidencia", 0.0),
+    ("recuperar_evidencia", "responder", 0.0),
+    ("responder", "verificar_resposta", 0.0),
+    ("verificar_resposta", "montar_resposta", 0.0),
+    ("verificar_resposta", "validacao_humana", 0.0),
+    ("validacao_humana", "montar_resposta", 0.0),
+]
+
+ROTULOS = {
+    "guardrail_entrada": "guardrail\nentrada",
+    "consultar_prontuario": "consultar\nprontuário",
+    "recuperar_evidencia": "recuperar\nevidência",
+    "responder": "responder\n(LLM)",
+    "verificar_resposta": "verificar\nresposta",
+    "validacao_humana": "validação\nhumana",
+    "montar_resposta": "montar\nresposta",
+}
+
+
+def _desenhar_aresta(eixo, origem, destino, curvatura, cor, largura, alfa):
+    from matplotlib.patches import FancyArrowPatch
+
+    eixo.add_patch(FancyArrowPatch(
+        POSICOES[origem], POSICOES[destino],
+        connectionstyle=f"arc3,rad={curvatura}",
+        arrowstyle="-|>", mutation_scale=13,
+        color=cor, linewidth=largura, alpha=alfa,
+        shrinkA=26, shrinkB=26, zorder=1,
+    ))
+
+
+def fluxo_percorrido(trilhas: dict[str, list[dict]], destino: str = "fluxo.png"):
+    """
+    Desenha o grafo uma vez por consulta, destacando o caminho que ela seguiu.
+
+    E a figura que responde "o fluxo decide alguma coisa?" sem precisar de
+    explicacao: o que ficou apagado nao foi executado. Ver a consulta recusada
+    saltar direto do guardrail para a resposta final, sem passar pela LLM, diz
+    mais do que qualquer descricao do roteamento.
+    """
+    figura, eixos = plt.subplots(1, len(trilhas), figsize=(3.5 * len(trilhas), 7.6))
+    if len(trilhas) == 1:
+        eixos = [eixos]
+
+    for eixo, (nome, trilha) in zip(eixos, trilhas.items(), strict=False):
+        visitados = [evento["etapa"] for evento in trilha]
+        tempos = {e["etapa"]: e["ms"] for e in trilha}
+        percorridas = set(zip(visitados, visitados[1:], strict=False))
+
+        for origem, alvo, curvatura in ARESTAS:
+            ativa = (origem, alvo) in percorridas
+            _desenhar_aresta(
+                eixo, origem, alvo, curvatura,
+                cor=AZUL if ativa else "#dde3e8",
+                largura=2.4 if ativa else 1.0,
+                alfa=1.0 if ativa else 0.9,
+            )
+
+        for etapa, (x, y) in POSICOES.items():
+            visitado = etapa in visitados
+            if not visitado:
+                cor, texto, borda = "#f2f5f7", "#b0bec5", "#dde3e8"
+            elif etapa == "validacao_humana":
+                cor, texto, borda = VERMELHO, "white", VERMELHO
+            else:
+                cor, texto, borda = AZUL, "white", AZUL
+
+            eixo.scatter(x, y, s=2600, color=cor, edgecolors=borda,
+                         linewidths=1.6, zorder=2)
+            eixo.text(x, y, ROTULOS[etapa], ha="center", va="center",
+                      fontsize=7.2, color=texto, fontweight="bold", zorder=3)
+            if visitado:
+                eixo.text(x + 0.42, y, f"{tempos[etapa]:.0f} ms", ha="left",
+                          va="center", fontsize=6.4, color="#607d8b", zorder=3)
+
+        parou = "validacao_humana" in visitados
+        eixo.set_title(
+            f"{nome}\n{len(visitados)} nós" + ("  ·  RETIDA" if parou else ""),
+            fontsize=9.5, fontweight="bold",
+            color=VERMELHO if parou else "#37474f", pad=12,
+        )
+        eixo.set_xlim(-0.85, 2.05)
+        eixo.set_ylim(-1.0, 10.0)
+        eixo.axis("off")
+
+    figura.suptitle("Caminho percorrido no grafo, por consulta",
+                    fontsize=13, fontweight="bold")
+    figura.tight_layout()
+    figura.savefig(destino, dpi=130, bbox_inches="tight")
+    return figura

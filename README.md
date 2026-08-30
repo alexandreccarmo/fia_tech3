@@ -38,14 +38,18 @@ O modelo base é aberto.
 | 9 | **Fluxo LangGraph**: 4 consultas, 4 caminhos | 2 min |
 | 10 | Conclusão e limitações | — |
 
-## Os quatro gráficos
+## Os gráficos
 
 Gerados em matplotlib, dentro do próprio notebook:
 
 1. **Curva de perda** — o treino funcionou?
 2. **Antes × depois** — o que o ajuste melhorou, em adesão ao formato e acurácia
-3. **Caminhos no grafo** — por quais nós cada consulta passou, com a latência de cada um
-4. **Achados por severidade** — quantos alertas cada nível de gravidade produziu
+3. **Caminho percorrido no grafo** — o fluxo desenhado uma vez por consulta, com os
+   nós visitados destacados e os demais apagados. É a figura que mostra, sem
+   precisar de explicação, que o roteamento decide alguma coisa: o pedido recusado
+   salta do guardrail direto para a resposta, sem passar pela LLM
+4. **Linha do tempo** — as mesmas trilhas com a latência de cada nó
+5. **Achados por severidade** — quantos alertas cada nível de gravidade produziu
 
 ## Estrutura
 

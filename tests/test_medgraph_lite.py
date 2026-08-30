@@ -271,6 +271,69 @@ class TestGrafo:
 
 
 # =============================================================================
+# GRAFICOS  [REQ-E3]
+# =============================================================================
+class TestGraficos:
+    """
+    As figuras da apresentacao precisam ser geradas sem erro.
+
+    Elas so aparecem no fim da execucao do notebook, depois do treino: uma
+    excecao aqui apareceria vinte minutos tarde demais.
+    """
+
+    def test_fluxo_percorrido_cobre_todos_os_nos_do_grafo(self):
+        """
+        REGRESSAO — o desenho tem posicoes fixas, escritas a mao.
+
+        Se alguem acrescentar um no ao grafo e esquecer de posiciona-lo aqui, a
+        figura sai sem ele: a consulta apareceria pulando uma etapa que na
+        verdade executou. Um grafico errado e pior do que nenhum, porque
+        ninguem duvida dele.
+        """
+        from medgraph_lite import graficos
+
+        nos_do_desenho = set(graficos.POSICOES)
+        assert set(graficos.ROTULOS) == nos_do_desenho, (
+            "ha no posicionado sem rotulo, ou o contrario"
+        )
+        for origem, destino, _ in graficos.ARESTAS:
+            assert origem in nos_do_desenho, f"aresta parte de no inexistente: {origem}"
+            assert destino in nos_do_desenho, f"aresta chega a no inexistente: {destino}"
+
+    def test_figuras_sao_geradas(self, tmp_path):
+        import matplotlib
+
+        matplotlib.use("Agg")
+        from medgraph_lite import graficos
+
+        trilha = [
+            {"etapa": "guardrail_entrada", "ms": 0.4, "detalhe": ""},
+            {"etapa": "consultar_prontuario", "ms": 1.2, "detalhe": ""},
+            {"etapa": "recuperar_evidencia", "ms": 38.0, "detalhe": ""},
+            {"etapa": "responder", "ms": 2210.0, "detalhe": ""},
+            {"etapa": "verificar_resposta", "ms": 0.8, "detalhe": ""},
+            {"etapa": "validacao_humana", "ms": 0.1, "detalhe": ""},
+            {"etapa": "montar_resposta", "ms": 0.2, "detalhe": ""},
+        ]
+        trilhas = {"com conflito": trilha, "recusado": trilha[:1] + trilha[-1:]}
+
+        graficos.fluxo_percorrido(trilhas, str(tmp_path / "fluxo.png"))
+        graficos.caminho_do_grafo(trilhas, str(tmp_path / "caminhos.png"))
+        graficos.achados_por_severidade({"critico": 2, "atencao": 1}, str(tmp_path / "a.png"))
+        graficos.curva_de_perda(
+            [{"step": 2, "loss": 2.1}, {"step": 4, "loss": 1.3}], str(tmp_path / "c.png")
+        )
+        graficos.antes_e_depois(
+            {"base": {"adesao_formato": 0.3, "acuracia": 0.5},
+             "ajustado": {"adesao_formato": 0.9, "acuracia": 0.7}},
+            str(tmp_path / "d.png"),
+        )
+
+        for nome in ("fluxo.png", "caminhos.png", "a.png", "c.png", "d.png"):
+            assert (tmp_path / nome).stat().st_size > 3000, f"{nome} saiu vazio"
+
+
+# =============================================================================
 # INTEGRIDADE DO PROJETO  [REQ-4]
 # =============================================================================
 class TestIntegridade:
