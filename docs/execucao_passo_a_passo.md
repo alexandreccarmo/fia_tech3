@@ -284,7 +284,12 @@ nova, a célula 3 pede o upload do `.zip`.
 
 ### Célula 1 — Ambiente
 
-Confere a GPU disponível.
+Informa se há GPU. **Este notebook não precisa de uma:** a fusão do adapter roda
+com `device_map="cpu"` e a conversão do `llama.cpp` também é CPU.
+
+Use *Ambiente de execução → Alterar o tipo → CPU* para poupar a cota de GPU, que
+o treino já consumiu. O recurso que importa aqui é RAM — a fusão carrega o modelo
+base em float16, cerca de 6,4 GB, contra os ~12,7 GB do Colab gratuito.
 
 ### Célula 2 — Dependências e repositório
 
@@ -532,6 +537,7 @@ Colab Pro.
 | `CUDA out of memory` | Sequência longa demais | Antes da 9: `colab_utils.CONFIG_PADRAO["max_seq_length"] = 768` |
 | `save_steps` não é múltiplo de `eval_steps` | Ajuste manual incoerente | Iguale os dois valores |
 | Formato baixo na célula 12 | Treino insuficiente | Mais épocas ou mais exemplos |
+| `FileNotFoundError: nvidia-smi` na célula 1 do notebook 02 | Runtime sem GPU, que aqui é o esperado | Corrigido; em notebook antigo, pule a célula |
 
 ---
 
