@@ -293,7 +293,13 @@ base em float16, cerca de 6,4 GB, contra os ~12,7 GB do Colab gratuito.
 
 ### Célula 2 — Dependências e repositório
 
-~3 minutos. Instala e clona.
+~3 minutos. Instala, remove o `torchao` e clona.
+
+A remoção do `torchao` não é capricho: o Colab traz a versão 0.10 pré-instalada e
+o `peft` recente exige 0.16 ou superior. A incompatibilidade não aparece aqui —
+ela estoura na célula 5, dentro de `PeftModel.from_pretrained`, com um
+`ImportError` que fala de `torchao` e não menciona o adapter. Este notebook não
+usa a biblioteca: a quantização é do `llama.cpp` e a fusão é em float16.
 
 ### Célula 3 — O adapter
 
@@ -538,6 +544,7 @@ Colab Pro.
 | `save_steps` não é múltiplo de `eval_steps` | Ajuste manual incoerente | Iguale os dois valores |
 | Formato baixo na célula 12 | Treino insuficiente | Mais épocas ou mais exemplos |
 | `FileNotFoundError: nvidia-smi` na célula 1 do notebook 02 | Runtime sem GPU, que aqui é o esperado | Corrigido; em notebook antigo, pule a célula |
+| `ImportError: incompatible version of torchao` na célula 5 do notebook 02 | `torchao` 0.10 do Colab contra o mínimo do `peft` | `%pip uninstall -y -q torchao` e reexecute |
 
 ---
 
