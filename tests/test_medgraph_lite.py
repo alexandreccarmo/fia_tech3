@@ -204,6 +204,54 @@ class TestRegrasClinicas:
         assert not verificacao.aprovado
         assert any("citacao" in a.mensagem for a in verificacao.criticos)
 
+    def test_aceita_citacao_a_modelo_de_documento(self):
+        """
+        REGRESSAO — o verificador so reconhecia [P..] e [E..].
+
+        Os modelos de laudo, receita e procedimento entram no indice com
+        marcador [D1] a [D3], e o proprio treino ensina o modelo a cita-los.
+        Uma resposta certa, citando a fonte certa, era marcada como "sem
+        citacao de fonte", virava achado critico e era retida para validacao
+        humana. O erro apontava para a direcao que produz fadiga de alarme.
+        """
+        verificacao = guardrails.verificar_resposta(
+            "Decisao: yes\nAlergias conferidas, dose, via e assinatura do medico. [D2]",
+            marcadores_recuperados=["D2"],
+        )
+        assert verificacao.aprovado, [a.mensagem for a in verificacao.achados]
+
+    def test_recusa_fonte_que_nao_foi_recuperada(self):
+        """
+        [REQ-3c] Explainability e procedencia, e nao so presenca de colchetes.
+
+        O treino ensina o formato "... [E1]" com os exemplos do PubMedQA, e
+        nada impede o modelo de escrever [E1] respondendo sobre um protocolo do
+        hospital. O formato fica perfeito e a fonte nao existe - que e
+        exatamente a falha que a citacao deveria impedir.
+        """
+        verificacao = guardrails.verificar_resposta(
+            "Decisao: yes\nConduta conforme a evidencia. [E1]",
+            marcadores_recuperados=["P1", "P4"],
+        )
+        assert not verificacao.aprovado
+        assert any("nao foi recuperada" in a.mensagem for a in verificacao.criticos)
+
+    def test_fonte_extra_ao_lado_de_fonte_real_e_apenas_atencao(self):
+        """
+        Rebaixar em vez de reprovar, quando ha ao menos uma fonte legitima.
+
+        Citar [P1] e [P9] nao e o mesmo que citar so [P9]: a afirmacao tem
+        procedencia, e ha ruido junto. Tratar os dois casos como criticos
+        transformaria excesso de citacao em consulta retida.
+        """
+        verificacao = guardrails.verificar_resposta(
+            "Decisao: yes\nColher lactato antes do antibiotico. [P1] [P9]",
+            marcadores_recuperados=["P1"],
+        )
+        assert verificacao.aprovado
+        assert any(a.severidade == "atencao" and "P9" in a.mensagem
+                   for a in verificacao.achados)
+
     def test_toda_interacao_usa_farmaco_conhecido(self):
         """
         As duas tabelas precisam concordar.
@@ -234,6 +282,23 @@ class TestProntuario:
         banco = prontuario.criar_banco(str(tmp_path / "p.db"))
         assert prontuario.buscar("PAC-001", banco).exames_criticos
         assert not prontuario.buscar("PAC-003", banco).exames_criticos
+
+    def test_identifica_exame_pendente(self, tmp_path):
+        """
+        [REQ-E1] "Verificar exames pendentes" e uma etapa que o enunciado nomeia.
+
+        "Nenhuma" precisa ser lida como ausencia de pendencia, e nao como uma
+        pendencia chamada "Nenhuma" - senao todo paciente sem exame em aberto
+        apareceria com uma.
+        """
+        banco = prontuario.criar_banco(str(tmp_path / "p.db"))
+        assert prontuario.buscar("PAC-001", banco).exames_pendentes
+        assert not prontuario.buscar("PAC-003", banco).exames_pendentes
+
+    def test_resumo_leva_as_pendencias_ao_prompt(self, tmp_path):
+        """Pendencia que nao chega ao contexto nao contextualiza nada."""
+        banco = prontuario.criar_banco(str(tmp_path / "p.db"))
+        assert "Hemocultura" in prontuario.buscar("PAC-001", banco).resumo()
 
 
 # =============================================================================
@@ -298,6 +363,43 @@ class TestGrafo:
         grafo, app = aplicacao
         estado = grafo.consultar(app, "Conduta na sepse?", "PAC-003")
         assert "Nao substitui avaliacao medica" in estado["resposta"]
+
+    def test_exames_sao_verificados_antes_de_chamar_a_llm(self, aplicacao):
+        """
+        [REQ-E1] A ordem importa: pendencia de exame nao depende da resposta.
+
+        Se a verificacao viesse depois de `responder`, uma consulta recusada ou
+        um erro de geracao deixariam o exame pendente sem ninguem olhando - e
+        e informacao que existe no prontuario desde antes da pergunta.
+        """
+        grafo, app = aplicacao
+        estado = grafo.consultar(app, "Conduta na sepse?", "PAC-001")
+        etapas = [e["etapa"] for e in estado["trilha"]]
+        assert etapas.index("verificar_exames") < etapas.index("responder")
+        assert any("Exame pendente" in a.mensagem for a in estado["achados"])
+        assert "[PENDENTE]" in estado["resposta"]
+
+    def test_alerta_e_enderecado_a_equipe_do_setor(self, aplicacao):
+        """
+        [REQ-E1] "Emitir alertas para a equipe medica" pede um destinatario.
+
+        Alerta sem destinatario e linha de log. Quem age sobre um conflito na
+        UTI e a equipe da UTI, e o registro precisa dizer isso para que a
+        auditoria consiga responder a quem o alerta foi dirigido.
+        """
+        grafo, app = aplicacao
+        estado = grafo.consultar(app, "Qual antibiotico iniciar?", "PAC-001")
+        etapas = [e["etapa"] for e in estado["trilha"]]
+        assert etapas.index("emitir_alerta") < etapas.index("validacao_humana")
+        assert estado["alertas"], "o caminho critico nao emitiu alerta"
+        assert all("equipe UTI" in a and "PAC-001" in a for a in estado["alertas"])
+        assert "[ALERTA EMITIDO]" in estado["resposta"]
+
+    def test_caso_sem_conflito_nao_emite_alerta(self, aplicacao):
+        grafo, app = aplicacao
+        estado = grafo.consultar(app, "O que colher na sepse?", "PAC-003")
+        assert "emitir_alerta" not in [e["etapa"] for e in estado["trilha"]]
+        assert not estado.get("alertas")
 
 
 # =============================================================================
@@ -452,7 +554,7 @@ class TestGraficos:
     excecao aqui apareceria vinte minutos tarde demais.
     """
 
-    def test_fluxo_percorrido_cobre_todos_os_nos_do_grafo(self):
+    def test_desenho_cobre_todos_os_nos_do_grafo(self, tmp_path):
         """
         REGRESSAO — o desenho tem posicoes fixas, escritas a mao.
 
@@ -460,10 +562,24 @@ class TestGraficos:
         figura sai sem ele: a consulta apareceria pulando uma etapa que na
         verdade executou. Um grafico errado e pior do que nenhum, porque
         ninguem duvida dele.
+
+        A PRIMEIRA VERSAO DESTE TESTE NAO PEGAVA ISSO. Ela comparava POSICOES
+        com ROTULOS e ARESTAS - tres dicionarios escritos no mesmo arquivo, que
+        continuam coerentes entre si justamente quando alguem esquece de mexer
+        em todos. A comparacao util e contra o grafo compilado.
         """
-        from medgraph_lite import graficos
+        from medgraph_lite import graficos, grafo
+
+        banco = prontuario.criar_banco(str(tmp_path / "p.db"))
+        app = grafo.construir(IndiceFalso(dados.PROTOCOLOS),
+                              lambda p, c: "Decisao: yes\nTexto. [P1]", banco)
+        nos_reais = {n for n in app.get_graph().nodes if not n.startswith("__")}
 
         nos_do_desenho = set(graficos.POSICOES)
+        assert nos_do_desenho == nos_reais, (
+            f"desenho e grafo divergem: so no grafo={sorted(nos_reais - nos_do_desenho)}, "
+            f"so no desenho={sorted(nos_do_desenho - nos_reais)}"
+        )
         assert set(graficos.ROTULOS) == nos_do_desenho, (
             "ha no posicionado sem rotulo, ou o contrario"
         )
@@ -480,9 +596,11 @@ class TestGraficos:
         trilha = [
             {"etapa": "guardrail_entrada", "ms": 0.4, "detalhe": ""},
             {"etapa": "consultar_prontuario", "ms": 1.2, "detalhe": ""},
+            {"etapa": "verificar_exames", "ms": 0.3, "detalhe": ""},
             {"etapa": "recuperar_evidencia", "ms": 38.0, "detalhe": ""},
             {"etapa": "responder", "ms": 2210.0, "detalhe": ""},
             {"etapa": "verificar_resposta", "ms": 0.8, "detalhe": ""},
+            {"etapa": "emitir_alerta", "ms": 0.2, "detalhe": ""},
             {"etapa": "validacao_humana", "ms": 0.1, "detalhe": ""},
             {"etapa": "montar_resposta", "ms": 0.2, "detalhe": ""},
         ]
@@ -502,6 +620,109 @@ class TestGraficos:
 
         for nome in ("fluxo.png", "caminhos.png", "a.png", "c.png", "d.png"):
             assert (tmp_path / nome).stat().st_size > 3000, f"{nome} saiu vazio"
+
+
+# =============================================================================
+# CONJUNTOS DE TREINO E TESTE  [REQ-1b]
+# =============================================================================
+class PubMedQAFalso:
+    """
+    Duble do PubMedQA, com a mesma forma de registro e sem rede.
+
+    A separacao entre treino e teste e logica de indexacao, e nao de download:
+    testa-la baixando 1.000 artigos reais tornaria a suite lenta e dependente
+    de rede para verificar um fatiamento de lista.
+    """
+
+    def __init__(self, n=200):
+        self._itens = [
+            {
+                "question": f"Pergunta cientifica numero {i}?",
+                "context": {"contexts": [f"Contexto do estudo {i}."]},
+                "final_decision": ["yes", "no", "maybe"][i % 3],
+                "long_answer": f"Conclusao do estudo {i}.",
+            }
+            for i in range(n)
+        ]
+
+    def __len__(self):
+        return len(self._itens)
+
+    def __getitem__(self, i):
+        return self._itens[i]
+
+
+@pytest.fixture
+def pubmedqa_falso(monkeypatch):
+    import sys
+    import types
+
+    modulo = types.ModuleType("datasets")
+    modulo.load_dataset = lambda *a, **k: PubMedQAFalso()
+    monkeypatch.setitem(sys.modules, "datasets", modulo)
+    return modulo
+
+
+class TestConjuntos:
+    """
+    O item 1 do enunciado pede curadoria dos dados; a avaliacao da secao 6 do
+    notebook depende de o conjunto de teste ser mesmo inedito para o modelo.
+    """
+
+    def test_teste_nao_vaza_para_o_treino(self, pubmedqa_falso):
+        """
+        REGRESSAO — o corte acontecia DEPOIS da repeticao e do embaralhamento.
+
+        O material do hospital entra seis vezes no conjunto. Embaralhar tudo e
+        so entao separar as ultimas vinte linhas coloca copias identicas do
+        mesmo exemplo dos dois lados: com a semente 42, tres dos vinte casos de
+        teste tinham gemeos no treino. A avaliacao media memorizacao e
+        reportava generalizacao - e nada na saida denunciava isso.
+        """
+        treino, teste = dados.montar_conjuntos(n_pubmedqa=100, n_teste=20)
+
+        assert len(teste) == 20
+        perguntas_de_treino = {e["pergunta"] for e in treino}
+        vazados = [e["pergunta"] for e in teste if e["pergunta"] in perguntas_de_treino]
+        assert not vazados, f"exemplos de teste presentes no treino: {vazados}"
+
+    def test_treino_carrega_o_material_do_hospital_com_peso(self, pubmedqa_falso):
+        """A repeticao e o balanceamento por frequencia descrito no notebook."""
+        treino, _ = dados.montar_conjuntos(n_pubmedqa=100, n_teste=20)
+        do_hospital = [e for e in treino if e["pergunta"] == dados.FAQ[0][0]]
+        assert len(do_hospital) == 6
+
+    def test_todo_exemplo_tem_decisao_e_fonte(self, pubmedqa_falso):
+        """
+        O formato que o fine-tuning ensina precisa estar em todo exemplo.
+
+        Um exemplo sem "Decisao:" ou sem marcador ensina o modelo a omitir
+        justamente os dois campos que os guardrails procuram.
+        """
+        import re
+
+        treino, teste = dados.montar_conjuntos(n_pubmedqa=60, n_teste=10)
+        for exemplo in treino + teste:
+            assert exemplo["resposta"].startswith("Decisao: ")
+            assert re.search(r"\[[A-Z]+\d+\]", exemplo["resposta"])
+
+    def test_dataset_exportado_e_legivel_linha_a_linha(self, tmp_path):
+        """
+        [REQ-E2] O entregavel pede o dataset, e nao o codigo que o monta.
+
+        Em JSONL, cada linha e um registro completo: quem for conferir o
+        trabalho abre o arquivo, e nao o `dados.py`.
+        """
+        import json
+
+        escritos = dados.exportar_dataset(str(tmp_path))
+        assert escritos["protocolos.jsonl"] == len(dados.PROTOCOLOS)
+
+        for nome, quantidade in escritos.items():
+            linhas = (tmp_path / nome).read_text(encoding="utf-8").splitlines()
+            assert len(linhas) == quantidade, f"{nome} saiu com o numero errado de linhas"
+            for linha in linhas:
+                json.loads(linha)
 
 
 # =============================================================================

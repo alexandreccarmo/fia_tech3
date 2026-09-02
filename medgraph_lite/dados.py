@@ -190,28 +190,62 @@ def anonimizar(texto: str) -> tuple[str, int]:
     return texto, total
 
 
-def montar_exemplos_de_treino(n_pubmedqa: int = 350, semente: int = 42) -> list[dict]:
+def _exemplos_do_hospital(repeticoes: int = 6) -> list[dict]:
     """
-    Monta o conjunto de treino no formato de conversa.
+    O material interno no formato de conversa, repetido para ter peso.
 
-    Combina PubMedQA (evidencia cientifica real) com o material do hospital.
-    O tamanho e deliberadamente pequeno: o objetivo do fine-tuning aqui e
-    ensinar o FORMATO da resposta - decisao na primeira linha, fonte citada no
-    fim -, e nao ensinar medicina ao modelo.
+    Sao oito pares de pergunta e resposta contra centenas de exemplos
+    cientificos. Sem a repeticao eles nao influenciariam o formato aprendido -
+    e balancear por frequencia e preferivel a descartar a classe abundante.
+    """
+    fontes = {p["id"]: p for p in PROTOCOLOS} | {d["id"]: d for d in DOCUMENTOS}
+    exemplos = []
+    for _ in range(repeticoes):
+        for pergunta, resposta in FAQ + FAQ_DOCUMENTOS:
+            marcador = next(mid for mid in fontes if f"[{mid}]" in resposta)
+            exemplos.append({
+                "pergunta": pergunta,
+                "contexto": f"[{marcador}] {fontes[marcador]['texto']}",
+                "resposta": resposta,
+            })
+    return exemplos
+
+
+def montar_conjuntos(n_pubmedqa: int = 350, n_teste: int = 20,
+                     semente: int = 42) -> tuple[list[dict], list[dict]]:
+    """
+    Devolve (treino, teste), sem sobreposicao entre os dois.
+
+    A SEPARACAO ACONTECE ANTES DA REPETICAO, e essa ordem e o ponto todo.
+    Repetir o material do hospital seis vezes, embaralhar tudo e so entao
+    cortar as ultimas linhas para teste - que foi como esta funcao comecou -
+    coloca copias do MESMO exemplo dos dois lados: numa execucao medida, 3 dos
+    20 casos de teste tinham gemeos identicos no treino. A avaliacao entao
+    media memorizacao, e reportava generalizacao.
+
+    O teste sai inteiro do PubMedQA, que e onde os exemplos sao unicos, e
+    nenhum deles entra no treino. E o conjunto certo para a pergunta que a
+    avaliacao faz: o modelo responde no formato aprendido diante de uma
+    pergunta clinica que nunca viu?
+
+    O tamanho do treino e deliberadamente pequeno: o objetivo do fine-tuning
+    aqui e ensinar o FORMATO da resposta - decisao na primeira linha, fonte
+    citada no fim -, e nao ensinar medicina ao modelo.
     """
     from datasets import load_dataset
 
     random.seed(semente)
-    exemplos: list[dict] = []
 
     bruto = load_dataset("qiaojin/PubMedQA", "pqa_labeled", split="train")
-    indices = random.sample(range(len(bruto)), min(n_pubmedqa, len(bruto)))
+    quantidade = min(n_pubmedqa + n_teste, len(bruto))
+    indices = random.sample(range(len(bruto)), quantidade)
 
+    cientificos = []
     for i in indices:
         item = bruto[i]
         contexto = " ".join(item["context"]["contexts"])[:1200]
         contexto, _ = anonimizar(contexto)
-        exemplos.append({
+        cientificos.append({
             "pergunta": item["question"],
             "contexto": contexto,
             "resposta": (
@@ -220,16 +254,55 @@ def montar_exemplos_de_treino(n_pubmedqa: int = 350, semente: int = 42) -> list[
             ),
         })
 
-    # O material do hospital entra repetido, para ter peso apesar de pequeno.
-    fontes = {p["id"]: p for p in PROTOCOLOS} | {d["id"]: d for d in DOCUMENTOS}
-    for _ in range(6):
-        for pergunta, resposta in FAQ + FAQ_DOCUMENTOS:
-            marcador = next(mid for mid in fontes if f"[{mid}]" in resposta)
-            exemplos.append({
-                "pergunta": pergunta,
-                "contexto": f"[{marcador}] {fontes[marcador]['texto']}",
-                "resposta": resposta,
-            })
+    teste = cientificos[:n_teste]
+    treino = cientificos[n_teste:] + _exemplos_do_hospital()
+    random.shuffle(treino)
+    return treino, teste
 
-    random.shuffle(exemplos)
-    return exemplos
+
+def exportar_dataset(destino: str = "data") -> dict[str, int]:
+    """
+    Grava o material sintetico do hospital em JSONL, um exemplo por linha.
+
+    O entregavel pede "dataset anonimizado ou exemplo de dados sinteticos". Ele
+    existe em `PROTOCOLOS`, `FAQ` e `DOCUMENTOS`, mas como literais Python
+    montados em tempo de execucao - quem for conferir o trabalho precisa ler
+    codigo para ver o dado. Exportado, o dataset vira arquivo que se abre.
+
+    O PubMedQA nao e exportado: e publico, tem licenca propria e o notebook o
+    baixa pelo `datasets`. Redistribui-lo aqui seria copia desnecessaria.
+    """
+    import json
+    from pathlib import Path
+
+    pasta = Path(destino)
+    pasta.mkdir(parents=True, exist_ok=True)
+
+    conjuntos = {
+        "protocolos.jsonl": PROTOCOLOS,
+        "documentos.jsonl": DOCUMENTOS,
+        "faq.jsonl": [{"pergunta": p, "resposta": r} for p, r in FAQ + FAQ_DOCUMENTOS],
+        "treino_hospital.jsonl": _exemplos_do_hospital(repeticoes=1),
+        "prontuarios.jsonl": _prontuarios_para_exportar(),
+    }
+
+    escritos = {}
+    for nome, registros in conjuntos.items():
+        with (pasta / nome).open("w", encoding="utf-8") as saida:
+            for registro in registros:
+                saida.write(json.dumps(registro, ensure_ascii=False) + "\n")
+        escritos[nome] = len(registros)
+    return escritos
+
+
+def _prontuarios_para_exportar() -> list[dict]:
+    """Os prontuarios sinteticos, passados pelo anonimizador antes de sair."""
+    from .prontuario import PACIENTES
+
+    exportados = []
+    for paciente in PACIENTES:
+        limpo = {}
+        for campo, valor in paciente.items():
+            limpo[campo] = anonimizar(valor)[0] if isinstance(valor, str) else valor
+        exportados.append(limpo)
+    return exportados

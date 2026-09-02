@@ -48,7 +48,7 @@ precisa chegar ao protocolo de betalactâmicos, que não contém nenhuma dessas
 palavras na pergunta. O FAISS roda em memória, é salvo em disco e não exige
 serviço externo — foi o mesmo que vimos nas aulas.
 
-**`HuggingFaceEmbeddings`** para transformar texto em vetor. Usamos o
+**`HuggingFaceEmbeddings`** (de `langchain-huggingface`) para transformar texto em vetor. Usamos o
 `all-MiniLM-L6-v2`, que é pequeno e roda rápido.
 
 **`ChatPromptTemplate`** para o prompt do assistente. Poderíamos ter montado a
@@ -135,7 +135,7 @@ a lista fique completa:
 | Pacote | O que trouxemos dele |
 | --- | --- |
 | `langchain` | `ChatPromptTemplate` e `StrOutputParser` — o prompt como objeto e a saída como texto puro |
-| `langchain-community` | `FAISS` como vector store e `HuggingFaceEmbeddings` |
+| `langchain-community` | `FAISS` como vector store |
 | `langchain-huggingface` | `HuggingFacePipeline`, que transforma o modelo que treinamos num componente da cadeia |
 | `langgraph` | `StateGraph`, `add_conditional_edges` e o desenho do diagrama |
 
@@ -184,28 +184,37 @@ registrar o papel de cada uma:
 ## O fluxo
 
 ```
-guardrail_entrada ──(recusado)────────────────────┐
-        │                                          │
-consultar_prontuario                               │
-        │                                          │
-recuperar_evidencia                                │
-        │                                          │
-responder (LLM)                                    │
-        │                                          │
-verificar_resposta ──(crítico)── validacao_humana ─┤
-        │                                          │
-        └──────────────────────────────────────────┴──> montar_resposta
+guardrail_entrada ──(recusado)──────────────────────────────────────┐
+        │                                                            │
+consultar_prontuario                                                 │
+        │                                                            │
+verificar_exames                                                     │
+        │                                                            │
+recuperar_evidencia                                                  │
+        │                                                            │
+responder (LLM)                                                      │
+        │                                                            │
+verificar_resposta ──(crítico)── emitir_alerta ── validacao_humana ──┤
+        │                                                            │
+        └────────────────────────────────────────────────────────────┴──> montar_resposta
 ```
+
+O enunciado descreve o fluxo automatizado como um sistema que, "ao receber
+informações sobre um paciente", pode "verificar exames pendentes, sugerir
+tratamentos e emitir alertas para a equipe médica". As três etapas têm um nó
+cada: `verificar_exames`, `responder` e `emitir_alerta`.
 
 | Nó | O que faz |
 | --- | --- |
 | `guardrail_entrada` | Recusa pedidos fora do escopo |
 | `consultar_prontuario` | Busca alergias, medicações, exames e comorbidades no SQLite |
+| `verificar_exames` | Lê exames críticos e pendências antes de qualquer geração |
 | `recuperar_evidencia` | Busca semântica nos protocolos e modelos de documento |
 | `responder` | Chama a LLM ajustada, pela cadeia LangChain |
-| `verificar_resposta` | Regras clínicas e exigência de citação |
+| `verificar_resposta` | Regras clínicas e procedência da citação |
+| `emitir_alerta` | Endereça cada achado crítico à equipe do setor do paciente |
 | `validacao_humana` | Retém a resposta — a execução termina aqui |
-| `montar_resposta` | Monta o texto final com fontes e aviso |
+| `montar_resposta` | Monta o texto final com fontes, pendências, alertas e aviso |
 
 ---
 
@@ -298,9 +307,12 @@ Para trocar, mude a palavra e **reexecute a partir da seção 3.2**; as seções
 
 | `PERFIL` | Exemplos | Épocas | Passos | Treino | **Notebook inteiro** |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| `"rapido"` *(padrão)* | 378 | 1 | 24 | 1,8 min | **~12 min** |
-| `"completo"` | 828 | 2 | 103 | ~7,6 min | **~18 min** |
-| `"intensivo"` | 1.528 | 2 | 191 | ~14 min | **~24 min** |
+| `"rapido"` *(padrão)* | 398 | 1 | 24 | 1,8 min | **~12 min** |
+| `"completo"` | 848 | 2 | 106 | ~7,8 min | **~18 min** |
+| `"intensivo"` | 1.028 | 2 | 128 | ~9,4 min | **~20 min** |
+
+O `"intensivo"` usa todo o `pqa_labeled` do PubMedQA, que tem 1.000 exemplos
+anotados por especialistas — pedir mais do que isso não aumenta o conjunto.
 
 Os tempos usam o ritmo que medimos numa T4: **4,4 segundos por passo**. Só o
 treino muda de duração — as demais seções somam cerca de 10 minutos em qualquer
@@ -369,6 +381,17 @@ conforme a conexão — a maior parte é o download do `torch`.
 
 Ao terminar, imprime `Pronto. Rode: make testes`.
 
+**Se o `python3` da sua máquina for anterior ao 3.10** — o macOS ainda traz um
+3.9 em `/usr/bin` — o alvo para antes de criar nada e diz qual versão encontrou.
+Aponte para outro interpretador:
+
+```bash
+make setup PY_SETUP=/opt/homebrew/bin/python3
+```
+
+Sem essa checagem o `make setup` terminaria com sucesso e os testes falhariam
+depois com `SyntaxError`, num arquivo que não tem nada de errado.
+
 > **Por que um ambiente virtual.** As versões que o projeto usa não devem
 > interferir no Python do sistema. Todos os alvos do `Makefile` chamam
 > `.venv/bin/python` explicitamente, então não é preciso ativar nada.
@@ -379,14 +402,14 @@ Ao terminar, imprime `Pronto. Rode: make testes`.
 make testes
 ```
 
-São 51 testes, em menos de quatro segundos. A saída termina com:
+São 63 testes, em menos de quatro segundos. A saída termina com:
 
 ```
-51 passed, 1 warning in 2.83s
+63 passed, 1 warning in 1.10s
 ```
 
-O aviso é do `langgraph` anunciando uma mudança futura numa API interna que não
-usamos diretamente. Pode ignorar.
+O aviso é uma biblioteca anunciando mudança futura numa API que não usamos
+diretamente — o texto varia com a versão instalada. Pode ignorar.
 
 Se algum teste falhar, o nome dele diz o que quebrou — cada teste cobre uma
 afirmação específica, e a docstring explica por que aquilo importa.
@@ -461,11 +484,12 @@ fia_tech3/
 │   ├── grafo.py        fluxo LangGraph
 │   ├── auditoria.py    trilha por consulta e logger de sistema
 │   └── graficos.py     as cinco figuras
+├── data/               dataset sintético em JSONL (`make dataset`)
 ├── notebooks/
 │   └── medgraph_lite.ipynb
 ├── docs/
 │   └── relatorio_tecnico.md
-├── tests/              51 testes, rodam sem GPU
+├── tests/              63 testes, rodam sem GPU
 ├── demo.py             o fluxo no terminal
 ├── Makefile
 └── requirements.txt
@@ -487,8 +511,13 @@ Com 0,5 bilhão, medimos **4,4 segundos por passo**: o treino padrão leva **1,8
 minuto** e demonstra exatamente a mesma técnica. O QLoRA treina **8.798.208
 parâmetros de 323.917.696 — 2,72% do modelo**.
 
-O notebook oferece três perfis de treino, de 24 a 191 passos, para quem quiser
+O notebook oferece três perfis de treino, de 24 a 128 passos, para quem quiser
 resultados mais representativos ao custo de alguns minutos a mais.
+
+Ao final do treino o notebook **salva o adapter** em `/content/adapter`. São só
+as matrizes A e B do LoRA — alguns megabytes, sem o modelo base — e é com esse
+arquivo que o ajuste pode ser reaproveitado depois:
+`PeftModel.from_pretrained(modelo_base, "/content/adapter")`.
 
 **O que o ajuste ensina não é medicina.** É o formato da resposta:
 
@@ -510,13 +539,21 @@ correções diferentes — uma métrica única esconderia isso.
 
 ## Resultados
 
-Execução medida numa T4 do Colab, com o perfil padrão — 24 passos, 378 exemplos,
-1,8 minuto de treino:
+Execução medida numa T4 do Colab, com o perfil padrão — 24 passos, 1,8 minuto de
+treino:
 
 | Sistema | Adesão ao formato | Acurácia |
 | --- | ---: | ---: |
 | Modelo base | 0% | 55% |
 | Modelo ajustado | **90%** | **10%** |
+
+> **Estes números são de uma execução anterior a duas correções na avaliação:**
+> o conjunto de teste passou a ser separado antes da repetição do material do
+> hospital (três dos vinte casos tinham cópias no treino), e a verificação de
+> formato passou a aceitar as três famílias de marcador. As duas mudanças
+> afetam as colunas acima. Reexecute o notebook e reporte **os números da sua
+> execução** — a análise abaixo continua valendo, porque descreve o mecanismo,
+> mas os valores exatos precisam vir da medição nova.
 
 A leitura direta dessa tabela seria "o ajuste ensinou o formato e destruiu a
 acurácia". Está parcialmente errada, e vale explicar as duas partes.
@@ -590,10 +627,21 @@ por proximidade alcançaria o "evitar" da frase anterior e liberaria uma sugest�
 real de fármaco contraindicado — errando na direção que uma regra de segurança
 não pode errar.
 
-### Citação obrigatória
+### Citação obrigatória, e conferida contra o que foi recuperado
 
-Resposta sem fonte não passa. É o que torna a explicabilidade verificável: a
-fonte não é uma promessa do modelo, é um campo que o sistema confere.
+Resposta sem fonte não passa. Mas exigir apenas que **haja** um marcador deixa
+passar a falha mais provável de um modelo treinado a citar: inventar a citação.
+O treino ensina o formato `... [E1]` com os exemplos do PubMedQA, e nada impede
+o modelo de escrever `[E1]` respondendo sobre um protocolo do hospital — o
+formato fica perfeito e a fonte não existe.
+
+Por isso o guardrail compara o que foi citado com o que o RAG de fato entregou
+naquela consulta. Citação a fonte não recuperada é achado crítico; citação
+correta com um marcador extra ao lado é apenas atenção, porque a afirmação tem
+procedência e o resto é ruído.
+
+É o que torna a explicabilidade verificável: a fonte não é uma promessa do
+modelo, é um campo que o sistema confere.
 
 ---
 
@@ -610,6 +658,10 @@ Três registros, com públicos diferentes:
 Cada consulta recebe um `trace_id`. Sem ele, os eventos de consultas diferentes
 se misturam no arquivo e deixa de ser possível reconstruir o que aconteceu em
 cada uma.
+
+O nó `emitir_alerta` grava na mesma trilha o alerta **endereçado**: leva o setor
+onde o paciente está internado, para que a auditoria consiga responder não só
+"o que foi alertado" como "a quem". Alerta sem destinatário é linha de log.
 
 ```json
 {
@@ -658,7 +710,7 @@ guardrail direto para a resposta final, sem tocar na LLM, dispensa explicar o qu
 
 ## Testes
 
-51 testes, rodando em menos de três segundos, sem GPU.
+63 testes, rodando em menos de três segundos, sem GPU.
 
 | Área | O que verificamos |
 | --- | --- |
@@ -687,6 +739,37 @@ antes e depois do ajuste.
 
 ---
 
+## O vídeo
+
+O entregável pede uma demonstração de **até 15 minutos** cobrindo quatro pontos:
+o treinamento e o funcionamento da LLM personalizada, a execução de um fluxo
+automatizado, respostas a perguntas clínicas contextualizadas, e os logs e a
+validação das respostas.
+
+Um roteiro que cabe no tempo, gravando a tela com o notebook já executado (não
+espere o treino ao vivo — deixe a saída pronta e percorra as células):
+
+| Tempo | Seção | O que mostrar |
+| ---: | --- | --- |
+| 0:00–1:30 | Abertura | O problema, o princípio ("o assistente nunca prescreve") e o mapa do notebook |
+| 1:30–3:30 | §3 | Os três materiais do enunciado, a anonimização nos dois sentidos e a separação treino/teste |
+| 3:30–6:30 | §5 | QLoRA: o que está congelado, o que treina, a contagem de parâmetros, a curva de perda e o adapter salvo |
+| 6:30–8:00 | §6 | Antes × depois, e o diagnóstico de colapso de classe — inclusive o que **não** melhorou |
+| 8:00–9:30 | §7–8 | RAG com marcador de fonte e a cadeia LangChain montada com `\|` |
+| 9:30–13:00 | §9 | **O centro da demonstração**: as quatro consultas, a trilha colorida ao vivo e a figura do caminho percorrido |
+| 13:00–14:30 | §9.3 | A trilha em JSONL, as consultas retidas e o alerta endereçado à equipe |
+| 14:30–15:00 | Fecho | Limitações declaradas e o aviso de que é trabalho acadêmico |
+
+Os dois momentos que mais rendem: a consulta recusada **saltando** do guardrail
+direto para a resposta final sem tocar na LLM, e o conflito de alergia sendo
+**retido** com o alerta emitido. Os dois se veem na figura do caminho percorrido,
+sem precisar de explicação.
+
+Para ensaiar sem gastar cota de GPU: `make demo` roda o fluxo inteiro no
+terminal, com o modelo simulado.
+
+---
+
 ## Requisitos do enunciado
 
 | Requisito | Onde |
@@ -703,8 +786,9 @@ antes e depois do ajuste.
 | Explicabilidade por fonte | `rag.py` + `guardrails.verificar_resposta` |
 | Projeto modularizado | pacote `medgraph_lite/` |
 | Fluxos do LangGraph | `grafo.py` |
-| Dataset sintético e anonimizado | `dados.py` |
+| Dataset sintético e anonimizado | `dados.py`, exportado em `data/*.jsonl` |
 | Relatório técnico | `docs/relatorio_tecnico.md` |
+| Vídeo de até 15 minutos | roteiro em [O vídeo](#o-vídeo) — a gravar |
 
 ---
 
@@ -714,6 +798,17 @@ Nenhum dado real de paciente é usado. Prontuários, protocolos, documentos e FA
 do Hospital Vida Plena foram escritos por nós. Ainda assim aplicamos o pipeline
 de anonimização sobre eles, para demonstrar a técnica e garantir que o mesmo
 código funcionaria com dados reais.
+
+O material está versionado em `data/`, um registro por linha em JSONL — quem for
+conferir o trabalho abre o arquivo, em vez de ler `dados.py`. Para reexportar
+depois de mexer nos dados:
+
+```bash
+make dataset
+```
+
+O PubMedQA não é redistribuído aqui: é público, tem licença própria e o notebook
+o baixa pelo `datasets`.
 
 Este é um trabalho acadêmico. Não passou por comitê de ética nem por validação
 clínica, e não deve ser usado em assistência a pacientes.

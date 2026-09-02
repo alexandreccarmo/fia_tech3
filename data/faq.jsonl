@@ -1,0 +1,8 @@
+{"pergunta": "Qual o tempo maximo para iniciar antibiotico na sepse?", "resposta": "Decisao: yes\nAte 1 hora do reconhecimento, apos colher hemoculturas e lactato. [P1]"}
+{"pergunta": "Posso usar cefalosporina em paciente com anafilaxia a penicilina?", "resposta": "Decisao: no\nCefalosporinas compartilham o anel betalactamico com as penicilinas; em anafilaxia, evitar a classe inteira. [P4]"}
+{"pergunta": "Preciso ajustar antimicrobiano quando o clearance esta em 25 mL/min?", "resposta": "Decisao: yes\nAbaixo de 30 mL/min, ajustar dose e intervalo dos antimicrobianos de excrecao renal. [P3]"}
+{"pergunta": "Amiodarona interfere na varfarina?", "resposta": "Decisao: yes\nEleva o INR; reavaliar em 3 a 5 dias apos a introducao. [P5]"}
+{"pergunta": "CURB-65 de 1 indica internacao em UTI?", "resposta": "Decisao: no\nCURB-65 baixo nao indica UTI; a estratificacao orienta enfermaria ou tratamento ambulatorial. [P2]"}
+{"pergunta": "O que nao pode faltar numa prescricao do hospital?", "resposta": "Decisao: yes\nAlergias declaradas conferidas antes de prescrever, dose, via, intervalo e duracao, e a assinatura do medico responsavel com CRM. [D2]"}
+{"pergunta": "O laudo laboratorial deve trazer a conduta terapeutica?", "resposta": "Decisao: no\nO laudo traz resultado, referencia e interpretacao do achado; a conduta e definida pelo medico assistente. [D1]"}
+{"pergunta": "A descricao de procedimento precisa registrar intercorrencias?", "resposta": "Decisao: yes\nO campo e obrigatorio e deve ser preenchido mesmo quando nao houve nenhuma. [D3]"}

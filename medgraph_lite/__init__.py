@@ -10,8 +10,8 @@ Modulos:
     treino      configuracao do fine-tuning QLoRA
     rag         indice FAISS e recuperacao com fonte
     guardrails  limites de atuacao e regras clinicas
-    grafo       fluxo LangGraph de seis nos
-    graficos    as quatro figuras da apresentacao
+    grafo       fluxo LangGraph de nove nos
+    graficos    as cinco figuras da apresentacao
 """
 
 __version__ = "1.0.0"

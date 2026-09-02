@@ -8,7 +8,7 @@ PYTHON := .venv/bin/python
 export PYTHONPATH := $(shell pwd)
 
 .DEFAULT_GOAL := ajuda
-.PHONY: ajuda setup testes lint formatar demo limpar
+.PHONY: ajuda setup testes lint formatar demo dataset limpar
 
 ajuda:  ## Lista os comandos
 	@echo ""
@@ -21,8 +21,22 @@ ajuda:  ## Lista os comandos
 	@echo "  https://colab.research.google.com/github/alexandreccarmo/fia_tech3/blob/main/notebooks/medgraph_lite.ipynb"
 	@echo ""
 
+# Qual python3 cria o venv. O projeto usa sintaxe de 3.10+ (`X | None`,
+# `zip(strict=)`), e o macOS ainda traz um 3.9 em /usr/bin: sem esta checagem o
+# `make setup` termina com sucesso e os testes falham depois com SyntaxError,
+# num arquivo que nao tem nada de errado.
+PY_SETUP ?= python3
+
 setup:  ## Cria o venv e instala as dependencias
-	python3 -m venv .venv
+	@$(PY_SETUP) -c 'import sys; sys.exit(0 if sys.version_info >= (3,10) else 1)' \
+		|| { echo ""; \
+		     echo "  Este projeto precisa de Python 3.10 ou mais novo."; \
+		     echo "  O '$(PY_SETUP)' desta maquina e:"; \
+		     $(PY_SETUP) -V; \
+		     echo ""; \
+		     echo "  Aponte para outro:  make setup PY_SETUP=/opt/homebrew/bin/python3"; \
+		     echo ""; exit 1; }
+	$(PY_SETUP) -m venv .venv
 	.venv/bin/pip install -q -U pip
 	.venv/bin/pip install -q -r requirements.txt pytest ruff
 	@echo "Pronto. Rode: make testes"
@@ -39,6 +53,10 @@ formatar:  ## Formata e ordena imports
 
 demo:  ## Demonstra o grafo no terminal, com modelo simulado
 	$(PYTHON) demo.py
+
+dataset:  ## Reexporta o dataset sintetico para data/*.jsonl
+	$(PYTHON) -c "from medgraph_lite import dados; \
+	              print(dados.exportar_dataset('data'))"
 
 limpar:  ## Remove caches e artefatos gerados
 	find . -type d -name __pycache__ -not -path "./.venv/*" -exec rm -rf {} + 2>/dev/null || true

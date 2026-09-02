@@ -61,8 +61,7 @@ fusão, e o `llama.cpp` recusando o tokenizer de uma versão nova do
 
 Para um trabalho que precisa ser **apresentado**, cada dependência externa é um
 risco sem contrapartida. A versão atual roda inteira em um notebook, em cerca de
-25 minutos, sem conta em serviço nenhum. A versão anterior está preservada em
-`modelo_cancelado/`.
+25 minutos, sem conta em serviço nenhum.
 
 ---
 
@@ -74,7 +73,7 @@ risco sem contrapartida. A versão atual roda inteira em um notebook, em cerca d
                               v
         +------------------------------------------+
         |     LangGraph — fluxo de decisão         |
-        |     7 nós, 2 pontos de desvio            |
+        |     9 nós, 2 pontos de desvio            |
         +------------------------------------------+
            |          |            |            |
            v          v            v            v
@@ -92,7 +91,7 @@ comparativa precisa.
 
 | Módulo | Responsabilidade |
 | --- | --- |
-| `dados.py` | PubMedQA, protocolos, modelos de documento, anonimização |
+| `dados.py` | PubMedQA, protocolos, modelos de documento, anonimização, separação treino/teste |
 | `prontuario.py` | Base SQLite e a entidade `Paciente` |
 | `treino.py` | Configuração do QLoRA e formato do prompt de treino |
 | `rag.py` | Índice FAISS e recuperação com marcador de fonte |
@@ -102,7 +101,7 @@ comparativa precisa.
 | `auditoria.py` | Trilha por consulta e logger de sistema |
 | `graficos.py` | As cinco figuras da apresentação |
 
-Cerca de 1.200 linhas de Python.
+Cerca de 1.700 linhas de Python.
 
 ---
 
@@ -152,6 +151,22 @@ O conjunto de treino combina ~350 exemplos do PubMedQA com o material do
 hospital repetido seis vezes. A repetição é deliberada: são 8 pares de pergunta
 e resposta contra centenas de exemplos científicos, e sem peso eles não
 influenciariam o formato aprendido.
+
+### 3.4 Separação entre treino e teste
+
+Vinte exemplos ficam fora do treino e servem à avaliação da seção 7. A separação
+acontece **antes** de o material do hospital ser repetido, e a ordem é o ponto
+todo.
+
+Na primeira versão o corte era feito depois: repetíamos o material seis vezes,
+embaralhávamos tudo e ficávamos com as últimas vinte linhas. Como as cópias são
+idênticas, **três dos vinte casos de teste tinham gêmeos no conjunto de treino**
+— a avaliação media memorização e reportava generalização, e nada na saída
+denunciava isso.
+
+O conjunto de teste sai inteiro do PubMedQA, onde cada exemplo é único, e o
+notebook confere a separação com um `assert` em vez de prometê-la num
+comentário.
 
 ---
 
@@ -240,11 +255,20 @@ abaixo usam o ritmo medido de 4,4 s por passo:
 
 | Perfil | Exemplos | Épocas | Passos | Treino |
 | --- | ---: | ---: | ---: | ---: |
-| `rapido` (padrão) | 378 | 1 | 24 | 1,8 min |
-| `completo` | 828 | 2 | 103 | ~7,6 min |
-| `intensivo` | 1.528 | 2 | 191 | ~14 min |
+| `rapido` (padrão) | 398 | 1 | 24 | 1,8 min |
+| `completo` | 848 | 2 | 106 | ~7,8 min |
+| `intensivo` | 1.028 | 2 | 128 | ~9,4 min |
 
-### 4.5 Um argumento recusado pela biblioteca
+### 4.5 Compatibilidade de biblioteca
+
+A API do `trl` renomeou argumentos várias vezes. A configuração é montada
+**tentando construir e removendo apenas o que a biblioteca recusar**, em vez de
+descobrir por introspecção quais nomes ela aceita.
+
+A diferença importa: a introspecção pode errar para menos, e errar para menos
+aqui significa treinar com uma configuração diferente da pedida, em silêncio.
+Deixar a própria biblioteca decidir elimina essa classe de erro.
+### 4.6 Um argumento recusado pela biblioteca
 
 A camada de compatibilidade informou, na execução medida:
 
@@ -265,15 +289,6 @@ descartado e o treino seguiu. É exatamente o tipo de divergência silenciosa en
 a configuração pedida e a aplicada que a camada de compatibilidade existe para
 tornar visível.
 
-### 4.5 Compatibilidade de biblioteca
-
-A API do `trl` renomeou argumentos várias vezes. A configuração é montada
-**tentando construir e removendo apenas o que a biblioteca recusar**, em vez de
-descobrir por introspecção quais nomes ela aceita.
-
-A diferença importa: a introspecção pode errar para menos, e errar para menos
-aqui significa treinar com uma configuração diferente da pedida, em silêncio.
-Deixar a própria biblioteca decidir elimina essa classe de erro.
 
 ---
 
@@ -303,11 +318,57 @@ críticos e comorbidades.
 ### 5.3 A convenção de citação
 
 Cada trecho chega ao prompt **já etiquetado** com seu marcador — `[P1]`, `[D2]`.
-O modelo cita o marcador que recebeu, e o guardrail de saída confere se a
-resposta traz alguma citação.
+O modelo cita o marcador que recebeu, e o guardrail de saída confere duas
+coisas: que há citação, e que o marcador citado é um dos que foram de fato
+recuperados naquela consulta (seção 6.3).
 
 Isso é o que torna a explainability verificável em vez de declarada: a fonte não
 é uma promessa do modelo, é um campo que o sistema checa.
+
+### 5.4 O fluxo de decisão, nó a nó
+
+O entregável pede o diagrama do fluxo. Ele é gerado pelo próprio grafo compilado
+na seção 9 do notebook (`app.get_graph().draw_mermaid_png()`), o que impede que a
+documentação descreva um fluxo que o código já não segue. Em texto:
+
+```
+guardrail_entrada ──(recusado)──────────────────────────────────────┐
+        │                                                            │
+consultar_prontuario                                                 │
+        │                                                            │
+verificar_exames                                                     │
+        │                                                            │
+recuperar_evidencia                                                  │
+        │                                                            │
+responder (LLM, pela cadeia LangChain)                               │
+        │                                                            │
+verificar_resposta ──(crítico)── emitir_alerta ── validacao_humana ──┤
+        │                                                            │
+        └────────────────────────────────────────────────────────────┴──> montar_resposta
+```
+
+| Nó | O que faz | Requisito |
+| --- | --- | --- |
+| `guardrail_entrada` | Recusa pedidos fora do escopo | 3 — limites de atuação |
+| `consultar_prontuario` | Lê o SQLite do paciente | 2 — base estruturada |
+| `verificar_exames` | Exames críticos e pendências, antes da LLM | E1 — "verificar exames pendentes" |
+| `recuperar_evidencia` | Busca semântica com marcador de fonte | 3 — explainability |
+| `responder` | Cadeia LangChain com a LLM ajustada | 2 — "sugerir tratamentos" |
+| `verificar_resposta` | Regras clínicas e procedência da citação | 3 — limites e explainability |
+| `emitir_alerta` | Endereça o achado crítico ao setor do paciente | E1 — "emitir alertas" |
+| `validacao_humana` | Retém a resposta; a execução termina aqui | 3 — "nunca sem validação humana" |
+| `montar_resposta` | Texto final com fontes, pendências, alertas e aviso | 3 — explainability |
+
+**Por que um grafo, e não uma cadeia.** A cadeia da seção 5.1 executa sempre os
+mesmos passos na mesma ordem. Uma pergunta fora do escopo não deve chegar ao
+modelo; uma resposta em conflito com alergia registrada não deve ser entregue.
+São caminhos decididos em execução, e é para isso que existem as duas arestas
+condicionais.
+
+**As três etapas que o enunciado nomeia têm um nó cada.** Ele descreve o fluxo
+automatizado como um sistema que, ao receber informações sobre um paciente, pode
+"verificar exames pendentes, sugerir tratamentos e emitir alertas para a equipe
+médica": `verificar_exames`, `responder` e `emitir_alerta`.
 
 ---
 
@@ -343,25 +404,64 @@ A menção em contexto de evitação é **rebaixada** para severidade informativ
 não descartada: se a heurística errar, o pior que acontece é um alerta discreto
 onde deveria haver um grave — e ele continua visível.
 
-**Interações e valores críticos.** Pares de relevância reconhecida (varfarina
-com amiodarona, sulfametoxazol ou fluconazol) e exames marcados como críticos no
-prontuário. Um teste garante que toda interação cadastrada usa fármacos que o
-detector reconhece — sem isso, a regra existiria no código e seria inerte.
+**Interações.** Pares de relevância reconhecida — varfarina com amiodarona,
+sulfametoxazol ou fluconazol. Um teste garante que toda interação cadastrada usa
+fármacos que o detector reconhece: sem isso, a regra existiria no código e seria
+inerte na prática.
 
-### 6.3 Guardrail de saída
+**Exames críticos e pendentes.** Estes não olham o texto gerado, e sim o
+paciente. Por isso saíram de `verificar_resposta` e passaram a viver no nó
+`verificar_exames`, que roda **antes** da recuperação e antes da LLM. Pendência
+de exame é informação que já está no prontuário desde antes da pergunta, e
+fazê-la depender da resposta significava não verificá-la quando a resposta não
+viesse.
 
-Exige citação de fonte. Sem ela, a resposta não é verificável e não passa.
+### 6.3 Guardrail de saída: citação com procedência
 
-### 6.4 Validação humana
+Exige citação de fonte — e confere a **procedência** dela.
 
-Havendo qualquer achado crítico, o fluxo desvia para `validacao_humana`, a
-resposta é marcada como **retida** e a execução termina sem liberá-la. É o item
-do enunciado que diz "nunca prescrever diretamente, sem validação humana",
-implementado como topologia de grafo.
+Verificar apenas que existe um marcador entre colchetes deixa passar a falha
+mais provável de um modelo treinado a citar: inventar a citação. O treino ensina
+o formato `... [E1]` com os exemplos do PubMedQA, e nada impede o modelo de
+escrever `[E1]` respondendo sobre um protocolo do hospital. O formato fica
+perfeito e a fonte não existe — que é exatamente o que a citação deveria
+impedir.
+
+O guardrail recebe do nó de recuperação os marcadores efetivamente entregues
+naquela consulta e compara:
+
+| Situação | Severidade |
+| --- | --- |
+| Nenhuma citação | Crítico |
+| Só cita fonte que não foi recuperada | Crítico |
+| Cita fonte recuperada, com marcador extra ao lado | Atenção |
+| Cita apenas fontes recuperadas | Aprovado |
+
+A terceira linha é uma escolha: a afirmação tem procedência e o resto é ruído.
+Tratá-la como crítica transformaria excesso de citação em consulta retida.
+
+**Um defeito que isso corrigiu.** A verificação anterior aceitava apenas as
+famílias `[P..]` e `[E..]`. Os modelos de laudo, receita e procedimento entram
+no índice com marcador `[D1]` a `[D3]`, e o próprio treino ensina o modelo a
+citá-los: uma resposta correta, citando a fonte certa, era marcada como "sem
+citação de fonte", virava achado crítico e era retida. O erro apontava para a
+direção que produz fadiga de alarme.
+
+### 6.4 Alerta endereçado e validação humana
+
+Havendo qualquer achado crítico, o fluxo desvia para `emitir_alerta` e de lá
+para `validacao_humana`. A resposta é marcada como **retida** e a execução
+termina sem liberá-la. É o item do enunciado que diz "nunca prescrever
+diretamente, sem validação humana", implementado como topologia de grafo.
+
+O alerta leva destinatário: o setor onde o paciente está internado. Alerta sem
+destinatário é linha de log — quem age sobre um conflito na UTI é a equipe da
+UTI, e a auditoria precisa conseguir responder não só "o que foi alertado" como
+"a quem".
 
 ### 6.5 Logging e auditoria
 
-Dois registros, com públicos diferentes:
+Três registros, com públicos diferentes:
 
 | Destino | Conteúdo | Para quem |
 | --- | --- | --- |
@@ -391,8 +491,10 @@ trilha com arquivo aberto não é serializável.
 
 ### 7.1 Metodologia
 
-Vinte casos separados do conjunto de treino, **nunca vistos pelo modelo**. O
-mesmo conjunto é avaliado duas vezes: com o modelo base e com o ajustado.
+Vinte casos separados do conjunto de treino, **nunca vistos pelo modelo** — a
+separação descrita na seção 3.4, feita antes da repetição do material do
+hospital e verificada por `assert` no notebook. O mesmo conjunto é avaliado duas
+vezes: com o modelo base e com o ajustado.
 
 Duas métricas, medidas **separadamente**:
 
@@ -407,12 +509,19 @@ prompt de treino. Uma métrica única confundiria as duas.
 
 ### 7.2 Resultados
 
-Execução medida, perfil `rapido` (24 passos, 378 exemplos, 1,8 min):
+Execução medida, perfil `rapido` (24 passos, 1,8 min):
 
 | Sistema | Adesão ao formato | Acurácia |
 | --- | ---: | ---: |
 | Modelo base | 0% | 55% |
 | Modelo ajustado | **90%** | **10%** |
+
+> **Estes números precedem duas correções na avaliação**, descritas nas seções
+> 3.4 e 7.4: a separação treino/teste passou a ser feita antes da repetição do
+> material do hospital, e a verificação de formato passou a aceitar as três
+> famílias de marcador. As duas afetam as colunas acima. O mecanismo analisado a
+> seguir continua valendo — ele descreve *por que* os números se comportam assim
+> —, mas os valores a reportar são os da execução nova.
 
 A leitura direta dessa tabela — "o ajuste melhorou o formato e destruiu a
 acurácia" — está parcialmente errada, e a parte errada é instrutiva.
@@ -463,6 +572,16 @@ decidido nada — e sem a distribuição, esse número passa por desempenho.
 
 O notebook emite um aviso automático quando uma única decisão responde por 80% ou
 mais dos casos.
+
+Duas outras correções entraram depois:
+
+**A adesão ao formato só reconhecia dois tipos de marcador.** A verificação
+exigia `[E1]` ou `[P..]`, e uma resposta citando corretamente um modelo de
+documento (`[D2]`) contava como fora do formato. A métrica passou a aceitar
+qualquer família de marcador — a mesma regra que o guardrail da seção 6.3 usa.
+
+**O conjunto de teste tinha cópias no treino.** Três dos vinte casos, conforme a
+seção 3.4. Enquanto isso valeu, parte da adesão medida era memorização.
 
 ### 7.5 Conclusão da avaliação
 
@@ -528,19 +647,22 @@ por validação clínica e não deve ser utilizado em assistência a pacientes.
 | LangChain integrando a LLM customizada | `chain.py`, notebook §8 |
 | Consultas a base estruturada | `prontuario.py`, notebook §4 |
 | Contextualização com dados do paciente | `grafo.no_responder` |
+| Verificar exames pendentes | `grafo.no_verificar_exames` |
+| Emitir alertas para a equipe médica | `grafo.no_emitir_alerta` |
 | Limites de atuação | `guardrails.py`, notebook §9 |
 | Logging para rastreamento e auditoria | `auditoria.py`, notebook §9.3 |
 | Explainability por fonte | `rag.py` + `guardrails.verificar_resposta` |
 | Projeto modularizado em Python | pacote `medgraph_lite/` |
 | Instruções completas no README | `README.md` |
 | Fluxos do LangGraph | `grafo.py` |
-| Dataset anonimizado ou sintético | `dados.py` |
+| Dataset anonimizado ou sintético | `dados.py`, exportado em `data/*.jsonl` |
+| Diagrama do fluxo | seção 5.4, e gerado pelo grafo no notebook §9 |
 | Relatório técnico | este documento |
-| Vídeo de até 15 minutos | a gravar |
+| Vídeo de até 15 minutos | roteiro no README, seção "O vídeo" — a gravar |
 
 ### Suíte de testes
 
-47 testes, executando em menos de 3 segundos, sem GPU. Cobrem anonimização nos
+63 testes, executando em menos de 3 segundos, sem GPU. Cobrem anonimização nos
 dois sentidos, limites de atuação, regras clínicas, prontuário, os quatro
 caminhos do grafo, a trilha de auditoria, o pipeline LangChain e a integridade
 do notebook.

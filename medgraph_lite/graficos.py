@@ -5,7 +5,8 @@ Sao quatro, e cada um responde a uma pergunta que a banca faz:
   1. o treino funcionou?          -> curva de perda
   2. o ajuste melhorou o que?     -> antes x depois
   3. o fluxo faz o que promete?   -> caminho percorrido por consulta
-  4. os limites funcionam?        -> achados por severidade
+  4. onde esta o custo?           -> linha do tempo por consulta
+  5. os limites funcionam?        -> achados por severidade
 """
 
 from __future__ import annotations
@@ -132,15 +133,21 @@ def achados_por_severidade(contagem: dict[str, int], destino: str = "achados.png
 # =============================================================================
 # O GRAFO COM O CAMINHO PERCORRIDO
 # =============================================================================
-# Posicoes fixas dos nos. O grafo tem sete nos e nao muda, entao um layout
+# Posicoes fixas dos nos. O grafo tem nove nos e nao muda, entao um layout
 # escrito a mao comunica melhor do que qualquer algoritmo automatico: a coluna
 # central e o caminho feliz, e os desvios saem para os lados.
+#
+# O teste `test_desenho_cobre_todos_os_nos_do_grafo` compara este dicionario com
+# os nos do grafo compilado: um no acrescentado la e esquecido aqui sairia
+# apagado na figura, como se nao tivesse executado.
 POSICOES = {
-    "guardrail_entrada":    (0.0, 9.0),
-    "consultar_prontuario": (0.0, 7.5),
-    "recuperar_evidencia":  (0.0, 6.0),
-    "responder":            (0.0, 4.5),
-    "verificar_resposta":   (0.0, 3.0),
+    "guardrail_entrada":    (0.0, 12.0),
+    "consultar_prontuario": (0.0, 10.5),
+    "verificar_exames":     (0.0, 9.0),
+    "recuperar_evidencia":  (0.0, 7.5),
+    "responder":            (0.0, 6.0),
+    "verificar_resposta":   (0.0, 4.5),
+    "emitir_alerta":        (1.15, 3.0),
     "validacao_humana":     (1.15, 1.5),
     "montar_resposta":      (0.0, 0.0),
 }
@@ -149,24 +156,32 @@ POSICOES = {
 # que o desvio da recusa nao passe por cima dos nos do meio.
 ARESTAS = [
     ("guardrail_entrada", "consultar_prontuario", 0.0),
-    ("guardrail_entrada", "montar_resposta", -0.55),
-    ("consultar_prontuario", "recuperar_evidencia", 0.0),
+    ("guardrail_entrada", "montar_resposta", -0.62),
+    ("consultar_prontuario", "verificar_exames", 0.0),
+    ("verificar_exames", "recuperar_evidencia", 0.0),
     ("recuperar_evidencia", "responder", 0.0),
     ("responder", "verificar_resposta", 0.0),
     ("verificar_resposta", "montar_resposta", 0.0),
-    ("verificar_resposta", "validacao_humana", 0.0),
+    ("verificar_resposta", "emitir_alerta", 0.0),
+    ("emitir_alerta", "validacao_humana", 0.0),
     ("validacao_humana", "montar_resposta", 0.0),
 ]
 
 ROTULOS = {
     "guardrail_entrada": "guardrail\nentrada",
     "consultar_prontuario": "consultar\nprontuário",
+    "verificar_exames": "verificar\nexames",
     "recuperar_evidencia": "recuperar\nevidência",
     "responder": "responder\n(LLM)",
     "verificar_resposta": "verificar\nresposta",
+    "emitir_alerta": "emitir\nalerta",
     "validacao_humana": "validação\nhumana",
     "montar_resposta": "montar\nresposta",
 }
+
+# Nos que sinalizam risco. Saem em vermelho quando visitados, para que o desvio
+# se leia na figura sem precisar do rotulo.
+NOS_DE_RISCO = {"emitir_alerta", "validacao_humana"}
 
 
 def _desenhar_aresta(eixo, origem, destino, curvatura, cor, largura, alfa):
@@ -190,7 +205,7 @@ def fluxo_percorrido(trilhas: dict[str, list[dict]], destino: str = "fluxo.png")
     saltar direto do guardrail para a resposta final, sem passar pela LLM, diz
     mais do que qualquer descricao do roteamento.
     """
-    figura, eixos = plt.subplots(1, len(trilhas), figsize=(3.5 * len(trilhas), 7.6))
+    figura, eixos = plt.subplots(1, len(trilhas), figsize=(3.5 * len(trilhas), 9.4))
     if len(trilhas) == 1:
         eixos = [eixos]
 
@@ -212,7 +227,7 @@ def fluxo_percorrido(trilhas: dict[str, list[dict]], destino: str = "fluxo.png")
             visitado = etapa in visitados
             if not visitado:
                 cor, texto, borda = "#f2f5f7", "#b0bec5", "#dde3e8"
-            elif etapa == "validacao_humana":
+            elif etapa in NOS_DE_RISCO:
                 cor, texto, borda = VERMELHO, "white", VERMELHO
             else:
                 cor, texto, borda = AZUL, "white", AZUL
@@ -231,8 +246,8 @@ def fluxo_percorrido(trilhas: dict[str, list[dict]], destino: str = "fluxo.png")
             fontsize=9.5, fontweight="bold",
             color=VERMELHO if parou else "#37474f", pad=12,
         )
-        eixo.set_xlim(-0.85, 2.05)
-        eixo.set_ylim(-1.0, 10.0)
+        eixo.set_xlim(-0.85, 2.55)
+        eixo.set_ylim(-1.0, 13.0)
         eixo.axis("off")
 
     figura.suptitle("Caminho percorrido no grafo, por consulta",

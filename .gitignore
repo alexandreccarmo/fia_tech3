@@ -6,9 +6,9 @@ __pycache__/
 .ruff_cache/
 
 # Artefatos gerados pelo notebook.
-# Os padroes sao ancorados na raiz de proposito: sem a barra inicial, "*.png"
-# valeria para o repositorio inteiro e apagaria do controle de versao os
-# graficos que modelo_cancelado/ guarda como historico.
+# Os padroes sao ancorados na raiz de proposito: sem a barra inicial, "*.jsonl"
+# valeria para o repositorio inteiro e tiraria do controle de versao o dataset
+# sintetico de data/, que e um dos entregaveis.
 /*.png
 /*.db
 /saida_treino/
